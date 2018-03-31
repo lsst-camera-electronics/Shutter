@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+  <DUT Name="ShutterState" Id="{e6ced1e0-fbf1-44fa-9011-9af9b6d1a376}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE ShutterState :
+(
+	STOPPED,    (* No motion, positions indeterminate. *)
+	RESETTING,  (* No motion, clearing axis faults. *)
+	ENABLING,   (* No motion, re-enabling axes after a reset. *)
+	OPENING,    (* One blade set is retracting, the other is still. *)
+	CLOSING,    (* One blade set is extending, the other is still. *)
+	CLOSED      (* One blade set is fully retracted, the other is fully extended. *)
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+  <POU Name="MAIN" Id="{f71d400f-d229-45a7-bebf-e505112d31c1}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	cycler: Cycler;
+	physicalAxes: ARRAY [ShutterSide.MINUSX .. ShutterSide.PLUSX] OF AXIS_REF; (* Must be linked to Axis1 and 2, respectively, under MOTION. *)
+	axisInfo: ARRAY [ShutterSide.MINUSX..SHutterSide.PLUSX] OF AxisInfo := [(openPosition:=0.0, closedPosition:=500.0), (openPosition:=500.0, closedPosition:=0.0)];
+	start, stop, reset, abort: BOOL;
+	delay: TON;
+	acceleration, speed: LREAL;
+	exposure: TIME;
+END_VAR
+VAR CONSTANT
+	accTitle: STRING := 'Acceleration';
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[delay(IN:=TRUE, PT:=T#0S);
+IF delay.Q THEN
+    delay(IN:=FALSE);
+    cycler(
+        physicalAxes := physicalAxes,
+        axisInfo := axisInfo,
+        abortRequest:=abort,
+        resetRequest:=reset,
+        startRequest:=start,
+        stopRequest:=stop,
+        exposureTime:=exposure,
+        speed:=speed,
+        acceleration:=acceleration);
+END_IF
+]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="17" Count="2" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="10" Count="5" />
+      <LineId Id="31" Count="2" />
+      <LineId Id="21" Count="1" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

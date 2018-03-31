@@ -1,0 +1,225 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+  <POU Name="Cycler" Id="{a89e7236-f52b-46ba-955d-2a8dcdae0df3}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK PUBLIC Cycler
+VAR_IN_OUT
+	physicalAxes: ARRAY [ShutterSide.MINUSX .. ShutterSide.PLUSX] OF AXIS_REF;
+	abortRequest, resetRequest, startRequest, stopRequest: BOOL;
+END_VAR
+VAR_INPUT
+	axisInfo: ARRAY [ShutterSide.MINUSX .. ShutterSide.PLUSX] OF AxisInfo;
+	speed, acceleration: LREAL;
+	exposureTime: TIME;
+END_VAR
+VAR_OUTPUT
+	state: ShutterState := ShutterState.STOPPED;
+END_VAR
+
+VAR
+	retracting: ShutterSide;
+	extending: ShutterSide;
+	retractor, extender: MC_MoveAbsolute;
+	plusResetter, minusResetter: MC_Reset;
+	plusEnabler, minusEnabler: MC_Power;
+	expoTimer: TON;
+	axisError: ARRAY [ShutterSide.MINUSX .. ShutterSide.PLUSX] OF UDINT;
+	brakeRelays AT %Q*: BYTE;	
+END_VAR
+VAR CONSTANT
+	BRAKES_OFF: BYTE := 3;
+	BRAKES_ON:  BYTE := 0;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+CASE state OF
+	ShutterState.STOPPED:
+	plusResetter(Axis:=physicalAxes[ShutterSide.PLUSX], Execute:=FALSE);
+	minusResetter(Axis:=physicalAxes[ShutterSide.MINUSX], Execute:=FALSE);
+	extender(Execute:=FALSE, Axis:=physicalAxes[ShutterSide.PLUSX]);
+	retractor(Execute:=FALSE, Axis:=physicalAxes[ShutterSide.MINUSX]);
+	expoTimer(IN:=FALSE);
+	IF resetRequest THEN
+		resetRequest := FALSE;
+		state := ShutterState.RESETTING;
+	ELSIF startRequest THEN
+		startRequest := FALSE;
+		retracting :=  ShutterSide.MINUSX;
+		extending := ShutterSide.PLUSX;
+		state := ShutterState.OPENING;
+		brakeRelays := BRAKES_OFF;
+	END_IF
+	
+	ShutterState.OPENING:
+	retractor(Axis:=physicalAxes[retracting],
+        Execute:=TRUE,
+        Position:=axisInfo[retracting].openPosition,
+        Velocity:=speed,
+        Acceleration:=acceleration,
+        Deceleration:=acceleration);
+	IF retractor.Error OR retractor.CommandAborted THEN
+		state := ShutterState.STOPPED;
+		brakeRelays := BRAKES_ON;
+		retractor(Axis:=physicalAxes[retracting], Execute:=FALSE);
+		axisError[retracting] := retractor.ErrorID;		
+	END_IF
+	(* The exposure starts when the first blade set starts to retract. If the blade
+       set doesn't reach its target by the time the exposure is supposed to
+       be over then the exposure will be extended until it motion is completed.
+    *)
+	expoTimer(IN:=TRUE, PT:=exposureTime);
+	IF expoTimer.Q  AND retractor.Done THEN
+		expoTimer(IN:=FALSE);
+		retractor(Axis:=physicalAxes[retracting], Execute:=FALSE);
+		state := ShutterState.CLOSING;
+	END_IF
+	
+	ShutterState.CLOSING:
+	extender(Axis:=physicalAxes[extending],
+        Execute:=TRUE,
+        Position:=axisInfo[extending].closedPosition,
+        Velocity:=speed,
+        Acceleration:=acceleration,
+        Deceleration:=acceleration);
+	IF extender.Error OR extender.CommandAborted THEN
+		state := ShutterState.STOPPED;
+		brakeRelays := BRAKES_ON;
+		extender(Axis:=physicalAxes[extending], Execute:=FALSE);
+		axisError[extending] := extender.ErrorID;
+	ELSIF extender.Done THEN
+		extender(Axis:=physicalAxes[extending], Execute:=FALSE);
+		state := ShutterState.CLOSED;
+	END_IF
+	
+	ShutterState.CLOSED:
+	state := ShutterState.OPENING;
+	(* Sides now exchange roles. *)
+	retracting := ShutterSide.PLUSX - retracting;
+	extending := ShutterSide.PLUSX - extending;
+	IF stopRequest THEN
+		stopRequest := FALSE;
+		state := ShutterState.STOPPED;
+		brakeRelays := BRAKES_ON;
+	END_IF
+	
+	ShutterState.RESETTING:
+	plusResetter(Axis:=physicalAxes[ShutterSide.PLUSX],
+        Execute:=TRUE,
+        ErrorID => axisError[ShutterSide.PLUSX]);
+	minusResetter(Axis:=physicalAxes[ShutterSide.MINUSX],
+		Execute:=TRUE,
+		ErrorID => axisError[ShutterSide.MINUSX]);
+	IF (plusResetter.Done OR plusResetter.Error) AND (minusResetter.Done OR minusResetter.Error) THEN
+		IF plusResetter.Done AND minusResetter.Done THEN
+	        state := ShutterState.ENABLING;
+		ELSE
+			state := ShutterState.STOPPED;
+			brakeRelays := BRAKES_ON;
+		END_IF
+	END_IF
+	
+	ShutterState.ENABLING:
+	plusResetter(Axis:=physicalAxes[ShutterSide.PLUSX], Execute:=FALSE);
+	minusResetter(Axis:=physicalAxes[ShutterSide.MINUSX], Execute:=FALSE);
+	plusEnabler(Axis:=physicalAxes[ShutterSide.PLUSX],
+		Enable:=TRUE,
+        Enable_Positive:=TRUE,
+		Enable_Negative:=TRUE,
+		Override:=100.0,
+		ErrorID => axisError[ShutterSide.PLUSX]
+        );
+	minusEnabler(Axis:=physicalAxes[ShutterSide.MINUSX],
+        Enable:=TRUE,
+        Enable_Positive:=TRUE,
+        Enable_Negative:=TRUE,
+        Override:=100.0,
+        ErrorID => axisError[ShutterSide.MINUSX]);
+	IF (plusEnabler.Status OR plusEnabler.Error) AND (minusEnabler.Status OR minusEnabler.Error) THEN
+	    state := ShutterState.STOPPED;
+		brakeRelays := BRAKES_ON;
+	END_IF
+	ELSE
+		abortRequest := TRUE;
+END_CASE
+IF abortRequest THEN
+	abortRequest := FALSE;
+	plusEnabler(Axis:=physicalAxes[ShutterSide.PLUSX], Enable:=FALSE);
+	minusEnabler(Axis:=physicalAxes[ShutterSide.MINUSX], Enable:=FALSE);
+	state := ShutterState.STOPPED;
+	brakeRelays := BRAKES_ON;
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="Cycler">
+      <LineId Id="73" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="138" Count="0" />
+      <LineId Id="136" Count="1" />
+      <LineId Id="35" Count="1" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="22" Count="1" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="27" Count="1" />
+      <LineId Id="33" Count="1" />
+      <LineId Id="285" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="209" Count="5" />
+      <LineId Id="217" Count="0" />
+      <LineId Id="223" Count="0" />
+      <LineId Id="279" Count="0" />
+      <LineId Id="224" Count="1" />
+      <LineId Id="219" Count="0" />
+      <LineId Id="216" Count="0" />
+      <LineId Id="229" Count="2" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="228" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="46" Count="1" />
+      <LineId Id="232" Count="6" />
+      <LineId Id="286" Count="0" />
+      <LineId Id="239" Count="1" />
+      <LineId Id="243" Count="2" />
+      <LineId Id="241" Count="0" />
+      <LineId Id="48" Count="1" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="208" Count="0" />
+      <LineId Id="143" Count="1" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="54" Count="1" />
+      <LineId Id="281" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="128" Count="5" />
+      <LineId Id="97" Count="0" />
+      <LineId Id="146" Count="0" />
+      <LineId Id="134" Count="0" />
+      <LineId Id="147" Count="0" />
+      <LineId Id="149" Count="0" />
+      <LineId Id="282" Count="0" />
+      <LineId Id="148" Count="0" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="60" Count="1" />
+      <LineId Id="150" Count="1" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="114" Count="11" />
+      <LineId Id="140" Count="0" />
+      <LineId Id="126" Count="0" />
+      <LineId Id="283" Count="0" />
+      <LineId Id="141" Count="0" />
+      <LineId Id="63" Count="2" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="178" Count="1" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="284" Count="0" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="71" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
