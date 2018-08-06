@@ -1471,7 +1471,7 @@ External Setpoint Generation:
 		</System>
 		<Motion>
 			<NC>
-				<SafTask Priority="4" CycleTime="20000" AmsPort="501" IoAtBegin="true">
+				<SafTask Priority="4" CycleTime="10000" AmsPort="501" IoAtBegin="true">
 					<Name>NC-Task 1 SAF</Name>
 					<Vars VarGrpType="1" InsertType="1">
 						<Name>Inputs</Name>
@@ -1489,6 +1489,7 @@ External Setpoint Generation:
 				<Axis CreateSymbols="true" AxisType="1" Id="1">
 					<Name>Axis 1</Name>
 					<AxisPara>
+						<Dynamic Acceleration="7407.41" Deceleration="7407.41" Jerk="32921.8"/>
 						<Velo SlowManual="150"/>
 						<OtherSettings AllowMotionCmdToSlave="true"/>
 					</AxisPara>
@@ -1564,6 +1565,7 @@ External Setpoint Generation:
 					</Encoder>
 					<Drive Name="Drive" DrvType="24">
 						<DrvPara>
+							<Analog VeloReferenz="2038.894"/>
 							<TimeComp TaskDelayCycles="1"/>
 						</DrvPara>
 						<Vars VarGrpType="1">
@@ -1653,7 +1655,7 @@ Drive Status 4 (manually linked):
 					</Drive>
 					<Controller Name="Ctrl" CtrType="1">
 						<CtrPara PriorControlFactor="1">
-							<PosDiffControl Range="10" Time="0.04"/>
+							<PosDiffControl Range="2.5" Time="0.01"/>
 							<Observer BandWidth="20"/>
 						</CtrPara>
 					</Controller>
@@ -1720,14 +1722,13 @@ External Setpoint Generation:
 				<Axis CreateSymbols="true" AxisType="1" Id="2">
 					<Name>Axis 2</Name>
 					<AxisPara>
+						<Dynamic Acceleration="7407.41" Deceleration="7407.41" Jerk="32921.8"/>
 						<OtherSettings AllowMotionCmdToSlave="true"/>
 					</AxisPara>
 					<Encoder Name="Enc" EncType="4">
 						<EncPara ScaleFactorNumerator="0.049777676567" MaxCount="#x0000ffff">
 							<Inc RefSoftSyncMask="#x0000ffff"/>
 							<TimeComp TimeCompMode="1" EncDelayCycles="4"/>
-							<ParameterChanged>0</ParameterChanged>
-							<ParameterChanged>32</ParameterChanged>
 						</EncPara>
 						<Vars VarGrpType="1">
 							<Name>Inputs</Name>
@@ -1796,6 +1797,7 @@ External Setpoint Generation:
 					</Encoder>
 					<Drive Name="Drive" DrvType="24">
 						<DrvPara>
+							<Analog VeloReferenz="2038.894"/>
 							<TimeComp TaskDelayCycles="1"/>
 						</DrvPara>
 						<Vars VarGrpType="1">
