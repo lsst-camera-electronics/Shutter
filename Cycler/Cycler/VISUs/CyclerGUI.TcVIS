@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
-  <Visu Name="CyclerGUI" Id="{a1f0f562-441a-4a31-92c6-d322a9e84047}">
+  <Visu Name="CyclerGUI" Id="{3d2c33a1-fc25-4a8f-8046-312d064910f7}">
     <XmlArchive>
       <Data>
         <o xml:space="preserve" t="VisualObject">
@@ -154,7 +154,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"277"</v>
+                      <v n="Value">"0"</v>
                     </o>
                   </l>
                 </o>
@@ -173,7 +173,7 @@
                   </a>
                 </d>
                 <v n="VisualElementIdentification">{9aa0c3ee-931f-4f6b-987a-ed702c66e01c}</v>
-                <v n="VisualElementOwningObjectGuid">{a1f0f562-441a-4a31-92c6-d322a9e84047}</v>
+                <v n="VisualElementOwningObjectGuid">{3d2c33a1-fc25-4a8f-8046-312d064910f7}</v>
                 <a n="LMGuids" et="Guid" />
                 <d n="SubElements" t="Hashtable" />
                 <v n="VisualElementId">0</v>
@@ -325,7 +325,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"267"</v>
+                      <v n="Value">"1"</v>
                     </o>
                   </l>
                 </o>
@@ -344,7 +344,7 @@
                   </a>
                 </d>
                 <v n="VisualElementIdentification">{a6b690d8-2f7b-4091-9490-94193ec89cb6}</v>
-                <v n="VisualElementOwningObjectGuid">{a1f0f562-441a-4a31-92c6-d322a9e84047}</v>
+                <v n="VisualElementOwningObjectGuid">{3d2c33a1-fc25-4a8f-8046-312d064910f7}</v>
                 <a n="LMGuids" et="Guid" />
                 <d n="SubElements" t="Hashtable" />
                 <v n="VisualElementId">1</v>
@@ -496,7 +496,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"23"</v>
+                      <v n="Value">"2"</v>
                     </o>
                   </l>
                 </o>
@@ -515,7 +515,7 @@
                   </a>
                 </d>
                 <v n="VisualElementIdentification">{69e53580-4697-4c15-a62d-8e4092889f46}</v>
-                <v n="VisualElementOwningObjectGuid">{a1f0f562-441a-4a31-92c6-d322a9e84047}</v>
+                <v n="VisualElementOwningObjectGuid">{3d2c33a1-fc25-4a8f-8046-312d064910f7}</v>
                 <a n="LMGuids" et="Guid" />
                 <d n="SubElements" t="Hashtable" />
                 <v n="VisualElementId">2</v>
@@ -667,7 +667,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"696"</v>
+                      <v n="Value">"3"</v>
                     </o>
                   </l>
                 </o>
@@ -686,7 +686,7 @@
                   </a>
                 </d>
                 <v n="VisualElementIdentification">{b60c3e45-5ab9-4df9-ac48-4ecf5971db70}</v>
-                <v n="VisualElementOwningObjectGuid">{a1f0f562-441a-4a31-92c6-d322a9e84047}</v>
+                <v n="VisualElementOwningObjectGuid">{3d2c33a1-fc25-4a8f-8046-312d064910f7}</v>
                 <a n="LMGuids" et="Guid" />
                 <d n="SubElements" t="Hashtable" />
                 <v n="VisualElementId">3</v>
@@ -836,7 +836,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"88"</v>
+                      <v n="Value">"4"</v>
                     </o>
                   </l>
                 </o>
@@ -848,7 +848,7 @@
                 <n n="VisualElementFrameInformation" />
                 <d n="VisualElementInputActions" t="Hashtable" />
                 <v n="VisualElementIdentification">{a49b4168-b9a0-4005-a77a-6471d854376e}</v>
-                <v n="VisualElementOwningObjectGuid">{a1f0f562-441a-4a31-92c6-d322a9e84047}</v>
+                <v n="VisualElementOwningObjectGuid">{3d2c33a1-fc25-4a8f-8046-312d064910f7}</v>
                 <a n="LMGuids" et="Guid" />
                 <d n="SubElements" t="Hashtable" />
                 <v n="VisualElementId">4</v>
@@ -990,7 +990,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"1"</v>
+                      <v n="Value">"5"</v>
                     </o>
                   </l>
                 </o>
@@ -1000,7 +1000,7 @@
                 <v n="VisualElementIdentifier">"accel"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="InputBoxInputAction[]">
                   <v>OnMouseUp</v>
                   <a cet="InputBoxInputAction">
                     <o>
@@ -1018,7 +1018,7 @@
                   </a>
                 </d>
                 <v n="VisualElementIdentification">{5b77c343-dd15-4eb7-b986-a48ae572d0e7}</v>
-                <v n="VisualElementOwningObjectGuid">{a1f0f562-441a-4a31-92c6-d322a9e84047}</v>
+                <v n="VisualElementOwningObjectGuid">{3d2c33a1-fc25-4a8f-8046-312d064910f7}</v>
                 <a n="LMGuids" et="Guid" />
                 <d n="SubElements" t="Hashtable" />
                 <v n="VisualElementId">15</v>
@@ -1160,7 +1160,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"2"</v>
+                      <v n="Value">"10"</v>
                     </o>
                   </l>
                 </o>
@@ -1170,7 +1170,7 @@
                 <v n="VisualElementIdentifier">"GenElemInst_24"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="InputBoxInputAction[]">
                   <v>OnMouseUp</v>
                   <a cet="InputBoxInputAction">
                     <o>
@@ -1188,7 +1188,7 @@
                   </a>
                 </d>
                 <v n="VisualElementIdentification">{123fb27d-b862-4c63-b123-8513f8757265}</v>
-                <v n="VisualElementOwningObjectGuid">{a1f0f562-441a-4a31-92c6-d322a9e84047}</v>
+                <v n="VisualElementOwningObjectGuid">{3d2c33a1-fc25-4a8f-8046-312d064910f7}</v>
                 <a n="LMGuids" et="Guid" />
                 <d n="SubElements" t="Hashtable" />
                 <v n="VisualElementId">17</v>
@@ -1330,7 +1330,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"3"</v>
+                      <v n="Value">"7"</v>
                     </o>
                   </l>
                 </o>
@@ -1340,7 +1340,7 @@
                 <v n="VisualElementIdentifier">"GenElemInst_26"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="InputBoxInputAction[]">
                   <v>OnMouseDown</v>
                   <a cet="InputBoxInputAction">
                     <o>
@@ -1358,7 +1358,7 @@
                   </a>
                 </d>
                 <v n="VisualElementIdentification">{23a5bd35-36fc-4bda-ad74-76d2c615513e}</v>
-                <v n="VisualElementOwningObjectGuid">{a1f0f562-441a-4a31-92c6-d322a9e84047}</v>
+                <v n="VisualElementOwningObjectGuid">{3d2c33a1-fc25-4a8f-8046-312d064910f7}</v>
                 <a n="LMGuids" et="Guid" />
                 <d n="SubElements" t="Hashtable" />
                 <v n="VisualElementId">19</v>
@@ -1508,7 +1508,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"4"</v>
+                      <v n="Value">"8"</v>
                     </o>
                   </l>
                 </o>
@@ -1520,7 +1520,7 @@
                 <n n="VisualElementFrameInformation" />
                 <d n="VisualElementInputActions" t="Hashtable" />
                 <v n="VisualElementIdentification">{44cc0c5a-26ad-46d6-b4b2-c4f2885bf41e}</v>
-                <v n="VisualElementOwningObjectGuid">{a1f0f562-441a-4a31-92c6-d322a9e84047}</v>
+                <v n="VisualElementOwningObjectGuid">{3d2c33a1-fc25-4a8f-8046-312d064910f7}</v>
                 <a n="LMGuids" et="Guid" />
                 <d n="SubElements" t="Hashtable" />
                 <v n="VisualElementId">23</v>
@@ -1670,7 +1670,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"5"</v>
+                      <v n="Value">"9"</v>
                     </o>
                   </l>
                 </o>
@@ -1682,7 +1682,7 @@
                 <n n="VisualElementFrameInformation" />
                 <d n="VisualElementInputActions" t="Hashtable" />
                 <v n="VisualElementIdentification">{71723a0e-2fa9-43f0-b80f-cc7596affa92}</v>
-                <v n="VisualElementOwningObjectGuid">{a1f0f562-441a-4a31-92c6-d322a9e84047}</v>
+                <v n="VisualElementOwningObjectGuid">{3d2c33a1-fc25-4a8f-8046-312d064910f7}</v>
                 <a n="LMGuids" et="Guid" />
                 <d n="SubElements" t="Hashtable" />
                 <v n="VisualElementId">25</v>
@@ -1832,7 +1832,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"88"</v>
+                      <v n="Value">"4"</v>
                     </o>
                   </l>
                 </o>
@@ -1844,7 +1844,7 @@
                 <n n="VisualElementFrameInformation" />
                 <d n="VisualElementInputActions" t="Hashtable" />
                 <v n="VisualElementIdentification">{cf857e38-93a5-44a5-8399-f79c5412cf95}</v>
-                <v n="VisualElementOwningObjectGuid">{a1f0f562-441a-4a31-92c6-d322a9e84047}</v>
+                <v n="VisualElementOwningObjectGuid">{3d2c33a1-fc25-4a8f-8046-312d064910f7}</v>
                 <a n="LMGuids" et="Guid" />
                 <d n="SubElements" t="Hashtable" />
                 <v n="VisualElementId">27</v>
@@ -1940,7 +1940,7 @@
                 <v>4bf303c9-175b-42f6-90a6-fb52c3a1ad3e</v>
               </d>
               <v n="FbName">"NotImportant"</v>
-              <v n="FbGuid">{a1f0f562-441a-4a31-92c6-d322a9e84047}</v>
+              <v n="FbGuid">{3d2c33a1-fc25-4a8f-8046-312d064910f7}</v>
             </o>
             <v n="GeneratedGlobalVisuVarsGuid">{1ea183ea-7e69-4b1a-b14a-2aef52db17a7}</v>
             <v n="GeneratedGlobalTheVisuVarlistGuid">{e9b35d55-162f-4483-9d94-49fc8b483131}</v>
@@ -1950,10 +1950,10 @@
               <d n="FbMethods" t="CaseInsensitiveHashtable" ckt="String" cvt="Guid">
                 <v>FB_Init</v>
                 <v>74112ee1-4485-41b5-aa8d-327fe6a78034</v>
-                <v>FB_Exit</v>
-                <v>c156c4f5-ac29-47ec-8a2e-be2c097ba962</v>
                 <v>FB_Reinit</v>
                 <v>c0d7e473-1ad9-49c2-8ecc-9ea858726559</v>
+                <v>FB_Exit</v>
+                <v>c156c4f5-ac29-47ec-8a2e-be2c097ba962</v>
               </d>
               <v n="FbName">"NotImportant"</v>
               <v n="FbGuid">{2942eeca-fb8d-4e4e-b712-11b76303f6c5}</v>
@@ -2044,8 +2044,8 @@
         <Type n="Guid">System.Guid</Type>
         <Type n="Hashtable">System.Collections.Hashtable</Type>
         <Type n="HotkeyConfiguration">{6b108d46-58af-4e41-a3f4-174d8f160cc4}</Type>
-        <Type n="IInputAction[]">_3S.CoDeSys.VisualElem.IInputAction[], VisualElem, Version=3.5.8.0, Culture=neutral, PublicKeyToken=null</Type>
         <Type n="InputBoxInputAction">{e8e7e747-f76f-4dee-ab1c-b9637e41ac26}</Type>
+        <Type n="InputBoxInputAction[]">_3S.CoDeSys.VisualElem.InputBoxInputAction[], VisualElem.plugin, Version=3.5.8.40, Culture=neutral, PublicKeyToken=null</Type>
         <Type n="Int16">System.Int16</Type>
         <Type n="Int32">System.Int32</Type>
         <Type n="Int64">System.Int64</Type>
