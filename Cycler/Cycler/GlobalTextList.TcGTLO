@@ -154,7 +154,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"0"</v>
+                      <v n="Value">"277"</v>
                     </o>
                   </l>
                 </o>
@@ -325,7 +325,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"1"</v>
+                      <v n="Value">"267"</v>
                     </o>
                   </l>
                 </o>
@@ -496,7 +496,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"2"</v>
+                      <v n="Value">"23"</v>
                     </o>
                   </l>
                 </o>
@@ -667,7 +667,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"3"</v>
+                      <v n="Value">"696"</v>
                     </o>
                   </l>
                 </o>
@@ -836,7 +836,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"4"</v>
+                      <v n="Value">"88"</v>
                     </o>
                   </l>
                 </o>
@@ -990,7 +990,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"5"</v>
+                      <v n="Value">"1"</v>
                     </o>
                   </l>
                 </o>
@@ -1000,7 +1000,7 @@
                 <v n="VisualElementIdentifier">"accel"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="InputBoxInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
                   <v>OnMouseUp</v>
                   <a cet="InputBoxInputAction">
                     <o>
@@ -1148,7 +1148,7 @@
                     </o>
                     <o>
                       <v n="Id">390574330L</v>
-                      <v n="Value">"50"</v>
+                      <v n="Value">"Set speed"</v>
                     </o>
                     <o>
                       <v n="Id">2597686782L</v>
@@ -1160,7 +1160,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"6"</v>
+                      <v n="Value">"2"</v>
                     </o>
                   </l>
                 </o>
@@ -1170,7 +1170,7 @@
                 <v n="VisualElementIdentifier">"GenElemInst_24"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="InputBoxInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
                   <v>OnMouseUp</v>
                   <a cet="InputBoxInputAction">
                     <o>
@@ -1330,7 +1330,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"7"</v>
+                      <v n="Value">"3"</v>
                     </o>
                   </l>
                 </o>
@@ -1340,7 +1340,7 @@
                 <v n="VisualElementIdentifier">"GenElemInst_26"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="InputBoxInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
                   <v>OnMouseDown</v>
                   <a cet="InputBoxInputAction">
                     <o>
@@ -1508,7 +1508,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"8"</v>
+                      <v n="Value">"4"</v>
                     </o>
                   </l>
                 </o>
@@ -1670,7 +1670,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"9"</v>
+                      <v n="Value">"5"</v>
                     </o>
                   </l>
                 </o>
@@ -1832,7 +1832,7 @@
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"4"</v>
+                      <v n="Value">"88"</v>
                     </o>
                   </l>
                 </o>
@@ -1950,10 +1950,10 @@
               <d n="FbMethods" t="CaseInsensitiveHashtable" ckt="String" cvt="Guid">
                 <v>FB_Init</v>
                 <v>74112ee1-4485-41b5-aa8d-327fe6a78034</v>
-                <v>FB_Reinit</v>
-                <v>c0d7e473-1ad9-49c2-8ecc-9ea858726559</v>
                 <v>FB_Exit</v>
                 <v>c156c4f5-ac29-47ec-8a2e-be2c097ba962</v>
+                <v>FB_Reinit</v>
+                <v>c0d7e473-1ad9-49c2-8ecc-9ea858726559</v>
               </d>
               <v n="FbName">"NotImportant"</v>
               <v n="FbGuid">{2942eeca-fb8d-4e4e-b712-11b76303f6c5}</v>
@@ -2044,8 +2044,8 @@
         <Type n="Guid">System.Guid</Type>
         <Type n="Hashtable">System.Collections.Hashtable</Type>
         <Type n="HotkeyConfiguration">{6b108d46-58af-4e41-a3f4-174d8f160cc4}</Type>
+        <Type n="IInputAction[]">_3S.CoDeSys.VisualElem.IInputAction[], VisualElem, Version=3.5.8.0, Culture=neutral, PublicKeyToken=null</Type>
         <Type n="InputBoxInputAction">{e8e7e747-f76f-4dee-ab1c-b9637e41ac26}</Type>
-        <Type n="InputBoxInputAction[]">_3S.CoDeSys.VisualElem.InputBoxInputAction[], VisualElem.plugin, Version=3.5.8.40, Culture=neutral, PublicKeyToken=null</Type>
         <Type n="Int16">System.Int16</Type>
         <Type n="Int32">System.Int32</Type>
         <Type n="Int64">System.Int64</Type>
