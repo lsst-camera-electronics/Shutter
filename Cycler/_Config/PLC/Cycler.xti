@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmItem" TcSmVersion="1.0" TcVersion="3.1.4020.32" ClassName="CNestedPlcProjDef">
+	<Project GUID="{20651501-9D50-4E0C-AF06-8B577D14FDDA}" Name="Cycler" PrjFilePath="..\..\Cycler\Cycler.plcproj" TmcFilePath="..\..\Cycler\Cycler.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e">
+		<Instance Id="#x01010010" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="1">
+			<Name>Cycler Instance</Name>
+			<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
+			<UnrestoredVarLinks ImportTime="2018-08-12T17:46:25">
+				<OwnerA Name="OutputSrc" Prefix="TIPC^Cycler^Cycler Instance" Type="2">
+					<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 5 (EL2622)">
+						<Link VarA="MAIN.cycler.brakeRelays" TypeA="BYTE" InOutA="1" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Channel 1^Output" Size="1" RestoreInfo="ANotFound"/>
+						<Link VarA="MAIN.cycler.brakeRelays" TypeA="BYTE" InOutA="1" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Channel 2^Output" Size="1" OffsA="1" RestoreInfo="ANotFound"/>
+					</OwnerB>
+					<OwnerB Name="TINC^NC-Task 1 SAF^Axes^Axis 1">
+						<Link VarA="MAIN.physicalAxes[1].PlcToNc" TypeA="MC.PLCTONC_AXIS_REF" InOutA="1" GuidA="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" VarB="Inputs^FromPlc" RestoreInfo="ANotFound"/>
+					</OwnerB>
+					<OwnerB Name="TINC^NC-Task 1 SAF^Axes^Axis 2">
+						<Link VarA="MAIN.physicalAxes[0].PlcToNc" TypeA="MC.PLCTONC_AXIS_REF" InOutA="1" GuidA="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" VarB="Inputs^FromPlc" RestoreInfo="ANotFound"/>
+					</OwnerB>
+				</OwnerA>
+				<OwnerA Name="InputDst" Prefix="TIPC^Cycler^Cycler Instance" Type="1">
+					<OwnerB Name="TINC^NC-Task 1 SAF^Axes^Axis 1">
+						<Link VarA="MAIN.physicalAxes[1].NcToPlc" TypeA="MC.NCTOPLC_AXIS_REF" InOutA="0" GuidA="{6A65C767-34E5-42BF-AD87-E1A503EAC7BE}" VarB="Outputs^ToPlc" RestoreInfo="ANotFound"/>
+					</OwnerB>
+					<OwnerB Name="TINC^NC-Task 1 SAF^Axes^Axis 2">
+						<Link VarA="MAIN.physicalAxes[0].NcToPlc" TypeA="MC.NCTOPLC_AXIS_REF" InOutA="0" GuidA="{6A65C767-34E5-42BF-AD87-E1A503EAC7BE}" VarB="Outputs^ToPlc" RestoreInfo="ANotFound"/>
+					</OwnerB>
+				</OwnerA>
+			</UnrestoredVarLinks>
+			<TaskPouOids>
+				<TaskPouOid Prio="20" OTCID="#x01010011"/>
+			</TaskPouOids>
+		</Instance>
+	</Project>
+</TcSmItem>
