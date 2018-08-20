@@ -1329,8 +1329,12 @@ External Setpoint Generation:
 		</AxisPara>
 		<Encoder Name="Enc" EncType="4">
 			<EncPara ScaleFactorNumerator="0.049777676567" MaxCount="#x0000ffff">
+				<SoftEndMinControl Enable="true"/>
+				<SoftEndMaxControl Enable="true" Range="749"/>
 				<Inc RefSoftSyncMask="#x0000ffff"/>
 				<TimeComp TimeCompMode="1" EncDelayCycles="4"/>
+				<ParameterChanged>11</ParameterChanged>
+				<ParameterChanged>12</ParameterChanged>
 			</EncPara>
 			<Vars VarGrpType="1">
 				<Name>Inputs</Name>

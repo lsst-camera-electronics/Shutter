@@ -147,7 +147,9 @@ IF abortRequest THEN
 	minusEnabler(Axis:=physicalAxes[ShutterSide.MINUSX], Enable:=FALSE);
 	state := ShutterState.STOPPED;
 	brakeRelays := BRAKES_ON;
-END_IF]]></ST>
+END_IF
+
+]]></ST>
     </Implementation>
     <LineIds Name="Cycler">
       <LineId Id="73" Count="0" />
@@ -219,6 +221,8 @@ END_IF]]></ST>
       <LineId Id="70" Count="0" />
       <LineId Id="284" Count="0" />
       <LineId Id="72" Count="0" />
+      <LineId Id="322" Count="0" />
+      <LineId Id="318" Count="0" />
       <LineId Id="71" Count="0" />
     </LineIds>
   </POU>
