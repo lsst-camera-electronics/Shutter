@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+  <GVL Name="GVL" Id="{543590d2-21dc-426c-bb1c-cff8b9e02654}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	task						: 	INT 	:= 0;
+	brakeRelays 		AT %Q*	:	BYTE;
+
+	
+	//Home and deployed switches
+	limitHomeXp 	AT %I*	: 	BOOL;
+	limitDeployedXp	AT %I*	: 	BOOL;
+	limitHomeXm 	AT %I*	: 	BOOL;
+	limitDeployedXm	AT %I*	: 	BOOL;
+END_VAR
+]]></Declaration>
+  </GVL>
+</TcPlcObject>

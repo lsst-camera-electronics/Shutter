@@ -1,0 +1,470 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+  <POU Name="TestMotion" Id="{f5ec753e-2f53-4143-ab85-291d0817da2d}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK TestMotion
+VAR_IN_OUT
+	axisXP  : AXIS_REF; //Axis 1;
+	axisXM : AXIS_REF; //Axis 2;
+	nextInstruct, abortRequest, resetRequest, startRequest, stopRequest: BOOL;
+	homeRequest : BYTE;
+		
+	//statemachine
+	state : INT;
+	
+END_VAR
+VAR_INPUT
+
+	speed : LREAL;	
+
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	//test variable
+	xPlusMoving : BOOL;
+	xMinusMoving : BOOL;
+	
+	//power 
+	mcPowerXP : MC_Power;
+	mcPowerXM : MC_Power;
+	mcResetXP : MC_Reset;
+	mcResetXM : MC_Reset;
+	
+	//motion
+	mcMoveAbsXP : MC_MoveAbsolute;
+	mcMoveAbsXM : MC_MoveAbsolute;
+	mcHomeXP 	: MC_Home;
+	mcHomeXM 	: MC_Home;
+	mcHalt		: MC_Halt;
+	
+	//position
+	mcSetPosXP : MC_SetPosition;
+	mcSetPosXM : MC_SetPosition;
+	
+	//error var
+	errorIDXP : UDINT;
+	errorIDXM : UDINT;
+	
+END_VAR
+VAR CONSTANT
+	BRAKES_OFF_C	: BYTE	:= 3;
+	BRAKES_ON_C		: BYTE	:= 0;
+	HOME_VEL_C		: LREAL	:= 30;
+	POSITION_VEL_C	: LREAL := 300;
+	POS_START_C		: LREAL := 0;
+	POS_END_C		: LREAL := 749;
+	HOMEOFFSET_XP_C	: LREAL	:= (POS_START_C+35);
+	HOMEOFFSET_XM_C	: LREAL	:= (POS_END_C-88);
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+axisXP.ReadStatus();
+axisXM.ReadStatus();
+xPlusMoving  := axisXP.Status.Moving;
+xMinusMoving := axisXM.Status.Moving;
+
+//reset input from GUI
+IF abortRequest THEN
+	abortRequest := FALSE;
+	state := -1; //stop state
+END_IF
+IF resetRequest THEN
+	resetRequest := FALSE;
+	state := 0;
+END_IF
+
+//Homing selection block
+IF homeRequest=1 THEN
+	state := 200;
+ELSIF homeRequest=2 THEN
+	state := 300;
+ELSIF homeRequest=3 THEN
+	state := 400;
+END_IF
+homeRequest := 0;
+
+//if brakes are not disengaged, disable axis movement
+IF GVL.brakeRelays <> 3 THEN
+	McPowerXP(Axis := axisXP, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE);
+	McPowerXM(Axis := axisXM, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE);
+ELSE
+	McPowerXP(Axis := axisXP, Enable := TRUE, Enable_Positive := TRUE, Enable_Negative := TRUE);
+	McPowerXM(Axis := axisXM, Enable := TRUE, Enable_Positive := TRUE, Enable_Negative := TRUE); 
+END_IF
+
+//if any of the axis is not homed, disable other movement state until homed
+IF state>420 THEN
+	IF NOT axisXP.Status.Homed OR NOT axisXM.Status.Homed THEN
+		abortRequest:=TRUE;
+	END_IF
+END_IF
+
+CASE state OF
+	-1: //Abort state. Disable movement
+		McPowerXP(Axis := axisXP, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE);
+		McPowerXM(Axis := axisXM, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE);
+		nextInstruct := FALSE;
+		GVL.brakeRelays := BRAKES_ON_C;
+		
+	0: //reset state
+		nextInstruct := FALSE;
+		mcResetXP(Axis := axisXP, Execute := TRUE, ErrorID => errorIDXP);
+		mcResetXM(Axis := axisXM, Execute := TRUE, ErrorID => errorIDXM);
+		IF mcResetXP.Error OR mcResetXM.Error THEN
+			McPowerXP(Axis := axisXP, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE);
+			McPowerXM(Axis := axisXM, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE);
+			GVL.brakeRelays := BRAKES_ON_C;
+			state 			:= 100; //go to stop state
+		ELSIF mcResetXP.Done AND mcResetXM.Done THEN
+			McPowerXP(Axis := axisXP, Enable := TRUE, Enable_Positive := TRUE, Enable_Negative := TRUE);
+			McPowerXM(Axis := axisXM, Enable := TRUE, Enable_Positive := TRUE, Enable_Negative := TRUE);
+			mcResetXP(Axis := axisXP, Execute := FALSE);
+			mcResetXM(Axis := axisXM, Execute := FALSE);
+			GVL.brakeRelays	:= BRAKES_OFF_C;
+			state 			:= 100; //go to stop state
+		END_IF
+		
+	100: //stop state
+		mcMoveAbsXP(Axis := axisXP, Execute := FALSE);
+		mcMoveAbsXM(Axis := axisXM, Execute := FALSE);
+		mcHomeXP(Axis := axisXP, Execute := FALSE);
+		mcHomeXM(Axis := axisXP, Execute := FALSE);
+	
+		
+	200://Homing start for AxisXP
+		mcHomeXP(Axis := axisXP, Position := POS_START_C, bCalibrationCam := GVL.limitHomeXp, Execute := TRUE);
+		IF mcHomeXP.Done THEN
+			state := 210;
+		END_IF
+		
+	210: //Homing routine running for AxisXP
+		IF NOT mcHomeXP.Error THEN
+			mcHomeXP(Axis := axisXP, Execute := FALSE);
+			mcMoveAbsXP(Axis:=axisXP, Execute:= TRUE, Velocity:=HOME_VEL_C, Position:=HOMEOFFSET_XP_C);
+			IF mcMoveAbsXP.Done THEN
+				mcMoveAbsXP(Axis:=axisXP, Execute:= FALSE);
+				mcSetPosXP(Axis:=axisXP, Position:=POS_START_C, Execute:=TRUE);
+				state := 220; 
+			END_IF
+		ELSE
+			state :=100; //stop state. Should go to error state
+		END_IF
+		
+	220: //Homing routine complete for AxisXP
+		mcSetPosXP(Axis:=axisXP, Execute:=FALSE);
+		IF  mcSetPosXP.Done THEN
+			state := 100;
+		END_IF
+
+		
+	300://Homing start for AxisXM
+		mcHomeXM(Axis := axisXM, Position := POS_START_C, bCalibrationCam := GVL.limitHomeXm, Execute := TRUE);
+		IF mcHomeXM.Done THEN
+			state := 310;
+		END_IF	
+
+
+	310: //Homing routine running for AxisXM
+		IF NOT mcHomeXM.Error THEN
+			mcHomeXM(Axis := axisXM, Execute := FALSE);
+			mcMoveAbsXM(Axis:=axisXM, Execute:= TRUE, Velocity:=HOME_VEL_C, Position:=HOMEOFFSET_XM_C);
+			IF mcMoveAbsXM.Done THEN
+				mcMoveAbsXM(Axis:=axisXM, Execute:= FALSE);
+				mcSetPosXM(Axis:=axisXM, Position:=POS_END_C, Execute:=TRUE);
+				state := 320; 
+			END_IF
+		ELSE
+			state :=100; //stop state. Should go to error state
+		END_IF	
+		
+	320: //Homing routine complete for AxisXM
+		mcSetPosXM(Axis:=axisXM, Execute:=FALSE);
+		IF  mcSetPosXM.Done THEN
+			state := 100;
+		END_IF	
+
+	
+	400: //Homing start for both blades
+		mcHomeXP(Axis := axisXP, Position := HOMEOFFSET_XP_C, bCalibrationCam := GVL.limitHomeXp, Execute := TRUE);
+		mcHomeXM(Axis := axisXM, Position := HOMEOFFSET_XM_C, bCalibrationCam := GVL.limitHomeXm, Execute := TRUE);
+		IF mcHomeXP.Done AND mcHomeXM.Done THEN
+			state := 410;
+		END_IF
+		
+	410: //Homing running for both blades
+		IF NOT mcHomeXP.Error AND NOT mcHomeXM.Error THEN
+			mcHomeXP(Axis := axisXP, Execute := FALSE);
+			mcMoveAbsXP(Axis:=axisXP, Velocity:=HOME_VEL_C, Position:=POS_START_C, Execute:= TRUE,);
+			mcHomeXM(Axis := axisXM, Execute := FALSE);
+			mcMoveAbsXM(Axis:=axisXM, Velocity:=HOME_VEL_C, Position:=POS_END_C, Execute:= TRUE);
+			IF mcMoveAbsXP.Done AND mcMoveAbsXM.Done THEN
+				mcMoveAbsXP(Axis:=axisXP, Execute:= FALSE);
+				mcMoveAbsXM(Axis:=axisXM, Execute:= FALSE);
+				state := 100; 
+			END_IF
+		ELSE
+			state :=100; //stop state. Should go to error state
+		END_IF
+
+	420: //Homing routine complete for AxisXM
+		mcSetPosXP(Axis:=axisXP, Execute:=FALSE);
+		mcSetPosXM(Axis:=axisXM, Execute:=FALSE);
+		IF  mcSetPosXP.Done AND mcSetPosXM.Done THEN
+			state := 100;
+		END_IF	
+
+//States higher than 420 requires HOMING ROUTINE to be run first.
+
+
+//Basic Motions ---------------------------------------------------------------
+	1000: //Open shutter
+		mcMoveAbsXP(Axis:=axisXP, Position:= POS_START_C, Velocity:=speed, Execute:=TRUE);
+		mcMoveAbsXM(Axis:=axisXM, Position:= POS_END_C, Velocity:=speed, Execute:=TRUE);
+		IF mcMoveAbsXP.Done AND mcMoveAbsXM.Done THEN
+			state:=100;
+		END_IF
+		
+		
+	1100: //Close shutter towards X+ side. AxisXP retracts to its HOME position
+		mcMoveAbsXP(Axis:=axisXP, Position:= POS_START_C, Velocity:=speed, Execute:=TRUE);
+		IF mcMoveAbsXP.Done THEN
+			mcMoveAbsXP(Axis:=axisXP, Execute:=FALSE);
+			state:=1110;
+		END_IF
+		
+	1110: //Close shutter towards X+ side. AxisXM extends to its DEPLOYED position 
+		mcMoveAbsXM(Axis:=axisXM, Position:= POS_START_C, Velocity:=speed, Execute:=TRUE);
+		IF mcMoveAbsXM.Done THEN
+			mcMoveAbsXM(Axis:=axisXM, Execute:=FALSE);
+			state:=100;	
+		END_IF
+		
+	1200: //Close shutter towards X- side. AxisXM retracts to its HOME position (~750 mm)
+		mcMoveAbsXM(Axis:=axisXM, Position:= POS_END_C, Velocity:=speed, Execute:=TRUE);
+		IF mcMoveAbsXM.Done THEN
+			mcMoveAbsXM(Axis:=axisXM, Execute:=FALSE);
+			state:=1210;
+		END_IF
+		
+	1210: //Close shutter towards X- side. AxisXP extends to its DEPLOYED position
+		mcMoveAbsXP(Axis:=axisXP, Position:= POS_END_C, Velocity:=speed, Execute:=TRUE);
+		IF mcMoveAbsXP.Done THEN
+			mcMoveAbsXP(Axis:=axisXP, Execute:=FALSE);
+			state:=100;
+		END_IF
+
+
+//Motion for visit----------------------------------------------------------------------------
+		
+	2000: //Normal Visit. Put both blades in position at 0 mm - Shutter closed
+		mcMoveAbsXP(Axis:=axisXP, Position:=POS_START_C, Velocity:=POSITION_VEL_C, Execute:=TRUE);
+		mcMoveAbsXM(Axis:=axisXM, Position:=POS_START_C, Velocity:=POSITION_VEL_C, Execute:=TRUE);
+		IF mcMoveAbsXP.Done AND mcMoveAbsXM.Done THEN
+			mcMoveAbsXP(Axis:=axisXP, Execute:=FALSE);
+			mcMoveAbsXM(Axis:=axisXM, Execute:=FALSE);
+			state:=2010;
+		END_IF
+	
+	2010: //Normal Visit. Blade in position. Wait for input to continue.
+		IF nextInstruct THEN
+			nextInstruct:=FALSE;
+			state:=2100;
+		END_IF
+		
+	2100: //Normal Visit. Visit 1 sequence - axisXM travels to end of X- side - Shutter open
+		mcMoveAbsXM(Axis:=axisXM, Position:=POS_END_C, Velocity:=speed, Execute:=TRUE);
+		IF mcMoveAbsXM.Done THEN
+			mcMoveAbsXM(Axis:=axisXM, Execute:=FALSE);
+			state:=2110;
+		END_IF
+
+	2110: //Normal Visit. Visit 1 sequence - axisXP travels to end of X- side - Shutter close
+		mcMoveAbsXP(Axis:=axisXP, Position:=POS_END_C, Velocity:=speed, Execute:=TRUE);
+		IF mcMoveAbsXP.Done THEN
+			mcMoveAbsXP(Axis:=axisXP, Execute:=FALSE);
+			state:=2120;
+		END_IF
+		
+	2120: //Normal Visit. Pause at the end of first visit. Wait for input to continue
+		IF nextInstruct THEN
+			nextInstruct:=FALSE;
+			state:=2200;
+		END_IF
+	
+	2200: //Normal Visit. Visit 2 sequence - axisXP travels to X+ side - Shutter open
+		mcMoveAbsXP(Axis:=axisXP, Position:=POS_START_C, Velocity:=speed, Execute:=TRUE);
+		IF mcMoveAbsXP.Done THEN
+			mcMoveAbsXP(Axis:=axisXP, Execute:=FALSE);
+			state:=2210;
+		END_IF
+		
+	2210: //Normal Visit. Visit 2 sequence - axisXM travels to X+ side - Shutter close
+		mcMoveAbsXM(Axis:=axisXM, Position:=POS_START_C, Velocity:=speed, Execute:=TRUE);
+		IF mcMoveAbsXM.Done THEN
+			mcMoveAbsXM(Axis:=axisXM, Execute:=FALSE);
+			state:=100;
+		END_IF
+		
+	
+	
+	
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="TestMotion">
+      <LineId Id="25" Count="1" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="29" Count="1" />
+      <LineId Id="351" Count="0" />
+      <LineId Id="150" Count="1" />
+      <LineId Id="153" Count="0" />
+      <LineId Id="152" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="146" Count="0" />
+      <LineId Id="148" Count="0" />
+      <LineId Id="147" Count="0" />
+      <LineId Id="157" Count="0" />
+      <LineId Id="349" Count="0" />
+      <LineId Id="158" Count="0" />
+      <LineId Id="161" Count="0" />
+      <LineId Id="294" Count="0" />
+      <LineId Id="297" Count="0" />
+      <LineId Id="334" Count="1" />
+      <LineId Id="160" Count="0" />
+      <LineId Id="299" Count="0" />
+      <LineId Id="336" Count="0" />
+      <LineId Id="350" Count="0" />
+      <LineId Id="337" Count="0" />
+      <LineId Id="370" Count="0" />
+      <LineId Id="345" Count="0" />
+      <LineId Id="342" Count="1" />
+      <LineId Id="346" Count="0" />
+      <LineId Id="340" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="352" Count="0" />
+      <LineId Id="357" Count="0" />
+      <LineId Id="354" Count="0" />
+      <LineId Id="359" Count="1" />
+      <LineId Id="356" Count="0" />
+      <LineId Id="353" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="368" Count="1" />
+      <LineId Id="571" Count="0" />
+      <LineId Id="372" Count="0" />
+      <LineId Id="367" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="572" Count="0" />
+      <LineId Id="77" Count="2" />
+      <LineId Id="99" Count="1" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="97" Count="0" />
+      <LineId Id="82" Count="2" />
+      <LineId Id="165" Count="1" />
+      <LineId Id="155" Count="0" />
+      <LineId Id="136" Count="0" />
+      <LineId Id="85" Count="0" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="86" Count="1" />
+      <LineId Id="101" Count="1" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="121" Count="9" />
+      <LineId Id="199" Count="0" />
+      <LineId Id="132" Count="0" />
+      <LineId Id="204" Count="0" />
+      <LineId Id="215" Count="0" />
+      <LineId Id="202" Count="1" />
+      <LineId Id="207" Count="2" />
+      <LineId Id="133" Count="1" />
+      <LineId Id="216" Count="0" />
+      <LineId Id="211" Count="0" />
+      <LineId Id="214" Count="0" />
+      <LineId Id="213" Count="0" />
+      <LineId Id="135" Count="0" />
+      <LineId Id="217" Count="1" />
+      <LineId Id="270" Count="3" />
+      <LineId Id="243" Count="2" />
+      <LineId Id="274" Count="10" />
+      <LineId Id="219" Count="0" />
+      <LineId Id="119" Count="0" />
+      <LineId Id="287" Count="3" />
+      <LineId Id="285" Count="1" />
+      <LineId Id="89" Count="1" />
+      <LineId Id="303" Count="0" />
+      <LineId Id="300" Count="2" />
+      <LineId Id="104" Count="0" />
+      <LineId Id="109" Count="1" />
+      <LineId Id="304" Count="1" />
+      <LineId Id="314" Count="1" />
+      <LineId Id="306" Count="1" />
+      <LineId Id="503" Count="0" />
+      <LineId Id="318" Count="0" />
+      <LineId Id="310" Count="3" />
+      <LineId Id="168" Count="0" />
+      <LineId Id="319" Count="0" />
+      <LineId Id="410" Count="0" />
+      <LineId Id="320" Count="3" />
+      <LineId Id="329" Count="0" />
+      <LineId Id="550" Count="0" />
+      <LineId Id="555" Count="1" />
+      <LineId Id="551" Count="0" />
+      <LineId Id="361" Count="0" />
+      <LineId Id="363" Count="0" />
+      <LineId Id="374" Count="0" />
+      <LineId Id="377" Count="2" />
+      <LineId Id="401" Count="0" />
+      <LineId Id="415" Count="2" />
+      <LineId Id="419" Count="0" />
+      <LineId Id="432" Count="0" />
+      <LineId Id="420" Count="2" />
+      <LineId Id="429" Count="1" />
+      <LineId Id="433" Count="1" />
+      <LineId Id="436" Count="0" />
+      <LineId Id="435" Count="0" />
+      <LineId Id="431" Count="0" />
+      <LineId Id="423" Count="0" />
+      <LineId Id="425" Count="1" />
+      <LineId Id="443" Count="0" />
+      <LineId Id="427" Count="1" />
+      <LineId Id="373" Count="0" />
+      <LineId Id="437" Count="5" />
+      <LineId Id="495" Count="0" />
+      <LineId Id="552" Count="0" />
+      <LineId Id="554" Count="0" />
+      <LineId Id="553" Count="0" />
+      <LineId Id="496" Count="1" />
+      <LineId Id="502" Count="0" />
+      <LineId Id="504" Count="1" />
+      <LineId Id="507" Count="1" />
+      <LineId Id="506" Count="0" />
+      <LineId Id="509" Count="0" />
+      <LineId Id="544" Count="0" />
+      <LineId Id="546" Count="1" />
+      <LineId Id="549" Count="0" />
+      <LineId Id="548" Count="0" />
+      <LineId Id="545" Count="0" />
+      <LineId Id="518" Count="1" />
+      <LineId Id="521" Count="1" />
+      <LineId Id="524" Count="0" />
+      <LineId Id="523" Count="0" />
+      <LineId Id="520" Count="0" />
+      <LineId Id="525" Count="0" />
+      <LineId Id="531" Count="4" />
+      <LineId Id="526" Count="1" />
+      <LineId Id="511" Count="0" />
+      <LineId Id="536" Count="0" />
+      <LineId Id="512" Count="1" />
+      <LineId Id="498" Count="1" />
+      <LineId Id="539" Count="4" />
+      <LineId Id="557" Count="2" />
+      <LineId Id="561" Count="1" />
+      <LineId Id="564" Count="0" />
+      <LineId Id="563" Count="0" />
+      <LineId Id="560" Count="0" />
+      <LineId Id="537" Count="1" />
+      <LineId Id="500" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

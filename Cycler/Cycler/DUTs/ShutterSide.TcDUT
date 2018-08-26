@@ -5,8 +5,8 @@
 (****************** {attribute 'strict'} *)(* Want to treat them as integer constants*)
 TYPE ShutterSide :
 (
-	MINUSX, (* The -X side.*)
-    PLUSX   (* The +X side.*)
+	PLUSX, (* The +X side.*)
+	MINUSX (* The -X side.*)
 )INT;
 END_TYPE
 ]]></Declaration>

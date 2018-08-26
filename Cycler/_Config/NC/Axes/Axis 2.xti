@@ -1325,16 +1325,14 @@ External Setpoint Generation:
 		<Name>__FILENAME__</Name>
 		<AxisPara>
 			<Dynamic Acceleration="7407.41" Deceleration="7407.41" Jerk="32921.8"/>
+			<Velo RefSearch="60"/>
 			<OtherSettings AllowMotionCmdToSlave="true"/>
 		</AxisPara>
 		<Encoder Name="Enc" EncType="4">
 			<EncPara ScaleFactorNumerator="0.049777676567" MaxCount="#x0000ffff">
-				<SoftEndMinControl Enable="true"/>
-				<SoftEndMaxControl Enable="true" Range="749"/>
+				<SoftEndMaxControl Range="749"/>
 				<Inc RefSoftSyncMask="#x0000ffff"/>
 				<TimeComp TimeCompMode="1" EncDelayCycles="4"/>
-				<ParameterChanged>11</ParameterChanged>
-				<ParameterChanged>12</ParameterChanged>
 			</EncPara>
 			<Vars VarGrpType="1">
 				<Name>Inputs</Name>
@@ -1493,6 +1491,7 @@ Drive Status 4 (manually linked):
 		</Drive>
 		<Controller Name="Ctrl" CtrType="1">
 			<CtrPara PriorControlFactor="1">
+				<PosDiffControl Range="2.5" Time="0.01"/>
 				<Observer BandWidth="20"/>
 			</CtrPara>
 		</Controller>
@@ -1569,7 +1568,6 @@ External Setpoint Generation:
 				<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Ready to enable"/>
 				<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Torque reduced" Size="1" OffsA="6"/>
 				<Link VarA="Drive^Inputs^In^nState1" VarB="STM Status^Status^Warning" Size="1" OffsA="2"/>
-				<Link VarA="Drive^Inputs^In^nState2" VarB="STM Status^Status^Digital input 1" Size="1" OffsA="3"/>
 				<Link VarA="Drive^Inputs^In^nState2" VarB="STM Status^Status^Digital input 2" Size="1" OffsA="4"/>
 				<Link VarA="Drive^Inputs^In^nState2" VarB="STM Status^Status^Sync error" Size="1" OffsA="5"/>
 				<Link VarA="Drive^Inputs^In^nState2" VarB="STM Status^Status^TxPDO Toggle" Size="1" OffsA="7"/>

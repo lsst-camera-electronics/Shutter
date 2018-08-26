@@ -27,10 +27,17 @@
     <Compile Include="GlobalTextList.TcGTLO">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GVLs\GVL.TcGVL">
+      <SubType>Code</SubType>
+      <LinkAlways>true</LinkAlways>
+    </Compile>
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\Cycler.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\TestMotion.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\MAIN.TcPOU">
@@ -40,6 +47,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="VISUs\CyclerGUI.TcVIS">
+      <SubType>Code</SubType>
+      <DependentUpon>Visualization Manager.TcVMO</DependentUpon>
+    </Compile>
+    <Compile Include="VISUs\TestMotionGUI.TcVIS">
       <SubType>Code</SubType>
       <DependentUpon>Visualization Manager.TcVMO</DependentUpon>
     </Compile>
@@ -116,6 +127,10 @@
     <PlaceholderReference Include="Tc2_System">
       <DefaultResolution>Tc2_System, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc2_System</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc3_MC2_AdvancedHoming">
+      <DefaultResolution>Tc3_MC2_AdvancedHoming, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc3_MC2_AdvancedHoming</Namespace>
     </PlaceholderReference>
     <PlaceholderReference Include="Tc3_Module">
       <DefaultResolution>Tc3_Module, * (Beckhoff Automation GmbH)</DefaultResolution>

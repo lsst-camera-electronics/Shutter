@@ -2,12 +2,13 @@
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <POU Name="Cycler" Id="{a89e7236-f52b-46ba-955d-2a8dcdae0df3}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK PUBLIC Cycler
+
 VAR_IN_OUT
-	physicalAxes: ARRAY [ShutterSide.MINUSX .. ShutterSide.PLUSX] OF AXIS_REF;
+	physicalAxes: ARRAY [ShutterSide.PLUSX .. ShutterSide.MINUSX] OF AXIS_REF;
 	abortRequest, resetRequest, startRequest, stopRequest: BOOL;
 END_VAR
 VAR_INPUT
-	axisInfo: ARRAY [ShutterSide.MINUSX .. ShutterSide.PLUSX] OF AxisInfo;
+	axisInfo: ARRAY [ShutterSide.PLUSX .. ShutterSide.MINUSX] OF AxisInfo;
 	speed, acceleration: LREAL;
 	exposureTime: TIME;
 END_VAR
@@ -22,8 +23,10 @@ VAR
 	plusResetter, minusResetter: MC_Reset;
 	plusEnabler, minusEnabler: MC_Power;
 	expoTimer: TON;
-	axisError: ARRAY [ShutterSide.MINUSX .. ShutterSide.PLUSX] OF UDINT;
-	brakeRelays AT %Q*: BYTE;	
+	axisError: ARRAY [ShutterSide.PLUSX .. ShutterSide.MINUSX] OF UDINT;
+	//brakeRelays AT %Q*: BYTE;	//moved to global variable
+	
+	
 END_VAR
 VAR CONSTANT
 	BRAKES_OFF: BYTE := 3;
@@ -44,10 +47,10 @@ CASE state OF
 		state := ShutterState.RESETTING;
 	ELSIF startRequest THEN
 		startRequest := FALSE;
-		retracting :=  ShutterSide.MINUSX;
-		extending := ShutterSide.PLUSX;
+		retracting :=  ShutterSide.PLUSX;
+		extending := ShutterSide.MINUSX;
 		state := ShutterState.OPENING;
-		brakeRelays := BRAKES_OFF;
+		GVL.brakeRelays := BRAKES_OFF;
 	END_IF
 	
 	ShutterState.OPENING:
@@ -59,7 +62,7 @@ CASE state OF
         Deceleration:=acceleration);
 	IF retractor.Error OR retractor.CommandAborted THEN
 		state := ShutterState.STOPPED;
-		brakeRelays := BRAKES_ON;
+		GVL.brakeRelays := BRAKES_ON;
 		retractor(Axis:=physicalAxes[retracting], Execute:=FALSE);
 		axisError[retracting] := retractor.ErrorID;		
 	END_IF
@@ -83,7 +86,7 @@ CASE state OF
         Deceleration:=acceleration);
 	IF extender.Error OR extender.CommandAborted THEN
 		state := ShutterState.STOPPED;
-		brakeRelays := BRAKES_ON;
+		GVL.brakeRelays := BRAKES_ON;
 		extender(Axis:=physicalAxes[extending], Execute:=FALSE);
 		axisError[extending] := extender.ErrorID;
 	ELSIF extender.Done THEN
@@ -94,12 +97,13 @@ CASE state OF
 	ShutterState.CLOSED:
 	state := ShutterState.OPENING;
 	(* Sides now exchange roles. *)
-	retracting := ShutterSide.PLUSX - retracting;
-	extending := ShutterSide.PLUSX - extending;
+	extending := ShutterSide.MINUSX - extending;
+	retracting := ShutterSide.MINUSX - retracting;
+
 	IF stopRequest THEN
 		stopRequest := FALSE;
 		state := ShutterState.STOPPED;
-		brakeRelays := BRAKES_ON;
+		GVL.brakeRelays := BRAKES_ON;
 	END_IF
 	
 	ShutterState.RESETTING:
@@ -114,7 +118,7 @@ CASE state OF
 	        state := ShutterState.ENABLING;
 		ELSE
 			state := ShutterState.STOPPED;
-			brakeRelays := BRAKES_ON;
+			GVL.brakeRelays := BRAKES_ON;
 		END_IF
 	END_IF
 	
@@ -136,17 +140,19 @@ CASE state OF
         ErrorID => axisError[ShutterSide.MINUSX]);
 	IF (plusEnabler.Status OR plusEnabler.Error) AND (minusEnabler.Status OR minusEnabler.Error) THEN
 	    state := ShutterState.STOPPED;
-		brakeRelays := BRAKES_ON;
+		GVL.brakeRelays := BRAKES_ON;
 	END_IF
 	ELSE
 		abortRequest := TRUE;
+		
+
 END_CASE
 IF abortRequest THEN
 	abortRequest := FALSE;
 	plusEnabler(Axis:=physicalAxes[ShutterSide.PLUSX], Enable:=FALSE);
 	minusEnabler(Axis:=physicalAxes[ShutterSide.MINUSX], Enable:=FALSE);
 	state := ShutterState.STOPPED;
-	brakeRelays := BRAKES_ON;
+	GVL.brakeRelays := BRAKES_ON;
 END_IF
 
 ]]></ST>
@@ -190,6 +196,7 @@ END_IF
       <LineId Id="48" Count="1" />
       <LineId Id="53" Count="0" />
       <LineId Id="208" Count="0" />
+      <LineId Id="412" Count="0" />
       <LineId Id="143" Count="1" />
       <LineId Id="58" Count="0" />
       <LineId Id="54" Count="1" />
@@ -214,7 +221,10 @@ END_IF
       <LineId Id="126" Count="0" />
       <LineId Id="283" Count="0" />
       <LineId Id="141" Count="0" />
-      <LineId Id="63" Count="2" />
+      <LineId Id="63" Count="1" />
+      <LineId Id="351" Count="0" />
+      <LineId Id="371" Count="0" />
+      <LineId Id="65" Count="0" />
       <LineId Id="20" Count="0" />
       <LineId Id="69" Count="0" />
       <LineId Id="178" Count="1" />
