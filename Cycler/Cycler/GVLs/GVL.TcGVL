@@ -12,6 +12,11 @@ VAR_GLOBAL
 	limitDeployedXp	AT %I*	: 	BOOL;
 	limitHomeXm 	AT %I*	: 	BOOL;
 	limitDeployedXm	AT %I*	: 	BOOL;
+	
+	//Hall Switches
+	hallSwitch AT %I*	:	ARRAY [0 .. 14] OF BOOL;
+	hallPosCal : ARRAY [0 .. 15] OF LREAL;
+	hallPosAct : LREAL;
 END_VAR
 ]]></Declaration>
   </GVL>

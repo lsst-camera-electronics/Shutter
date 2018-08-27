@@ -45,11 +45,23 @@ VAR
 	errorIDXP : UDINT;
 	errorIDXM : UDINT;
 	
+	//calibration var
+	hallSigCal_rtrig	: R_TRIG;
+	hallSigCal_ftrig 	: F_TRIG;
+	
+	//position var
+	hallSigAct_rtrig	: R_TRIG;
+	hallSigAct_ftrig 	: F_TRIG;
+	
+	//counter
+	i : INT :=0;
+	x : INT :=0;
 END_VAR
 VAR CONSTANT
 	BRAKES_OFF_C	: BYTE	:= 3;
 	BRAKES_ON_C		: BYTE	:= 0;
 	HOME_VEL_C		: LREAL	:= 30;
+	CALIBRATE_VEL_C	: LREAL	:= 30;
 	POSITION_VEL_C	: LREAL := 300;
 	POS_START_C		: LREAL := 0;
 	POS_END_C		: LREAL := 749;
@@ -99,10 +111,13 @@ IF state>420 THEN
 	END_IF
 END_IF
 
+
 CASE state OF
 	-1: //Abort state. Disable movement
 		McPowerXP(Axis := axisXP, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE);
 		McPowerXM(Axis := axisXM, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE);
+		mcHomeXP(Axis := axisXP, Execute := FALSE);
+		mcHomeXM(Axis := axisXP, Execute := FALSE);
 		nextInstruct := FALSE;
 		GVL.brakeRelays := BRAKES_ON_C;
 		
@@ -306,9 +321,78 @@ CASE state OF
 		END_IF
 		
 	
+//Calibration -----------------------------------------------------------------------------
+	9000: //Put Shutter in Open Position
+		mcMoveAbsXP(Axis:=axisXP, Position:= POS_START_C, Velocity:=POSITION_VEL_C, Execute:=TRUE);
+		mcMoveAbsXM(Axis:=axisXM, Position:= POS_END_C, Velocity:=POSITION_VEL_C, Execute:=TRUE);
+		IF mcMoveAbsXP.Done AND mcMoveAbsXM.Done THEN
+			i := 0;
+			GVL.hallPosCal[0] := 0;
+			GVL.hallPosCal[1] := 0;
+			GVL.hallPosCal[2] := 0;
+			GVL.hallPosCal[3] := 0;
+			GVL.hallPosCal[4] := 0;
+			GVL.hallPosCal[5] := 0;
+			GVL.hallPosCal[6] := 0;
+			GVL.hallPosCal[7] := 0;
+			GVL.hallPosCal[8] := 0;
+			GVL.hallPosCal[9] := 0;
+			GVL.hallPosCal[10] := 0;
+			GVL.hallPosCal[11] := 0;
+			GVL.hallPosCal[12] := 0;
+			GVL.hallPosCal[13] := 0;
+			GVL.hallPosCal[14] := 0;
+			GVL.hallPosCal[15] := 0;
+			mcMoveAbsXP(Axis:=axisXP, Execute:=FALSE);
+			state:=9010;
+		END_IF
+		//This section is required to get rid of false trigger when system starts up
+		hallSigCal_rtrig(CLK:=GVL.hallSwitch[5]);
+		hallSigCal_ftrig(CLK:=GVL.hallSwitch[5]);
+		IF hallSigCal_rtrig.Q OR hallSigCal_ftrig.Q THEN
+			;
+		END_IF
+
+	9010: //Calibrate AxisXP towards X- side.
+		//record hall trips at rising and falling edge
+		hallSigCal_rtrig(CLK:=GVL.hallSwitch[5]);
+		hallSigCal_ftrig(CLK:=GVL.hallSwitch[5]);
+		IF hallSigCal_rtrig.Q OR hallSigCal_ftrig.Q THEN
+			GVL.hallPosCal[i]:=axisXP.NcToPlc.ActPos;
+			i := i+1;
+		END_IF
+		IF mcMoveAbsXP.Done THEN
+			state:= 100;
+		END_IF
+		
+		//start moving axisXP towards x- side
+		mcMoveAbsXP(Axis:=axisXP, Position:=POS_END_C, Velocity:=CALIBRATE_VEL_C, Execute:=TRUE);
+		IF mcMoveAbsXP.Done THEN
+			mcMoveAbsXP(Axis:=axisXP, Execute:=FALSE);
+			state:= 9020;
+		END_IF
 	
-	
-END_CASE]]></ST>
+	9020: //Put shutter in open position after calibration
+		mcMoveAbsXP(Axis:=axisXP, Position:= POS_START_C, Velocity:=POSITION_VEL_C, Execute:=TRUE);
+		mcMoveAbsXM(Axis:=axisXM, Position:= POS_END_C, Velocity:=POSITION_VEL_C, Execute:=TRUE);
+		IF mcMoveAbsXP.Done AND mcMoveAbsXM.Done THEN
+			mcMoveAbsXP(Axis:=axisXP, Execute:=FALSE);
+			state:=100;
+		END_IF
+END_CASE
+
+
+//Actual Position Calc
+IF axisXP.Status.InPositionArea THEN
+	x := 0;
+END_IF
+
+hallSigAct_rtrig(CLK:=GVL.hallSwitch[5]);
+hallSigAct_ftrig(CLK:=GVL.hallSwitch[5]);
+IF (hallSigAct_rtrig.Q OR hallSigAct_ftrig.Q) AND axisXP.status.PositiveDirection THEN
+	GVL.hallPosAct:=GVL.hallPosCal[x];
+	x := x+1;
+END_IF]]></ST>
     </Implementation>
     <LineIds Name="TestMotion">
       <LineId Id="25" Count="1" />
@@ -346,9 +430,11 @@ END_CASE]]></ST>
       <LineId Id="359" Count="1" />
       <LineId Id="356" Count="0" />
       <LineId Id="353" Count="0" />
+      <LineId Id="695" Count="0" />
       <LineId Id="31" Count="0" />
       <LineId Id="49" Count="0" />
       <LineId Id="368" Count="1" />
+      <LineId Id="648" Count="1" />
       <LineId Id="571" Count="0" />
       <LineId Id="372" Count="0" />
       <LineId Id="367" Count="0" />
@@ -410,8 +496,7 @@ END_CASE]]></ST>
       <LineId Id="551" Count="0" />
       <LineId Id="361" Count="0" />
       <LineId Id="363" Count="0" />
-      <LineId Id="374" Count="0" />
-      <LineId Id="377" Count="2" />
+      <LineId Id="665" Count="3" />
       <LineId Id="401" Count="0" />
       <LineId Id="415" Count="2" />
       <LineId Id="419" Count="0" />
@@ -462,8 +547,43 @@ END_CASE]]></ST>
       <LineId Id="563" Count="0" />
       <LineId Id="560" Count="0" />
       <LineId Id="537" Count="1" />
+      <LineId Id="627" Count="0" />
+      <LineId Id="669" Count="0" />
+      <LineId Id="672" Count="1" />
+      <LineId Id="801" Count="1" />
+      <LineId Id="818" Count="14" />
+      <LineId Id="685" Count="0" />
+      <LineId Id="674" Count="1" />
+      <LineId Id="905" Count="0" />
+      <LineId Id="900" Count="4" />
+      <LineId Id="670" Count="0" />
+      <LineId Id="676" Count="0" />
+      <LineId Id="684" Count="0" />
+      <LineId Id="657" Count="0" />
+      <LineId Id="647" Count="0" />
+      <LineId Id="639" Count="0" />
+      <LineId Id="641" Count="0" />
+      <LineId Id="658" Count="0" />
+      <LineId Id="642" Count="1" />
+      <LineId Id="646" Count="0" />
+      <LineId Id="645" Count="0" />
+      <LineId Id="683" Count="0" />
+      <LineId Id="682" Count="0" />
+      <LineId Id="677" Count="4" />
       <LineId Id="500" Count="0" />
+      <LineId Id="686" Count="6" />
       <LineId Id="37" Count="0" />
+      <LineId Id="696" Count="0" />
+      <LineId Id="907" Count="0" />
+      <LineId Id="906" Count="0" />
+      <LineId Id="698" Count="0" />
+      <LineId Id="718" Count="1" />
+      <LineId Id="699" Count="1" />
+      <LineId Id="712" Count="0" />
+      <LineId Id="701" Count="0" />
+      <LineId Id="703" Count="0" />
+      <LineId Id="717" Count="0" />
+      <LineId Id="704" Count="0" />
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>

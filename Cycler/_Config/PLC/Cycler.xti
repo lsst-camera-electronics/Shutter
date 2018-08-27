@@ -701,6 +701,15 @@ External Setpoint Generation:
 			</Relations>
 		</DataType>
 		<DataType>
+			<Name GUID="{18071995-0000-0000-0000-00210000000F}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..14] OF BOOL</Name>
+			<BitSize>120</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000030}">BOOL</BaseType>
+			<ArrayInfo>
+				<LBound>0</LBound>
+				<Elements>15</Elements>
+			</ArrayInfo>
+		</DataType>
+		<DataType>
 			<Name GUID="{875D2B22-B7EB-497E-B933-0C004593CCF3}" Namespace="MC" TcBaseType="true" HideType="true" IecDeclaration="DWORD;">PLCTONC_AXIS_REF_CTRL</Name>
 			<BitSize>32</BitSize>
 			<SubItem>
@@ -1002,6 +1011,13 @@ External Setpoint Generation:
 					<Name>GVL.limitDeployedXm</Name>
 					<Type>BOOL</Type>
 				</Var>
+				<Var>
+					<Name>GVL.hallSwitch</Name>
+					<Comment>
+						<![CDATA[Hall Switches]]>
+					</Comment>
+					<Type GUID="{18071995-0000-0000-0000-00210000000F}">ARRAY [0..14] OF BOOL</Type>
+				</Var>
 			</Vars>
 			<Vars VarGrpType="2">
 				<Name>PlcTask Outputs</Name>
@@ -1035,6 +1051,23 @@ External Setpoint Generation:
 		<OwnerA Name="Cycler Instance">
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 2 (EL7047)">
 				<Link VarA="PlcTask Inputs^GVL.limitHomeXp" VarB="STM Status^Status^Digital input 1"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 3 (EL1819)">
+				<Link VarA="PlcTask Inputs^GVL.hallSwitch[0]" VarB="Channel 1^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.hallSwitch[10]" VarB="Channel 11^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.hallSwitch[11]" VarB="Channel 12^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.hallSwitch[12]" VarB="Channel 13^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.hallSwitch[13]" VarB="Channel 14^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.hallSwitch[14]" VarB="Channel 15^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.hallSwitch[1]" VarB="Channel 2^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.hallSwitch[2]" VarB="Channel 3^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.hallSwitch[3]" VarB="Channel 4^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.hallSwitch[4]" VarB="Channel 5^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.hallSwitch[5]" VarB="Channel 6^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.hallSwitch[6]" VarB="Channel 7^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.hallSwitch[7]" VarB="Channel 8^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.hallSwitch[8]" VarB="Channel 9^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.hallSwitch[9]" VarB="Channel 10^Input"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 4 (EL7047)">
 				<Link VarA="PlcTask Inputs^GVL.limitHomeXm" VarB="STM Status^Status^Digital input 1"/>
