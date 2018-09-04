@@ -67,11 +67,11 @@
 	<Project ProjectGUID="{3075676B-0CF9-4F6C-8E5E-5BF61A06CF76}" TargetNetId="5.48.66.18.1.1" ShowHideConfigurations="#x106">
 		<System>
 			<Settings RouterMemory="32505856">
-				<Cpu BaseTime="2000"/>
-				<IoIdleTask CycleTime="2000"/>
+				<Cpu BaseTime="2500"/>
+				<IoIdleTask CycleTime="2500"/>
 			</Settings>
 			<Tasks>
-				<Task Id="2" Priority="20" CycleTime="2000" AmsPort="350">
+				<Task Id="2" Priority="20" CycleTime="2500" AmsPort="350">
 					<Name>PlcTask</Name>
 				</Task>
 			</Tasks>

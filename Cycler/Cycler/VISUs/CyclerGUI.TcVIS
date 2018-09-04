@@ -1340,7 +1340,7 @@
                 <v n="VisualElementIdentifier">"GenElemInst_26"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="InputBoxInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
                   <v>OnMouseDown</v>
                   <a cet="InputBoxInputAction">
                     <o>
@@ -2441,7 +2441,7 @@
                 <v n="VisualElementIdentifier">"GenElemInst_61"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
                   <v>OnMouseUp</v>
                   <a cet="STSnippetInputAction">
                     <o>
@@ -2556,10 +2556,10 @@
               <d n="FbMethods" t="CaseInsensitiveHashtable" ckt="String" cvt="Guid">
                 <v>FB_Init</v>
                 <v>74112ee1-4485-41b5-aa8d-327fe6a78034</v>
-                <v>FB_Exit</v>
-                <v>c156c4f5-ac29-47ec-8a2e-be2c097ba962</v>
                 <v>FB_Reinit</v>
                 <v>c0d7e473-1ad9-49c2-8ecc-9ea858726559</v>
+                <v>FB_Exit</v>
+                <v>c156c4f5-ac29-47ec-8a2e-be2c097ba962</v>
               </d>
               <v n="FbName">"NotImportant"</v>
               <v n="FbGuid">{2942eeca-fb8d-4e4e-b712-11b76303f6c5}</v>

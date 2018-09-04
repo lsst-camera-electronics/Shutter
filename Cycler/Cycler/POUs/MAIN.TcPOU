@@ -5,7 +5,7 @@
 VAR
 	cycler		: Cycler;
 	physicalAxes: ARRAY [ShutterSide.PLUSX .. ShutterSide.MINUSX] OF AXIS_REF; (* Must be linked to Axis1 and 2, respectively, under MOTION. *)
-	axisInfo	: ARRAY [ShutterSide.PLUSX..SHutterSide.MINUSX] OF AxisInfo := [(openPosition:=0.0, closedPosition:=749.0), (openPosition:=749.0, closedPosition:=0.0)];
+	axisInfo	: ARRAY [ShutterSide.PLUSX..SHutterSide.MINUSX] OF AxisInfo := [(openPosition:=0.0, closedPosition:=750.0), (openPosition:=750.0, closedPosition:=0.0)];
 	start, stop, reset, abort: BOOL;
 	delay		: TON;
 	acceleration, speed: LREAL;
@@ -23,7 +23,7 @@ END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[delay(IN:=TRUE, PT:=T#0S);
-IF speed>1666 THEN 
+IF speed>1667 THEN 
 	speed:=0;
 END_IF
 IF delay.Q THEN

@@ -1042,6 +1042,28 @@ External Setpoint Generation:
 					</OwnerB>
 				</OwnerA>
 			</UnrestoredVarLinks>
+			<UnrestoredVarLinks ImportTime="2018-08-28T18:44:36">
+				<OwnerA Name="InputDst" Prefix="TIPC^Cycler^Cycler Instance" Type="1">
+					<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 3 (EL1819)">
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 10^Input" Size="1" OffsA="9" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 11^Input" Size="1" OffsA="10" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 12^Input" Size="1" OffsA="11" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 13^Input" Size="1" OffsA="12" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 14^Input" Size="1" OffsA="13" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 15^Input" Size="1" OffsA="14" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 16^Input" Size="1" OffsA="15" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 1^Input" Size="1" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 2^Input" Size="1" OffsA="1" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 3^Input" Size="1" OffsA="2" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 4^Input" Size="1" OffsA="3" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 5^Input" Size="1" OffsA="4" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 6^Input" Size="1" OffsA="5" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 7^Input" Size="1" OffsA="6" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 8^Input" Size="1" OffsA="7" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 9^Input" Size="1" OffsA="8" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
+					</OwnerB>
+				</OwnerA>
+			</UnrestoredVarLinks>
 			<TaskPouOids>
 				<TaskPouOid Prio="20" OTCID="#x01010011"/>
 			</TaskPouOids>

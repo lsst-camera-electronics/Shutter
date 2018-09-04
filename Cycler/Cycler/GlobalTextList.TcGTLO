@@ -171,6 +171,11 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"40"</v>
+              <v n="TextDefault">"Set Time"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"31"</v>
               <v n="TextDefault">"Set Velocity"</v>
               <l n="LanguageTexts" t="ArrayList" />
@@ -191,6 +196,11 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"42"</v>
+              <v n="TextDefault">"START CYCLER"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"24"</v>
               <v n="TextDefault">"State: %s"</v>
               <l n="LanguageTexts" t="ArrayList" />
@@ -198,6 +208,11 @@
             <o>
               <v n="TextID">"3"</v>
               <v n="TextDefault">"Stop"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"41"</v>
+              <v n="TextDefault">"STOP CYCLER"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
