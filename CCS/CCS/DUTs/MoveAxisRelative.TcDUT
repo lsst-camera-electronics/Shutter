@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="MoveAxisRelative" Id="{ea912ee2-7216-4c72-8b01-91a2f30753f0}">
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+TYPE MoveAxisRelative EXTENDS IncomingMessage :
+STRUCT
+	axisName: STRING(CT.AXIS_NAME_SIZE);
+	distance: LREAL;
+	moveTime: TIME;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

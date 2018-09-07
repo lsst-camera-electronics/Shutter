@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <POU Name="MAIN" Id="{c1140e7d-1105-4c8d-b24e-65f7dd84116c}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	(* Messages sent to CCS. *)
+	outAxisStatus: AxisStatus;
+	outControllerStatus: ControllerStatus;
+	outIOStatus: IOStatus;
+	ackChangeAxisEnable: MessageID;
+	ackChangeOutputLine: MessageID;
+	ackClearAllFaults: MessageID;
+	ackClearAxisFaults: MessageID;
+	ackEnableAllAxes: MessageID;
+	ackDisableAllAxes: MessageID;
+	ackMoveAxisRelative: MessageID;
+	ackMoveAxisAbsolute: MessageID;
+	ackHomeAxis: MessageID;
+	
+	(* Messages coming from CCS. *)
+	inChangeAxisEnable: ChangeAxisEnable;
+	inChangeOutputLine: ChangeOutputLine;
+	inClearAllFaults: ClearAllFaults;
+	inClearAxisFaults: ClearAxisFaults;
+	inEnableAllAxes: EnableAllAxes;
+	inDisableAllAxes: DisableAllAxes;
+	inMoveAxisRelative: MoveAxisRelative;
+	inMoveAxisAbsolute: MoveAxisAbsolute;
+	inHomeAxis: HomeAxis;
+
+END_VAR
+
+    ]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

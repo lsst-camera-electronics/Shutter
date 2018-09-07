@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4022.22">
+	<Project ProjectGUID="{8E0AAA2C-2EB0-40D8-B11C-D50F5E75FC7C}" Target64Bit="true" ShowHideConfigurations="#x306">
+		<Plc>
+			<Project GUID="{96BAD415-043F-4FA1-895B-E318A59CE456}" Name="CCS" PrjFilePath="CCS\CCS.plcproj" TmcFilePath="CCS\CCS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e"/>
+		</Plc>
+	</Project>
+</TcSmProject>
