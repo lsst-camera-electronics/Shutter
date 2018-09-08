@@ -4,13 +4,13 @@
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
 TYPE AxisStatus EXTENDS OutgoingMessage :
 STRUCT
-	axisName: STRING(CT.AXIS_NAME_SIZE);
+	axisIndex: INT; (* 1 or 2. *)
 	enabled: BOOL; (* Axis enabled? *)
 	moving: BOOL;  (* Axis moving? *)
 	atHome: BOOL;   (* Axis has been homed? *)
 	atLowLimit: BOOL; (* Axis at low limit switch? *)
 	atHighLimit: BOOL; (* Axis at high limit switch? *)
-	faults: ARRAY [0..CT.FAULT_ARRAY_SIZE-1] OF STRING(CT.FAULT_STRING_SIZE); (* Axis faults that are present. *)
+	errorCode: DINT;
 	position: LREAL;
 END_STRUCT
 END_TYPE

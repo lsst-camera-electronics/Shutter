@@ -1,10 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
-  <GVL Name="CT" Id="{ab1f46a4-6d6b-4d22-a611-752d5f043f1a}">
+  <GVL Name="MSG" Id="{2ed4dcf7-bf7b-405b-b02f-6fb8a15d2b9f}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
-VAR_GLOBAL CONSTANT
-	STATUS_STRING_SIZE: DINT := 19;
-	ANALOG_ARRAY_SIZE : DINT := 20;
+VAR_GLOBAL
+	changeAxisEnable: FB_TcMessage;
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>

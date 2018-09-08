@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <POU Name="printChangeAxisEnable" Id="{66b8293d-95cd-4d7e-946a-cbeedec012cf}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION printChangeAxisEnable : BOOL
+VAR_INPUT
+	cmd: ChangeAxisEnable;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[MSG.changeAxisEnable.ipArguments.Clear().AddInt(cmd.axisIndex).AddBool(cmd.enabled);
+MSG.changeAxisEnable.Send(0);]]></ST>
+    </Implementation>
+    <LineIds Name="printChangeAxisEnable">
+      <LineId Id="7" Count="0" />
+      <LineId Id="11" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
