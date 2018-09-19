@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="StopAllMotion" Id="{6c12c0e1-ab80-4ea8-936d-b22b3cb5609a}">
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+TYPE StopAllMotion EXTENDS IncomingMessage :
+STRUCT
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

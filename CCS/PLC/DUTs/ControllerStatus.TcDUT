@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="ControllerStatus" Id="{30b948d1-d6c6-4ebb-87ac-5d68dac67886}">
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+TYPE ControllerStatus EXTENDS OutgoingMessage :
+STRUCT
+	commLinkStatus: STRING(CT.STATUS_STRING_SIZE);
+	motionEnabled: BOOL;
+	lastCommandStatus: STRING(CT.STATUS_STRING_SIZE);
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="EnableAllAxes" Id="{d445ac7b-bc53-4dd1-b824-04caa336596a}">
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+TYPE EnableAllAxes EXTENDS IncomingMessage :
+STRUCT
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

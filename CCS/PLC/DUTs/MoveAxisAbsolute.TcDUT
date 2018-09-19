@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="MoveAxisAbsolute" Id="{33dd88d0-6c3c-4b7a-8ea3-9da0868607eb}">
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+TYPE MoveAxisAbsolute EXTENDS IncomingMessage :
+STRUCT
+	axisIndex: INT; (* 1 or 2.*)
+	position: LREAL;
+	speed: LREAL;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

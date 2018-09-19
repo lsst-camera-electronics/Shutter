@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="ClearAxisFaults" Id="{f831fdab-76e9-4ec8-a9c6-ad90c6b44f97}">
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+TYPE ClearAxisFaults EXTENDS IncomingMessage :
+STRUCT
+	axisIndex: INT; (* 1 or 2.*)
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="AxisStatus" Id="{cf26e3e0-fe63-4d45-ac51-0519a8ae0daa}">
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+TYPE AxisStatus EXTENDS OutgoingMessage :
+STRUCT
+	axisIndex: INT; (* 1 or 2. *)
+	enabled: BOOL; (* Axis enabled? *)
+	moving: BOOL;  (* Axis moving? *)
+	atHome: BOOL;   (* Axis has been homed? *)
+	atLowLimit: BOOL; (* Axis at low limit switch? *)
+	atHighLimit: BOOL; (* Axis at high limit switch? *)
+	errorCode: DINT;
+	position: LREAL;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="MessageID" Id="{15edb5c5-37c9-47e4-b3b6-3b2b16b8564f}">
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+(* At least one of these components must change for each new
+   message sent. 
+ *)
+TYPE MessageID :
+STRUCT
+	ipv4: DINT;       (* IP address of sender. *)
+	pid: DINT;        (* Sender process ID. *)
+	dtime: DINT;      (* Time of day in milliseconds. *)
+	sequence: DINT;   (* Message sequence number. *)
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

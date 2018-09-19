@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="HomeAxis" Id="{c8f723cc-f82b-43d4-b2f5-30cd4c7ca484}">
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+TYPE HomeAxis EXTENDS IncomingMessage :
+STRUCT
+	axisIndex: INT; (* 1 or 2.*)
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

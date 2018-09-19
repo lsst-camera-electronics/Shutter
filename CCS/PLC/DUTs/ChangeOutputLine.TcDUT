@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="ChangeOutputLine" Id="{32929be1-b65b-4ded-a3e2-c875269a649e}">
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+TYPE ChangeOutputLine EXTENDS IncomingMessage :
+STRUCT
+	lineIndex: DINT;
+	newState: BOOL;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <GVL Name="MSG" Id="{ae62f89f-6d51-4248-aa59-40a696edf547}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	changeAxisEnable: FB_TcMessage;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>
