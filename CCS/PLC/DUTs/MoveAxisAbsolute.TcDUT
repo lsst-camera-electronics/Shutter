@@ -4,7 +4,7 @@
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
 TYPE MoveAxisAbsolute EXTENDS IncomingMessage :
 STRUCT
-	axisIndex: INT; (* 1 or 2.*)
+	axisIndex: DINT; (* 1 or 2.*)
 	position: LREAL;
 	speed: LREAL;
 END_STRUCT

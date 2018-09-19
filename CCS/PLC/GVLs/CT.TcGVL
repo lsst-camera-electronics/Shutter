@@ -4,7 +4,7 @@
     <Declaration><![CDATA[{attribute 'qualified_only'}
 VAR_GLOBAL CONSTANT
 	STATUS_STRING_SIZE: DINT := 19;
-	ANALOG_ARRAY_SIZE : DINT := 20;
+	ANALOG_ARRAY_SIZE : DINT := 10;
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>

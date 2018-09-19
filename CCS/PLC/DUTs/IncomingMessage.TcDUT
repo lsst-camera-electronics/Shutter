@@ -6,6 +6,7 @@ TYPE IncomingMessage :
 STRUCT
 	id: MessageID;   (* Used to identify new messages. *)
 	version: LINT;   (* Matches serialVersionUID of the equivalent Java class. *)
+	ackCode: DINT;   (* Set by PLC when acking a CCS message. *)
 END_STRUCT
 END_TYPE
 ]]></Declaration>

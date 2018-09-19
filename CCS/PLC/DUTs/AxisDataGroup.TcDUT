@@ -3,7 +3,12 @@
   <DUT Name="AxisDataGroup" Id="{42b1d3fd-52ef-4aef-92df-e912000eabc5}">
     <Declaration><![CDATA[TYPE AxisDataGroup :
 STRUCT
-	brakeRelay AT %Q*: BOOL;
+	brakeRelay AT %Q*: BOOL;        (* Set TRUE to release brake. *)
+	lowLimitSwitch AT %I*: BOOL;    (* Is the low limit switch on? *)
+	highLimitSwitch AT %I*: BOOL;
+	lowTorque AT %I*: BOOL;         (* Is the controller in low-torque mode? *)
+	controllerTemp AT %I*: UINT;    (* Controller temperature in Celsius. *)
+	motorCurrent AT %I*: UINT;      (* Motor current in mA. *)
 END_STRUCT
 END_TYPE
 ]]></Declaration>

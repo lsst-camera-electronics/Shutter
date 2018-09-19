@@ -32,7 +32,7 @@ VAR
 END_VAR
 
 VAR CONSTANT
-	zeroID: MessageID := (ipv4 := 0, pid := 0, dtime := 0, sequence := 0);
+	zeroID: MessageID := (lowUUID := 0, highUUID := 0, dtime := 0, sequence := 0);
 END_VAR
     ]]></Declaration>
     <Implementation>
@@ -49,11 +49,11 @@ IF firstCycle THEN
 	ackMoveAxisAbsolute.id := inMoveAxisAbsolute.id := zeroID;
 	ackHomeAxis.id := inHomeAxis.id := zeroID;
 	
-	MSG.changeAxisEnable.CreateEx(ST_ShutterEvent.ChangeAxisEnable, 0);
+	MSG.changeAxisEnable.CreateEx(TC_EVENTS.CCSEventClass.MsgChangeAxisEnable, 0);
 END_IF
 
 (* Check for arrival of new messages. *)
-IF newMessage(inChangeAxisEnable, ackChangeAxisEnable) THEN
+IF haveDifferentIDs(inChangeAxisEnable, ackChangeAxisEnable) THEN
 	ackChangeAxisEnable := inChangeAxisEnable;
 	printChangeAxisEnable(ackChangeAxisEnable);
 END_IF]]></ST>

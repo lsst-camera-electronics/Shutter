@@ -7,8 +7,8 @@
  *)
 TYPE MessageID :
 STRUCT
-	ipv4: DINT;       (* IP address of sender. *)
-	pid: DINT;        (* Sender process ID. *)
+	lowUUID: LINT;    (* Low part of UUID or other unique host identity. *)
+	highUUID: LINT;   (* High part of UUID. *)
 	dtime: DINT;      (* Time of day in milliseconds. *)
 	sequence: DINT;   (* Message sequence number. *)
 END_STRUCT

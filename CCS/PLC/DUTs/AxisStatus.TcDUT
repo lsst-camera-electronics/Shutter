@@ -4,10 +4,10 @@
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
 TYPE AxisStatus EXTENDS OutgoingMessage :
 STRUCT
-	axisIndex: INT; (* 1 or 2. *)
+	axisIndex: DINT; (* 1 or 2. *)
 	enabled: BOOL; (* Axis enabled? *)
 	moving: BOOL;  (* Axis moving? *)
-	atHome: BOOL;   (* Axis has been homed? *)
+	homed: BOOL;   (* Axis has been homed? *)
 	atLowLimit: BOOL; (* Axis at low limit switch? *)
 	atHighLimit: BOOL; (* Axis at high limit switch? *)
 	errorCode: DINT;
