@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+  <POU Name="Power" Id="{cd82df6c-11f2-4b61-8c52-0b244f02b6d6}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK Power
+
+VAR_IN_OUT
+	state : INT;
+END_VAR
+
+VAR_INPUT
+END_VAR
+
+VAR_OUTPUT
+END_VAR
+
+VAR
+	//Power variable
+	Vraw AT %I*	: ARRAY [0 .. Components.system] OF DINT;
+	Vsense		: ARRAY [0 .. Components.system] OF REAL;
+	Iin			: ARRAY [0 .. Components.system] OF REAL;
+	Pin		 	: ARRAY [0 .. Components.system] OF REAL;
+	Pin_max		: ARRAY [0 .. Components.system] OF REAL;
+	Pin_avg		: ARRAY [0 .. Components.system] OF REAL;
+	
+	//counter
+	i : INT;
+	powerTotal : REAL;
+	powerCounter : DINT;
+	
+	//timer
+	timer : TON;
+	timeElapsed		: TIME;
+	timer_rtrig		: R_TRIG;
+	
+	//testvar
+	test : INT;
+	
+END_VAR
+
+VAR CONSTANT
+	Rsense			: REAL := 0.051;
+	AdcResolution	: DINT := 8388607;
+	Vin				: REAL := 23.84;
+	Vref			: REAL := 1.25;
+	
+	CountTo			: TIME := T#1000H;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[Vsense[Components.motorXP] := (Vraw[Components.motorXP]*Vref)/AdcResolution;
+Iin[Components.motorXP] := Vsense[Components.motorXP]/Rsense;
+Pin[Components.motorXP] := Vin*Iin[Components.motorXP];
+
+IF state <> 100 THEN
+	timer_rtrig(CLK:=FALSE);
+	timer(IN:=TRUE, PT:=CountTo);
+	powerTotal := powerTotal+Pin[Components.motorXP];
+	powerCounter := powerCounter+1;
+ELSE
+	timer_rtrig(CLK:=TRUE);
+	IF timer_rtrig.Q THEN		
+		IF powerCounter <> 0 THEN
+		Pin_avg[Components.motorXP] := PowerTotal/(powerCounter);	
+		powertotal := 0;
+		powerCounter := 0;		
+		END_IF
+		test := test+1;
+	END_IF
+	timer(IN:=FALSE);
+
+END_IF
+	
+	
+FOR i:=Components.motorXP TO Components.system BY 1 DO
+	IF Pin_max[i] < Pin[i] THEN
+		Pin_max := Pin;
+	END_IF
+END_FOR]]></ST>
+    </Implementation>
+    <LineIds Name="Power">
+      <LineId Id="35" Count="2" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="85" Count="2" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="88" Count="1" />
+      <LineId Id="94" Count="1" />
+      <LineId Id="90" Count="0" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="71" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="57" Count="1" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="46" Count="1" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+  <GVL Name="GVL" Id="{543590d2-21dc-426c-bb1c-cff8b9e02654}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL CONSTANT
+	
+//============================GENERAL HALL SWITCH LOCATION ORDER===============================
+//X-side  ||---14---13-12---11---10---9---8---7---6---5---4---3---2-1----0---MOTORS---||  X+ side
+//
+	 HALL_LL_XP_C	: INT :=0; //hall switch lower limit for axisXP
+	 HALL_UL_XP_C	: INT :=12; //hall switch upper limit for axisXP
+	 HALL_LL_XM_C	: INT :=2; //hall switch lower limit for axisXM
+	 HALL_UL_XM_C	: INT :=14; //hall switch upper limit for axisXM
+	 
+	 HALL_TRIP_C	: INT := 15; //numbers of rise and fall per hall switch counting from 0
+	 HALL_TOTAL_C 	: INT := 14; //total numbers of hall counting from 0
+	
+	
+END_VAR
+VAR_GLOBAL
+	task					: 	INT 	:= 2;
+	brakeRelays 	AT %Q*	:	BYTE;
+
+	
+	//Home and deployed switches
+	limitHomeXp 	AT %I*	: 	BOOL;
+	limitDeployedXp	AT %I*	: 	BOOL;
+	limitHomeXm 	AT %I*	: 	BOOL;
+	limitDeployedXm	AT %I*	: 	BOOL;
+	
+	//Hall Switches
+	hallSwitch AT %I*	:	ARRAY[0..14] OF BOOL;
+	hallPosCalXP 		: ARRAY [0 .. 1, HALL_LL_XP_C .. HALL_UL_XP_C, 0 .. HALL_TRIP_C ] OF LREAL;
+	hallPosActXP 		: LREAL;
+	hallPosCalXM 		: ARRAY [0 .. 1, HALL_LL_XM_C .. HALL_UL_XM_C, 0 .. HALL_TRIP_C ] OF LREAL;
+	hallPosActXM 		: LREAL;
+	
+	//Timer
+	fbWaitTimer	: TON;
+	expoTime	: TIME; //time specified in milliseconds
+END_VAR
+]]></Declaration>
+  </GVL>
+</TcPlcObject>

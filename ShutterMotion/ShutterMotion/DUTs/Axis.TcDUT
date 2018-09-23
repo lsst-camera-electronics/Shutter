@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+  <DUT Name="Axis" Id="{2b563dca-bb77-4e19-946f-8445edcd73f2}">
+    <Declaration><![CDATA[TYPE Axis :
+STRUCT
+	//common variables for both axisXP and axisXM
+	mcPower		: MC_Power;
+	mcReset		: MC_Reset;
+	mcMoveAbs	: MC_MoveAbsolute;
+	mcSetPos	: MC_SetPosition;
+	mcHome		: MC_Home;
+	mcHalt		: MC_Halt;
+	direction 	: BOOL;
+	errorID : UDINT;
+
+	hallSigCal_rtrig	: ARRAY [GVL.HALL_LL_XP_C .. GVL.HALL_UL_XM_C] OF  R_TRIG;
+	hallSigCal_ftrig 	: ARRAY [GVL.HALL_LL_XP_C .. GVL.HALL_UL_XM_C] OF  F_TRIG;
+	tripCount 			: ARRAY	[GVL.HALL_LL_XP_C .. GVL.HALL_UL_XM_C] OF INT;
+	
+	(*
+	//for AxisXM only
+	hallSigCalXM_rtrig	: ARRAY [GVL.HALL_LL_XM_C .. GVL.HALL_UL_XM_C] OF  R_TRIG;
+	hallSigCalXM_ftrig 	: ARRAY [GVL.HALL_LL_XM_C .. GVL.HALL_UL_XM_C] OF  F_TRIG;
+	tripCountXM : ARRAY[GVL.HALL_LL_XM_C .. GVL.HALL_UL_XM_C] OF INT;
+	*)
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

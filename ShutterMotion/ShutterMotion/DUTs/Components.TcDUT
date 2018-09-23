@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+  <DUT Name="Components" Id="{74e76de3-b03e-41b3-82c7-5ef2e22c7ddc}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE Components :
+(
+	motorXP,
+	motorXM,
+	brakes,
+	controller,
+	terminals,
+	system
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
