@@ -7,12 +7,6 @@ VAR_IN_OUT
 	state : INT;
 END_VAR
 
-VAR_INPUT
-END_VAR
-
-VAR_OUTPUT
-END_VAR
-
 VAR
 	//Power variable
 	Vraw AT %I*	: ARRAY [0 .. Components.system] OF DINT;
@@ -23,80 +17,108 @@ VAR
 	Pin_avg		: ARRAY [0 .. Components.system] OF REAL;
 	
 	//counter
-	i : INT;
-	powerTotal : REAL;
-	powerCounter : DINT;
+	i 				: INT;
+	powerTotal		: ARRAY [0 .. Components.system] OF REAL;
+	powerCounter 	: ARRAY [0 .. Components.system] OF DINT;
 	
 	//timer
-	timer : TON;
+	timer 			: TON;
 	timeElapsed		: TIME;
 	timer_rtrig		: R_TRIG;
 	
 	//testvar
 	test : INT;
-	
 END_VAR
 
 VAR CONSTANT
 	Rsense			: REAL := 0.051;
-	AdcResolution	: DINT := 8388607;
-	Vin				: REAL := 23.84;
+	AdcResolution	: DINT := 8388607; //24bit adc (positive and minus)
+	Vin				: ARRAY[0..1] OF REAL := [24.0, 48.0];
 	Vref			: REAL := 1.25;
-	
 	CountTo			: TIME := T#1000H;
 END_VAR]]></Declaration>
     <Implementation>
-      <ST><![CDATA[Vsense[Components.motorXP] := (Vraw[Components.motorXP]*Vref)/AdcResolution;
-Iin[Components.motorXP] := Vsense[Components.motorXP]/Rsense;
-Pin[Components.motorXP] := Vin*Iin[Components.motorXP];
-
-IF state <> 100 THEN
-	timer_rtrig(CLK:=FALSE);
-	timer(IN:=TRUE, PT:=CountTo);
-	powerTotal := powerTotal+Pin[Components.motorXP];
-	powerCounter := powerCounter+1;
-ELSE
-	timer_rtrig(CLK:=TRUE);
-	IF timer_rtrig.Q THEN		
-		IF powerCounter <> 0 THEN
-		Pin_avg[Components.motorXP] := PowerTotal/(powerCounter);	
-		powertotal := 0;
-		powerCounter := 0;		
-		END_IF
-		test := test+1;
-	END_IF
-	timer(IN:=FALSE);
-
+      <ST><![CDATA[//reset power values
+IF state=0 THEN
+	FOR i := 0 TO Components.system BY 1 DO
+		Pin_max[i] := 0;
+	END_FOR
 END_IF
+
+
+FOR i:=0 TO 4 BY 1 DO 
+
+//Calculate instantanuous power
+	Vsense[i] := (Vraw[i]*Vref)/AdcResolution;
+	Iin[i] := Vsense[i]/Rsense;
 	
-	
-FOR i:=Components.motorXP TO Components.system BY 1 DO
-	IF Pin_max[i] < Pin[i] THEN
-		Pin_max := Pin;
+	IF i=Components.motorXM OR i=Components.motorXP THEN
+		Pin[i] := Vin[1]*Iin[i];
+	ELSE
+		Pin[i] := Vin[0]*Iin[i];
 	END_IF
-END_FOR]]></ST>
+
+	
+//Calculate average power
+	IF state <> 100 THEN
+		powerTotal[i] := powerTotal[i]+Pin[i];
+		powerCounter[i] := powerCounter[i]+1;
+		Pin_avg[i] 		:= PowerTotal[i]/powerCounter[i];
+	ELSE
+			powertotal[i] 	:= 0;
+			powerCounter[i]	:= 0;	
+	END_IF
+
+	
+//Calculate max power
+	IF Pin_max[i] < Pin[i] THEN
+		Pin_max[i] := Pin[i];
+	END_IF
+	
+END_FOR
+
+
+//Calculate power of entire shutter
+Pin[Components.system] := Pin[Components.motorXP]+Pin[Components.motorXM]+Pin[Components.brakes]
+								+ Pin[Components.controller]+Pin[Components.terminals];
+Pin_avg[Components.system] := Pin_avg[Components.motorXP]+Pin_avg[Components.motorXM]+Pin_avg[Components.brakes]
+								+ Pin_avg[Components.controller]+Pin_avg[Components.terminals];
+IF Pin_max[Components.system] < Pin[Components.system] THEN
+	Pin_max[Components.system] := Pin[Components.system];
+END_IF					]]></ST>
     </Implementation>
     <LineIds Name="Power">
-      <LineId Id="35" Count="2" />
+      <LineId Id="244" Count="6" />
+      <LineId Id="229" Count="0" />
+      <LineId Id="178" Count="0" />
+      <LineId Id="194" Count="0" />
+      <LineId Id="190" Count="1" />
+      <LineId Id="207" Count="2" />
+      <LineId Id="212" Count="1" />
+      <LineId Id="210" Count="0" />
+      <LineId Id="192" Count="0" />
+      <LineId Id="185" Count="0" />
+      <LineId Id="161" Count="0" />
       <LineId Id="48" Count="0" />
-      <LineId Id="66" Count="0" />
-      <LineId Id="85" Count="2" />
+      <LineId Id="145" Count="0" />
+      <LineId Id="147" Count="0" />
+      <LineId Id="220" Count="0" />
       <LineId Id="53" Count="0" />
-      <LineId Id="77" Count="0" />
-      <LineId Id="67" Count="0" />
-      <LineId Id="88" Count="1" />
-      <LineId Id="94" Count="1" />
-      <LineId Id="90" Count="0" />
-      <LineId Id="76" Count="0" />
-      <LineId Id="69" Count="0" />
-      <LineId Id="63" Count="0" />
-      <LineId Id="71" Count="0" />
+      <LineId Id="216" Count="0" />
+      <LineId Id="218" Count="0" />
       <LineId Id="60" Count="0" />
-      <LineId Id="57" Count="1" />
-      <LineId Id="40" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="196" Count="0" />
+      <LineId Id="195" Count="0" />
       <LineId Id="44" Count="0" />
       <LineId Id="46" Count="1" />
-      <LineId Id="45" Count="0" />
+      <LineId Id="177" Count="0" />
+      <LineId Id="174" Count="0" />
+      <LineId Id="197" Count="0" />
+      <LineId Id="226" Count="0" />
+      <LineId Id="206" Count="0" />
+      <LineId Id="198" Count="3" />
+      <LineId Id="203" Count="2" />
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>

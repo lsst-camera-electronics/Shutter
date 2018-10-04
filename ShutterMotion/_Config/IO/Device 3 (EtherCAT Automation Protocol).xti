@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmItem" TcSmVersion="1.0" TcVersion="3.1.4020.32" ClassName="CDevEthernetProtocolNvDef" SubType="112">
+	<Device Id="3" DevType="112" AmsPort="28675" AmsNetId="5.48.66.18.4.1">
+		<Name>__FILENAME__</Name>
+		<AddressInfo>
+			<Pnp>
+				<DeviceDesc>Local Area Connection 2 (TwinCAT-Intel PCI Ethernet</DeviceDesc>
+				<DeviceName>\DEVICE\{8CB4FE28-9F34-4789-A194-2C28EF3743A0}</DeviceName>
+				<DeviceData>000105304213</DeviceData>
+			</Pnp>
+		</AddressInfo>
+		<Image Id="5" AddrType="1" ImageType="1">
+			<Name>Image</Name>
+		</Image>
+		<Ethernet DeviceDesc="Local Area Connection 2 (TwinCAT-Intel PCI Ethernet"/>
+		<Eap EapDeviceGuid="{0A437AEE-A8B4-4CE0-B0E2-6310964F4373}"/>
+	</Device>
+</TcSmItem>

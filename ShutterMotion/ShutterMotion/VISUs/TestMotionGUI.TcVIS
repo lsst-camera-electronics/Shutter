@@ -489,7 +489,7 @@
                         </o>
                         <o>
                           <v n="Id">2496894244L</v>
-                          <v n="Value">"MAIN.testMotion.stateLVL1 &lt;&gt; 100;"</v>
+                          <v n="Value">"MAIN.testMotionState &lt;&gt; 100;"</v>
                         </o>
                         <o>
                           <v n="Id">823443203L</v>
@@ -840,11 +840,12 @@
                 <v n="VisualElementIdentifier">"GenElemInst_2"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
                   <v>OnMouseClick</v>
                   <a cet="STSnippetInputAction">
                     <o>
-                      <v n="STSnippet">"GVL.brakeRelays := 0;"</v>
+                      <v n="STSnippet">"MAIN.axis[0].brake:=FALSE;
+MAIN.axis[1].brake:=FALSE;"</v>
                     </o>
                   </a>
                 </d>
@@ -1007,11 +1008,12 @@
                 <v n="VisualElementIdentifier">"GenElemInst_4"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
                   <v>OnMouseClick</v>
                   <a cet="STSnippetInputAction">
                     <o>
-                      <v n="STSnippet">"GVL.brakeRelays := 3;"</v>
+                      <v n="STSnippet">"MAIN.axis[0].brake:=TRUE;
+MAIN.axis[1].brake:=TRUE;"</v>
                     </o>
                   </a>
                 </d>
@@ -1102,7 +1104,7 @@
                     </o>
                     <o>
                       <v n="Id">743958181L</v>
-                      <v n="Value">"GVL.brakeRelays = 3"</v>
+                      <v n="Value">"MAIN.axis[0].brake and MAIN.axis[1].brake;"</v>
                     </o>
                     <o>
                       <v n="Id">318782457L</v>
@@ -1269,7 +1271,7 @@
                     </o>
                     <o>
                       <v n="Id">2477733581L</v>
-                      <v n="Value">"MAIN.physicalAxes[0].NcToPlc.ActPos"</v>
+                      <v n="Value">"MAIN.axis[0].axisRef.NcToPlc.ActPos"</v>
                     </o>
                     <o>
                       <v n="Id">2597686782L</v>
@@ -1431,7 +1433,7 @@
                     </o>
                     <o>
                       <v n="Id">2477733581L</v>
-                      <v n="Value">"MAIN.physicalAxes[1].NcToPlc.ActPos"</v>
+                      <v n="Value">"MAIN.axis[1].axisRef.NcToPlc.ActPos"</v>
                     </o>
                     <o>
                       <v n="Id">2597686782L</v>
@@ -2115,7 +2117,7 @@
                     </o>
                     <o>
                       <v n="Id">2477733581L</v>
-                      <v n="Value">"MAIN.testMotion.stateLVL1;"</v>
+                      <v n="Value">"MAIN.testMotionState;"</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -2275,7 +2277,7 @@
                     </o>
                     <o>
                       <v n="Id">2496894244L</v>
-                      <v n="Value">"MAIN.testMotion.stateLVL1 &lt;&gt; 100;"</v>
+                      <v n="Value">"MAIN.testMotionState &lt;&gt; 100;"</v>
                     </o>
                     <o>
                       <v n="Id">2597686782L</v>
@@ -2450,7 +2452,7 @@
                     </o>
                     <o>
                       <v n="Id">2496894244L</v>
-                      <v n="Value">"MAIN.testMotion.stateLVL1 &lt;&gt; 100;"</v>
+                      <v n="Value">"MAIN.testMotionState &lt;&gt; 100;"</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -2603,7 +2605,7 @@
                     </o>
                     <o>
                       <v n="Id">390574330L</v>
-                      <v n="Value">"Set Velocity"</v>
+                      <v n="Value">"Set Speed"</v>
                     </o>
                     <o>
                       <v n="Id">2597686782L</v>
@@ -2611,11 +2613,11 @@
                     </o>
                     <o>
                       <v n="Id">2496894244L</v>
-                      <v n="Value">"MAIN.cycler.state &lt;&gt; ShutterState.STOPPED"</v>
+                      <v n="Value">"MAIN.testMotionState&lt;&gt;100;"</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
-                      <v n="Value">"31"</v>
+                      <v n="Value">"26"</v>
                     </o>
                   </l>
                 </o>
@@ -2953,7 +2955,7 @@
                     </o>
                     <o>
                       <v n="Id">2496894244L</v>
-                      <v n="Value">"MAIN.testMotion.stateLVL1 &lt;&gt; 100;"</v>
+                      <v n="Value">"MAIN.testMotionState &lt;&gt; 100;"</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -3124,7 +3126,7 @@
                     </o>
                     <o>
                       <v n="Id">2496894244L</v>
-                      <v n="Value">"MAIN.testMotion.stateLVL1 &lt;&gt; 100;"</v>
+                      <v n="Value">"MAIN.testMotionState &lt;&gt; 100;"</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -3295,7 +3297,7 @@
                     </o>
                     <o>
                       <v n="Id">2496894244L</v>
-                      <v n="Value">"MAIN.testMotion.stateLVL1 &lt;&gt; 100;"</v>
+                      <v n="Value">"MAIN.testMotionState &lt;&gt; 100;"</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -3567,7 +3569,7 @@
                     </o>
                     <o>
                       <v n="Id">743958181L</v>
-                      <v n="Value">"MAIN.physicalAxes[0].Status.Homed and MAIN.physicalAxes[1].Status.Homed;"</v>
+                      <v n="Value">"MAIN.axis[0].axisRef.Status.Homed and MAIN.axis[0].axisRef.Status.Homed;"</v>
                     </o>
                   </l>
                 </o>
@@ -3727,7 +3729,7 @@
                     </o>
                     <o>
                       <v n="Id">2496894244L</v>
-                      <v n="Value">"MAIN.testMotion.stateLVL1 &lt;&gt; 100;"</v>
+                      <v n="Value">"MAIN.testMotionState &lt;&gt; 100;"</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -4067,7 +4069,7 @@
                     </o>
                     <o>
                       <v n="Id">2477733581L</v>
-                      <v n="Value">"MAIN.testMotion.stateLVL2;"</v>
+                      <v n="Value">"MAIN.motion.stateLVL2;"</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -4283,6 +4285,7 @@
         <Type n="Guid">System.Guid</Type>
         <Type n="Hashtable">System.Collections.Hashtable</Type>
         <Type n="HotkeyConfiguration">{6b108d46-58af-4e41-a3f4-174d8f160cc4}</Type>
+        <Type n="IInputAction[]">_3S.CoDeSys.VisualElem.IInputAction[], VisualElem, Version=3.5.8.0, Culture=neutral, PublicKeyToken=null</Type>
         <Type n="InputBoxInputAction">{e8e7e747-f76f-4dee-ab1c-b9637e41ac26}</Type>
         <Type n="InputBoxInputAction[]">_3S.CoDeSys.VisualElem.InputBoxInputAction[], VisualElem.plugin, Version=3.5.8.40, Culture=neutral, PublicKeyToken=null</Type>
         <Type n="Int16">System.Int16</Type>

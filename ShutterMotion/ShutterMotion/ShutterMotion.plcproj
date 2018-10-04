@@ -18,7 +18,7 @@
     <Compile Include="DUTs\AxisInfo.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\Axis.TcDUT">
+    <Compile Include="DUTs\AxisGroup.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\Components.TcDUT">
@@ -44,6 +44,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\Power.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\Protection.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\TestMotion.TcPOU">

@@ -19,25 +19,39 @@ VAR_GLOBAL CONSTANT
 END_VAR
 VAR_GLOBAL
 	task					: 	INT 	:= 2;
-	brakeRelays 	AT %Q*	:	BYTE;
+	//brakeRelays 	AT %Q*	:	BYTE;
 
 	
 	//Home and deployed switches
-	limitHomeXp 	AT %I*	: 	BOOL;
-	limitDeployedXp	AT %I*	: 	BOOL;
-	limitHomeXm 	AT %I*	: 	BOOL;
-	limitDeployedXm	AT %I*	: 	BOOL;
+	//limitHomeXp 	AT %I*	: 	BOOL;
+	//limitDeployedXp	AT %I*	: 	BOOL;
+	//limitHomeXm 	AT %I*	: 	BOOL;
+	//limitDeployedXm	AT %I*	: 	BOOL;
 	
 	//Hall Switches
 	hallSwitch AT %I*	:	ARRAY[0..14] OF BOOL;
-	hallPosCalXP 		: ARRAY [0 .. 1, HALL_LL_XP_C .. HALL_UL_XP_C, 0 .. HALL_TRIP_C ] OF LREAL;
-	hallPosActXP 		: LREAL;
-	hallPosCalXM 		: ARRAY [0 .. 1, HALL_LL_XM_C .. HALL_UL_XM_C, 0 .. HALL_TRIP_C ] OF LREAL;
-	hallPosActXM 		: LREAL;
+	//hallPosCalXP 		: ARRAY [0 .. 1, HALL_LL_XP_C .. HALL_UL_XP_C, 0 .. HALL_TRIP_C ] OF LREAL;
+	//hallPosActXP 		: LREAL;
+	//hallPosCalXM 		: ARRAY [0 .. 1, HALL_LL_XM_C .. HALL_UL_XM_C, 0 .. HALL_TRIP_C ] OF LREAL;
+	//hallPosActXM 		: LREAL;
 	
 	//Timer
 	fbWaitTimer	: TON;
 	expoTime	: TIME; //time specified in milliseconds
+	
+	//others
+	setPosition : LREAL;
+	
+	//TestVariable
+	testINT : INT;
+	testINT2 : INT;
+	testLREAL : LREAL;
+	
+END_VAR
+
+VAR_GLOBAL PERSISTENT // For million cycle test
+	strokeXP	: UDINT;
+	strokeXM	: UDINT;
 END_VAR
 ]]></Declaration>
   </GVL>

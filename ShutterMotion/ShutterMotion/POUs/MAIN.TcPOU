@@ -3,37 +3,51 @@
   <POU Name="MAIN" Id="{f71d400f-d229-45a7-bebf-e505112d31c1}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
+	(*
 	cycler		: Cycler;
 	physicalAxes: ARRAY [ShutterSide.PLUSX .. ShutterSide.MINUSX] OF AXIS_REF; (* Must be linked to Axis1 and 2, respectively, under MOTION. *)
 	axisInfo	: ARRAY [ShutterSide.PLUSX..SHutterSide.MINUSX] OF AxisInfo := [(openPosition:=0.0, closedPosition:=750.0), (openPosition:=750.0, closedPosition:=0.0)];
+		*)
 	start, stop, reset, abort: BOOL;
 	delay		: TON;
 	acceleration, speed: LREAL;
 	exposure	: TIME;
-	
 
-	testMotion		: TestMotion;
+	
+	motion			: TestMotion;
+	axis			: ARRAY [XP .. XM] OF AxisGroup;
 	home 			: BYTE;
 	testMotionState	: INT :=100;
 	nextInstruct	: BOOL;
 	
 	power			: Power;
-
+	protect			: Protection;
+	
 	//test
 END_VAR
 VAR CONSTANT
 	accTitle	: STRING := 'Acceleration';
+	XP			: INT := 0;
+	XM			: INT := 1;
 END_VAR
-]]></Declaration>
+
+VAR PERSISTENT
+END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[delay(IN:=TRUE, PT:=T#0S);
 IF speed>1667 THEN 
 	speed:=0;
 END_IF
+
 IF delay.Q THEN
     delay(IN:=FALSE);
 	
+	protect(axis := axis,
+			stateLVL1	:= testMotionState,
+			reset		:= reset);
+	
 	CASE GVL.task OF
+		(*
 		1:
 		cycler(
         	physicalAxes	:= physicalAxes,
@@ -45,11 +59,11 @@ IF delay.Q THEN
         	exposureTime	:= exposure,
         	speed			:= speed,
         	acceleration	:= acceleration);
+			*)
 			
 		2:
-		testMotion(
-			axisXP			:= physicalAxes[ShutterSide.PLUSX],
-			axisXM 			:= physicalAxes[ShutterSide.MINUSX],
+		motion(
+			axis			:= axis,
 			abortRequest	:= abort,
         	resetRequest	:= reset,
         	startRequest	:= start,
@@ -61,11 +75,9 @@ IF delay.Q THEN
 
 	END_CASE
 
-power(state := testMotionState);
+	power(state := testMotionState);
 
 END_IF
-
-
 
 
 
@@ -73,13 +85,22 @@ END_IF
     </Implementation>
     <LineIds Name="MAIN">
       <LineId Id="117" Count="2" />
+      <LineId Id="212" Count="0" />
       <LineId Id="17" Count="1" />
       <LineId Id="55" Count="0" />
+      <LineId Id="244" Count="0" />
+      <LineId Id="278" Count="0" />
+      <LineId Id="280" Count="0" />
+      <LineId Id="245" Count="0" />
       <LineId Id="61" Count="0" />
       <LineId Id="100" Count="0" />
+      <LineId Id="208" Count="0" />
       <LineId Id="62" Count="0" />
       <LineId Id="91" Count="8" />
-      <LineId Id="101" Count="5" />
+      <LineId Id="101" Count="0" />
+      <LineId Id="209" Count="0" />
+      <LineId Id="102" Count="2" />
+      <LineId Id="106" Count="0" />
       <LineId Id="108" Count="3" />
       <LineId Id="116" Count="0" />
       <LineId Id="121" Count="0" />
@@ -91,8 +112,6 @@ END_IF
       <LineId Id="49" Count="0" />
       <LineId Id="33" Count="0" />
       <LineId Id="167" Count="0" />
-      <LineId Id="177" Count="0" />
-      <LineId Id="173" Count="0" />
       <LineId Id="172" Count="0" />
       <LineId Id="168" Count="0" />
       <LineId Id="21" Count="1" />

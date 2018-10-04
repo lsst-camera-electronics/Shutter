@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+  <DUT Name="AxisGroup" Id="{2b563dca-bb77-4e19-946f-8445edcd73f2}">
+    <Declaration><![CDATA[TYPE AxisGroup :
+STRUCT
+	//basic built in functions
+	mcPower		: MC_Power;
+	mcReset		: MC_Reset;
+	mcMoveAbs	: MC_MoveAbsolute;
+	mcSetPos	: MC_SetPosition;
+	mcHome		: MC_Home;
+	mcHalt		: MC_Halt;
+	mcStop		: MC_Stop;
+	
+	//
+	direction 	: BOOL;
+	error		: BOOL;
+	errorID 	: UDINT;
+	
+	//linkable variables
+	axisRef					: AXIS_REF;;
+	brake AT %Q* 			: BOOL;
+	limitHome AT %I*		: BOOL;
+	limitDeployed AT %I*	: BOOL;
+
+	//used for tracking linear motion using hall sensors
+	hallSigCal_rtrig	: ARRAY [GVL.HALL_LL_XP_C .. GVL.HALL_UL_XM_C] OF R_TRIG;
+	hallSigCal_ftrig 	: ARRAY [GVL.HALL_LL_XP_C .. GVL.HALL_UL_XM_C] OF F_TRIG;
+	hallPosCal			: ARRAY [0 .. 1, GVL.HALL_LL_XP_C .. GVL.HALL_UL_XM_C, 0 .. GVL.HALL_TRIP_C] OF LREAL;
+	hallPosAct			: LREAL;
+	tripCount 			: ARRAY	[GVL.HALL_LL_XP_C .. GVL.HALL_UL_XM_C] OF INT;
+	
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+  <POU Name="Protection" Id="{2dceb2c7-c1a1-4d57-b0b3-835d45fe31c4}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK Protection
+VAR_IN_OUT
+	axis  : ARRAY [XP .. XM] OF AxisGroup;
+	stateLVL1 : INT;
+END_VAR
+VAR_INPUT
+	reset : BOOL;
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	checkHomed_TON : TON;
+END_VAR
+
+VAR CONSTANT
+	XP : INT := 0;
+	XM : INT := 1;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+//Prevents movement if not homed.
+IF stateLVL1>400 THEN
+	IF NOT axis[XP].axisRef.Status.Homed OR NOT axis[XM].axisRef.Status.Homed THEN
+		 axis[XP].mcStop(Axis:=axis[XP].axisRef, Execute:=TRUE);
+		 axis[XM].mcStop(Axis:=axis[XM].axisRef, Execute:=TRUE);
+		//To-Do later... Add error code for not homed
+	END_IF
+END_IF
+
+
+//prevent axis from being setting position that will cause a collision with the other axis - SINGLE AXIS MOVEMENT ONLY. WILL HAVE TO REWRITE FOR AXIS MOVEMENT.
+IF stateLVL1=400 THEN
+	checkHomed_TON(IN:=FALSE);
+END_IF
+IF axis[XP].axisRef.Status.Homed AND axis[XM].axisRef.Status.Homed THEN	
+	checkHomed_TON(IN:=TRUE, PT:=T#5MS);
+	IF ((axis[XP].axisRef.NcToPlc.TargetPos > (axis[XM].axisRef.NcToPlc.ActPos + 1.0)) OR (axis[XM].axisRef.NcToPlc.TargetPos < (axis[XP].axisRef.NcToPlc.ActPos - 1.0))) 
+	AND checkHomed_TON.Q THEN
+		//add error here 
+		checkHomed_TON(IN:=FALSE);
+		GVL.testINT := GVL.testINT + 1;
+		GVL.testLREAL := axis[XM].axisRef.NcToPlc.TargetPos;		
+		
+		axis[XP].mcStop(Axis:=axis[XP].axisRef, Execute:=FALSE);
+		axis[XM].mcStop(Axis:=axis[XM].axisRef, Execute:=FALSE);
+		axis[XP].mcMoveAbs(axis:=axis[XP].axisRef, Execute:=FALSE);
+		axis[XM].mcMoveAbs(axis:=axis[XM].axisRef, Execute:=FALSE);
+		axis[XP].mcMoveAbs(axis:=axis[XP].axisRef, Position:=axis[XP].axisRef.NcToPlc.ActPos, Execute:=TRUE);
+		axis[XM].mcMoveAbs(axis:=axis[XM].axisRef, Position:=axis[XM].axisRef.NcToPlc.ActPos, Execute:=TRUE);
+		axis[XP].mcStop(Axis:=axis[XP].axisRef, Execute:=TRUE);
+		axis[XM].mcStop(Axis:=axis[XM].axisRef, Execute:=TRUE);
+	END_IF
+END_IF
+
+
+//Brake status check - if brakes are not disengaged, disable axis movement
+IF axis[XP].brake AND axis[XM].brake THEN 
+	axis[XP].mcPower(Axis := axis[XP].axisRef, Enable := TRUE, Enable_Positive := TRUE, Enable_Negative := TRUE);
+	axis[XM].mcPower(Axis := axis[XM].axisRef, Enable := TRUE, Enable_Positive := TRUE, Enable_Negative := TRUE);	
+ELSE
+	axis[XP].mcPower(Axis := axis[XP].axisRef, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE);
+	axis[XM].mcPower(Axis := axis[XM].axisRef, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE); 
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="Protection">
+      <LineId Id="41" Count="3" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="45" Count="2" />
+      <LineId Id="64" Count="1" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="109" Count="2" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="107" Count="0" />
+      <LineId Id="93" Count="0" />
+      <LineId Id="95" Count="0" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="120" Count="1" />
+      <LineId Id="114" Count="1" />
+      <LineId Id="122" Count="0" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="97" Count="1" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="66" Count="6" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

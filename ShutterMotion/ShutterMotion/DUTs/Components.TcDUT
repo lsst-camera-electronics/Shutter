@@ -8,8 +8,8 @@ TYPE Components :
 	motorXP,
 	motorXM,
 	brakes,
-	controller,
 	terminals,
+	controller,
 	system
 );
 END_TYPE
