@@ -11,6 +11,8 @@ STRUCT
 	mcHome		: MC_Home;
 	mcHalt		: MC_Halt;
 	mcStop		: MC_Stop;
+	mcJog		: MC_Jog;
+	
 	
 	//
 	direction 	: BOOL;

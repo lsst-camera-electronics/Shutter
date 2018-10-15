@@ -12,7 +12,8 @@ END_VAR
 VAR_OUTPUT
 END_VAR
 VAR
-	checkHomed_TON : TON;
+	checkHomed_TON 	: TON;
+	posDiff			: ARRAY[XP..XM] OF LREAL;
 END_VAR
 
 VAR CONSTANT
@@ -32,7 +33,7 @@ IF stateLVL1>400 THEN
 END_IF
 
 
-//prevent axis from being setting position that will cause a collision with the other axis - SINGLE AXIS MOVEMENT ONLY. WILL HAVE TO REWRITE FOR AXIS MOVEMENT.
+//prevent axis from being setting position that will cause a collision with the other axis - SINGLE AXIS MOVEMENT ONLY. WILL HAVE TO REWRITE FOR DUAL AXIS MOVEMENT.
 IF stateLVL1=400 THEN
 	checkHomed_TON(IN:=FALSE);
 END_IF
@@ -64,7 +65,16 @@ IF axis[XP].brake AND axis[XM].brake THEN
 ELSE
 	axis[XP].mcPower(Axis := axis[XP].axisRef, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE);
 	axis[XM].mcPower(Axis := axis[XM].axisRef, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE); 
-END_IF]]></ST>
+END_IF
+
+
+//Compare position seen by hall switch with position seen by motor encoder
+posDiff[XP] := axis[XP].axisRef.NcToPlc.ActPos - axis[XP].hallPosAct;
+posDiff[XM] := axis[XM].axisRef.NcToPlc.ActPos - axis[XM].hallPosAct;
+IF ABS(posDiff[XP])>22 THEN
+	; //write code for fast stop here and report error
+END_IF
+	]]></ST>
     </Implementation>
     <LineIds Name="Protection">
       <LineId Id="41" Count="3" />
@@ -93,6 +103,9 @@ END_IF]]></ST>
       <LineId Id="73" Count="0" />
       <LineId Id="63" Count="0" />
       <LineId Id="66" Count="6" />
+      <LineId Id="146" Count="3" />
+      <LineId Id="151" Count="2" />
+      <LineId Id="155" Count="1" />
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>

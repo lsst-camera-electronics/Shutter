@@ -119,6 +119,8 @@ CASE stateLVL1 OF
 	100: //stop state
 		axis[XP].mcMoveAbs(Axis := axis[XP].axisRef, Execute := FALSE);
 		axis[XM].mcMoveAbs(Axis := axis[XM].axisRef, Execute := FALSE);
+		axis[XP].mcJog(Axis:=axis[XP].axisRef, JogForward:=FALSE, JogBackwards:=FALSE);
+		axis[XM].mcJog(Axis:=axis[XM].axisRef, JogForward:=FALSE, JogBackwards:=FALSE);
 		axis[XP].mcHome(Axis := axis[XP].axisRef, Execute := FALSE);
 		axis[XM].mcHome(Axis := axis[XP].axisRef, Execute := FALSE);
 		stateLVL2 := 0;
@@ -162,17 +164,25 @@ CASE stateLVL1 OF
 			axis[XP].mcMoveAbs(Axis:=axis[XP].axisRef, Execute:=FALSE);
 			stateLVL1 := 100;
 		END_IF
-	
-	1400: //AxisXP jog
 
-	1500: //AxisXM move absolute
+	1400: //AxisXM move absolute
 		axis[XM].mcMoveAbs(Axis:=axis[XM].axisRef, Position:=GVL.setPosition, Velocity:=speed, Execute:=TRUE);
 		IF axis[XM].mcMoveAbs.Done THEN
 			axis[XM].mcMoveAbs(Axis:=axis[XM].axisRef, Execute:=FALSE);
 			stateLVL1 := 100;
 		END_IF
+
+	1500: //AxisXP Jog Forward
+		axis[XP].mcJog(Axis:=axis[XP].axisRef, JogForward:=TRUE, JogBackwards:=FALSE, Mode:=MC_JOGMODE_STANDARD_SLOW);
+	
+	1600: //AxisXP Jog Backward
+		axis[XP].mcJog(Axis:=axis[XP].axisRef, JogForward:=FALSE, JogBackwards:=TRUE, Mode:=MC_JOGMODE_STANDARD_SLOW);
 		
-	1600: //AxisXM jog
+	1700: //AxisXM Jog Backward
+		axis[XM].mcJog(Axis:=axis[XM].axisRef, JogForward:=TRUE, JogBackwards:=FALSE, Mode:=MC_JOGMODE_STANDARD_SLOW);
+	
+	1800: //AxisXM Jog Forward
+		axis[XM].mcJog(Axis:=axis[XM].axisRef, JogForward:=FALSE, JogBackwards:=TRUE, Mode:=MC_JOGMODE_STANDARD_SLOW);
 
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////
@@ -751,6 +761,7 @@ END_CASE]]></ST>
       <LineId Id="88" Count="0" />
       <LineId Id="60" Count="0" />
       <LineId Id="86" Count="1" />
+      <LineId Id="3025" Count="1" />
       <LineId Id="101" Count="1" />
       <LineId Id="2478" Count="0" />
       <LineId Id="1894" Count="0" />
@@ -784,11 +795,18 @@ END_CASE]]></ST>
       <LineId Id="2602" Count="1" />
       <LineId Id="2605" Count="0" />
       <LineId Id="2604" Count="0" />
-      <LineId Id="2594" Count="1" />
-      <LineId Id="2606" Count="2" />
+      <LineId Id="2594" Count="0" />
+      <LineId Id="2607" Count="1" />
       <LineId Id="2701" Count="4" />
+      <LineId Id="3005" Count="0" />
+      <LineId Id="3022" Count="0" />
+      <LineId Id="3007" Count="2" />
+      <LineId Id="3003" Count="0" />
       <LineId Id="2609" Count="0" />
-      <LineId Id="552" Count="0" />
+      <LineId Id="3011" Count="0" />
+      <LineId Id="2999" Count="1" />
+      <LineId Id="3012" Count="0" />
+      <LineId Id="3021" Count="0" />
       <LineId Id="2613" Count="0" />
       <LineId Id="2611" Count="0" />
       <LineId Id="554" Count="0" />
