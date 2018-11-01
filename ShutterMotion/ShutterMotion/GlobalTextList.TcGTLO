@@ -230,6 +230,11 @@
               <v n="TextDefault">"TestMotion Task"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
+            <o>
+              <v n="TextID">"45"</v>
+              <v n="TextDefault">"Travelling Slit"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
           </l>
           <l n="Languages" t="ArrayList" />
           <v n="GuidInit">{68851da3-a4eb-4cb7-b681-5586cfdb2777}</v>

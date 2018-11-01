@@ -1027,13 +1027,7 @@ External Setpoint Generation:
 				<Var>
 					<Name>GVL.hallSwitch</Name>
 					<Comment>
-						<![CDATA[brakeRelays 	AT %Q*	:	BYTE;
-Home and deployed switches
-limitHomeXp 	AT %I*	: 	BOOL;
-limitDeployedXp	AT %I*	: 	BOOL;
-limitHomeXm 	AT %I*	: 	BOOL;
-limitDeployedXm	AT %I*	: 	BOOL;
-Hall Switches]]>
+						<![CDATA[Hall Switches]]>
 					</Comment>
 					<Type GUID="{18071995-0000-0000-0000-00210000000F}">ARRAY [0..14] OF BOOL</Type>
 				</Var>

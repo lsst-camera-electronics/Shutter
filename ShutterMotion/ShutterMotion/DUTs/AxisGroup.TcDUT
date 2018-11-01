@@ -19,6 +19,7 @@ STRUCT
 	error		: BOOL;
 	errorID 	: UDINT;
 	
+	
 	//linkable variables
 	axisRef					: AXIS_REF;;
 	brake AT %Q* 			: BOOL;
@@ -26,11 +27,17 @@ STRUCT
 	limitDeployed AT %I*	: BOOL;
 
 	//used for tracking linear motion using hall sensors
-	hallSigCal_rtrig	: ARRAY [GVL.HALL_LL_XP_C .. GVL.HALL_UL_XM_C] OF R_TRIG;
-	hallSigCal_ftrig 	: ARRAY [GVL.HALL_LL_XP_C .. GVL.HALL_UL_XM_C] OF F_TRIG;
-	hallPosCal			: ARRAY [0 .. 1, GVL.HALL_LL_XP_C .. GVL.HALL_UL_XM_C, 0 .. GVL.HALL_TRIP_C] OF LREAL;
+	hallSigCal_rtrig	: ARRAY [GVL.hallLowerLimit_C .. GVL.hallUpperLimit_C] OF R_TRIG;
+	hallSigCal_ftrig 	: ARRAY [GVL.hallLowerLimit_C .. GVL.hallUpperLimit_C] OF F_TRIG;
+	hallPosCal			: ARRAY [GVL.dirPos_C .. GVL.dirNeg_C, 0 .. GVL.tripCount_C] OF LREAL;
 	hallPosAct			: LREAL;
-	tripCount 			: ARRAY	[GVL.HALL_LL_XP_C .. GVL.HALL_UL_XM_C] OF INT;
+	tripCount 			: INT;//ARRAY	[GVL.HALL_LL_XP_C .. GVL.HALL_UL_XM_C] OF INT;
+	
+	//hall sequence
+	hallSequence		: ARRAY [GVL.dirPos_C .. GVL.dirNeg_C, 0 .. GVL.tripCount_C] OF WORD;
+	seqToCompare		: WORD;
+	//seqCount			: INT;
+	
 	
 END_STRUCT
 END_TYPE

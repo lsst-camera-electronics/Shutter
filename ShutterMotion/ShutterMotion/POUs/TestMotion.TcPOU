@@ -20,12 +20,8 @@ VAR_OUTPUT
 END_VAR
 VAR
 	//testvar
-	test : INT;
-	
-	
-	//Axis
-	//xp : Axis;
-	//xm : Axis;	
+	//test : INT;
+	xorResult : BOOL; //used in tracking
 	
 	//state-machine
 	stateLVL2 : INT;
@@ -37,7 +33,7 @@ VAR
 	
 	//counter
 	i 	: INT :=0;
-	j	: INT :=0;
+	//j	: INT :=0;
 	
 
 END_VAR
@@ -45,12 +41,12 @@ VAR CONSTANT
 	BRAKE_OFF_C		: BOOL	:= TRUE;
 	BRAKE_ON_C		: BOOL	:= FALSE;
 	HOME_VEL_C		: LREAL	:= 30;
-	CALIBRATE_VEL_C	: LREAL	:= 60;
+	CALIBRATE_VEL_C	: LREAL	:= 200;//60;
 	POSITION_VEL_C	: LREAL := 300;
 	POS_START_C		: LREAL := 0;
 	POS_END_C		: LREAL := 750;
 	HOMEOFFSET_XP_C	: LREAL	:= (POS_START_C+35);
-	HOMEOFFSET_XM_C	: LREAL	:= (POS_END_C-85);
+	HOMEOFFSET_XM_C	: LREAL	:= (POS_END_C-84);
 	
 	//SIZE_HALL_SW_C 	: LREAL := SIZEOF(GVL.hallPosCalXP);
 	
@@ -100,7 +96,7 @@ CASE stateLVL1 OF
 			axis[XM].brake := BRAKE_ON_C;
 			stateLVL1 		:= -1; //go to stop state
 			stateLVL2		:=0;
-							GVL.testINT2 := GVL.testINT2 +1;//-------------------------------------------
+
 			//Should report an error flag go to error handle state
 		ELSIF axis[XP].mcReset.Done AND axis[XM].mcReset.Done THEN
 			axis[XP].mcPower(Axis := axis[XP].axisRef, Enable := TRUE, Enable_Positive := TRUE, Enable_Negative := TRUE);
@@ -268,10 +264,18 @@ CASE stateLVL1 OF
 		IF motionBusy = FALSE THEN
 			stateLVL1:=100;
 		END_IF
+		
+	
+		
+	12345:
+		travellingSlit();
+		IF motionBusy = FALSE THEN
+			stateLVL1:=100;
+		END_IF
 
 END_CASE
 
-
+(*
 //Need to rewrite this so that it will work with 2 axis running.------------------------------------------
 IF stateLVL1 <> 400 THEN
 	
@@ -280,14 +284,53 @@ IF stateLVL1 <> 400 THEN
 		axis[XP].hallSigCal_rtrig[i](CLK:=GVL.hallSwitch[i]);
 		axis[XP].hallSigCal_ftrig[i](CLK:=GVL.hallSwitch[i]);
 		IF axis[XP].hallSigCal_rtrig[i].Q OR axis[XP].hallSigCal_ftrig[i].Q THEN
-			IF axis[XP].axisRef.status.PositiveDirection THEN
+			
+				GVL.hallSequence.0 := axis[XP].hallSigCal_rtrig[0].Q OR axis[XP].hallSigCal_ftrig[0].Q;
+				GVL.hallSequence.1 := axis[XP].hallSigCal_rtrig[1].Q OR axis[XP].hallSigCal_ftrig[1].Q;
+				GVL.hallSequence.2 := axis[XP].hallSigCal_rtrig[2].Q OR axis[XP].hallSigCal_ftrig[2].Q;
+				GVL.hallSequence.3 := axis[XP].hallSigCal_rtrig[3].Q OR axis[XP].hallSigCal_ftrig[3].Q;
+				GVL.hallSequence.4 := axis[XP].hallSigCal_rtrig[4].Q OR axis[XP].hallSigCal_ftrig[4].Q;
+				GVL.hallSequence.5 := axis[XP].hallSigCal_rtrig[5].Q OR axis[XP].hallSigCal_ftrig[5].Q;
+				GVL.hallSequence.6 := axis[XP].hallSigCal_rtrig[6].Q OR axis[XP].hallSigCal_ftrig[6].Q;
+				GVL.hallSequence.7 := axis[XP].hallSigCal_rtrig[7].Q OR axis[XP].hallSigCal_ftrig[7].Q;
+				GVL.hallSequence.8 := axis[XP].hallSigCal_rtrig[8].Q OR axis[XP].hallSigCal_ftrig[8].Q;
+				GVL.hallSequence.9 := axis[XP].hallSigCal_rtrig[9].Q OR axis[XP].hallSigCal_ftrig[9].Q;
+				GVL.hallSequence.10 := axis[XP].hallSigCal_rtrig[10].Q OR axis[XP].hallSigCal_ftrig[10].Q;
+				GVL.hallSequence.11 := axis[XP].hallSigCal_rtrig[11].Q OR axis[XP].hallSigCal_ftrig[11].Q;
+				GVL.hallSequence.12 := axis[XP].hallSigCal_rtrig[12].Q OR axis[XP].hallSigCal_ftrig[12].Q;
+				GVL.hallSequence.13 := axis[XP].hallSigCal_rtrig[13].Q OR axis[XP].hallSigCal_ftrig[13].Q;
+				GVL.hallSequence.14 := axis[XP].hallSigCal_rtrig[14].Q OR axis[XP].hallSigCal_ftrig[14].Q;			
+			
+			IF (GVL.hallSequence.0 XOR GVL.hallSequence.1 XOR GVL.hallSequence.2 XOR GVL.hallSequence.3 XOR GVL.hallSequence.4 XOR
+				GVL.hallSequence.5 XOR GVL.hallSequence.6 XOR GVL.hallSequence.7 XOR GVL.hallSequence.8 XOR GVL.hallSequence.9 XOR
+				GVL.hallSequence.10 XOR GVL.hallSequence.11 XOR GVL.hallSequence.12 XOR GVL.hallSequence.13 XOR GVL.hallSequence.14) THEN
+				axis[XP].seqToCompare := GVL.hallSequence;
+				
+				GVL.testINT := GVL.testINT +1;
+				
+			ELSE
+				GVL.testINT2 := GVL.testINT2 +1;
+				IF axis[XM].axisRef.status.PositiveDirection THEN
+					axis[XP].seqToCompare := (GVL.hallSequence XOR axis[XM].hallSequence[1, axis[XM].seqCount]);	
+				ELSIF axis[XM].axisRef.status.NegativeDirection THEN
+					axis[XP].seqToCompare := (GVL.hallSequence XOR axis[XM].hallSequence[0, axis[XM].seqCount]);		
+				ELSE
+					; //PUT ERROR CODE HERE
+				END_IF		
+			END_IF	
+			
+			IF axis[XP].axisRef.status.PositiveDirection AND axis[XP].hallSequence[0, axis[XP].seqCount] = axis[XP].seqToCompare THEN
 				axis[XP].hallPosAct := axis[XP].hallPosCal[0, i, axis[XP].tripCount[i]];
 				axis[XP].tripCount[i] := axis[XP].tripCount[i] + 1;	
+				axis[XP].seqCount := axis[XP].seqCount + 1;
+				
 			END_IF
-			IF axis[XP].axisRef.status.NegativeDirection THEN
+			IF axis[XP].axisRef.status.NegativeDirection AND axis[XP].hallSequence[1, axis[XP].seqCount] = axis[XP].seqToCompare THEN
 				axis[XP].hallPosAct := axis[XP].hallPosCal[1, i, axis[XP].tripCount[i]];
 				axis[XP].tripCount[i] := axis[XP].tripCount[i] - 1;	
+				axis[XP].seqCount := axis[XP].seqCount - 1;
 			END_IF
+			
 		END_IF
 	END_FOR
 	//Actual Position Calc AxisXM
@@ -295,13 +338,51 @@ IF stateLVL1 <> 400 THEN
 		axis[XM].hallSigCal_rtrig[i](CLK:=GVL.hallSwitch[i]);
 		axis[XM].hallSigCal_ftrig[i](CLK:=GVL.hallSwitch[i]);
 		IF axis[XM].hallSigCal_rtrig[i].Q OR axis[XM].hallSigCal_ftrig[i].Q THEN
-			IF axis[XM].axisRef.status.PositiveDirection THEN
+			
+				GVL.hallSequence.0 := axis[XM].hallSigCal_rtrig[0].Q OR axis[XM].hallSigCal_ftrig[0].Q;
+				GVL.hallSequence.1 := axis[XM].hallSigCal_rtrig[1].Q OR axis[XM].hallSigCal_ftrig[1].Q;
+				GVL.hallSequence.2 := axis[XM].hallSigCal_rtrig[2].Q OR axis[XM].hallSigCal_ftrig[2].Q;
+				GVL.hallSequence.3 := axis[XM].hallSigCal_rtrig[3].Q OR axis[XM].hallSigCal_ftrig[3].Q;
+				GVL.hallSequence.4 := axis[XM].hallSigCal_rtrig[4].Q OR axis[XM].hallSigCal_ftrig[4].Q;
+				GVL.hallSequence.5 := axis[XM].hallSigCal_rtrig[5].Q OR axis[XM].hallSigCal_ftrig[5].Q;
+				GVL.hallSequence.6 := axis[XM].hallSigCal_rtrig[6].Q OR axis[XM].hallSigCal_ftrig[6].Q;
+				GVL.hallSequence.7 := axis[XM].hallSigCal_rtrig[7].Q OR axis[XM].hallSigCal_ftrig[7].Q;
+				GVL.hallSequence.8 := axis[XM].hallSigCal_rtrig[8].Q OR axis[XM].hallSigCal_ftrig[8].Q;
+				GVL.hallSequence.9 := axis[XM].hallSigCal_rtrig[9].Q OR axis[XM].hallSigCal_ftrig[9].Q;
+				GVL.hallSequence.10 := axis[XM].hallSigCal_rtrig[10].Q OR axis[XM].hallSigCal_ftrig[10].Q;
+				GVL.hallSequence.11 := axis[XM].hallSigCal_rtrig[11].Q OR axis[XM].hallSigCal_ftrig[11].Q;
+				GVL.hallSequence.12 := axis[XM].hallSigCal_rtrig[12].Q OR axis[XM].hallSigCal_ftrig[12].Q;
+				GVL.hallSequence.13 := axis[XM].hallSigCal_rtrig[13].Q OR axis[XM].hallSigCal_ftrig[13].Q;
+				GVL.hallSequence.14 := axis[XM].hallSigCal_rtrig[14].Q OR axis[XM].hallSigCal_ftrig[14].Q;			
+			
+			IF (GVL.hallSequence.0 XOR GVL.hallSequence.1 XOR GVL.hallSequence.2 XOR GVL.hallSequence.3 XOR GVL.hallSequence.4 XOR
+				GVL.hallSequence.5 XOR GVL.hallSequence.6 XOR GVL.hallSequence.7 XOR GVL.hallSequence.8 XOR GVL.hallSequence.9 XOR
+				GVL.hallSequence.10 XOR GVL.hallSequence.11 XOR GVL.hallSequence.12 XOR GVL.hallSequence.13 XOR GVL.hallSequence.14) THEN
+				axis[XM].seqToCompare := GVL.hallSequence;
+				
+				GVL.testINT := GVL.testINT +1;
+				
+			ELSE
+				GVL.testINT2 := GVL.testINT2 +1;
+				IF axis[XP].axisRef.status.PositiveDirection THEN
+					axis[XM].seqToCompare := (GVL.hallSequence XOR axis[XP].hallSequence[1, axis[XP].seqCount]);	
+				ELSIF axis[XP].axisRef.status.NegativeDirection THEN
+					axis[XM].seqToCompare := (GVL.hallSequence XOR axis[XP].hallSequence[0, axis[XP].seqCount]);		
+				ELSE
+					; //PUT ERROR CODE HERE
+				END_IF		
+			END_IF	
+				
+			IF axis[XM].axisRef.status.PositiveDirection AND axis[XM].hallSequence[0, axis[XM].seqCount] = axis[XM].seqToCompare THEN
 				axis[XM].hallPosAct := axis[XM].hallPosCal[0, i, axis[XM].tripCount[i]];
 				axis[XM].tripCount[i] := axis[XM].tripCount[i] - 1;	
+				axis[XM].seqCount := axis[XM].seqCount - 1;
+				
 			END_IF
-			IF axis[XM].axisRef.status.NegativeDirection THEN
+			IF axis[XM].axisRef.status.NegativeDirection AND axis[XM].hallSequence[1, axis[XM].seqCount] = axis[XM].seqToCompare THEN
 				axis[XM].hallPosAct := axis[XM].hallPosCal[1, i, axis[XM].tripCount[i]];
 				axis[XM].tripCount[i] := axis[XM].tripCount[i] + 1;	
+				axis[XM].seqCount := axis[XM].seqCount + 1;
 			END_IF
 		END_IF
 	END_FOR
@@ -314,7 +395,9 @@ ELSE
 	END_FOR
 	
 END_IF
-]]></ST>
+*)
+
+tracking();]]></ST>
     </Implementation>
     <Action Name="calibrateXM" Id="{f55b06c7-6108-4c5a-8395-ce4a40ab5ee7}">
       <Implementation>
@@ -327,15 +410,11 @@ END_IF
 CASE stateLVL2 OF
 	
 	9010: //Clear previous Calibration value
-		FOR i:=GVL.HALL_LL_XP_C TO GVL.HALL_UL_XP_C BY 1 DO
-			FOR j:=0 TO GVL.HALL_TRIP_C BY 1 DO
-				axis[XM].hallPosCal[0,i,j]:=0;
-				axis[XM].hallPosCal[1,i,j]:=0;
-			END_FOR
+		FOR i:=0 TO GVL.tripCount_C BY 1 DO
+			axis[XM].hallPosCal[0,i]:=0;
+			axis[XM].hallPosCal[1,i]:=0;
 		END_FOR
-		FOR i:=GVL.HALL_LL_XM_C TO GVL.HALL_UL_XM_C BY 1 DO
-				axis[XM].tripCount[i] := 0;	
-		END_FOR
+		axis[XM].tripCount := 0;	
 		stateLVL2:=9020;
 		
 	9020: //Put Shutter in Open Position
@@ -348,23 +427,41 @@ CASE stateLVL2 OF
 		END_IF
 		
 		//This section is required to get rid of false trigger when system starts up
-		FOR i:=GVL.HALL_LL_XM_C TO GVL.HALL_UL_XM_C BY 1 DO
+		FOR i:=GVL.hallLowerLimit_C TO GVL.hallUpperLimit_C BY 1 DO
 			axis[XM].hallSigCal_rtrig[i](CLK:=GVL.hallSwitch[i]);
 			axis[XM].hallSigCal_ftrig[i](CLK:=GVL.hallSwitch[i]);
 			IF axis[XM].hallSigCal_rtrig[i].Q OR axis[XM].hallSigCal_ftrig[i].Q THEN
 				; //do nothing
 			END_IF
 		END_FOR	
-
 	
 	9030: //Calibrate AxisXM twoards X+ side.
 		//record hall trips at rising and falling edge
-		FOR i:=GVL.HALL_LL_XM_C TO GVL.HALL_UL_XM_C BY 1 DO
+		FOR i:=GVL.hallLowerLimit_C TO GVL.hallUpperLimit_C BY 1 DO
 			axis[XM].hallSigCal_rtrig[i](CLK:=GVL.hallSwitch[i]);
 			axis[XM].hallSigCal_ftrig[i](CLK:=GVL.hallSwitch[i]);
 			IF axis[XM].hallSigCal_rtrig[i].Q OR axis[XM].hallSigCal_ftrig[i].Q THEN	
-				axis[XM].hallPosCal[1, i, axis[XM].tripCount[i]] := axis[XM].axisRef.NcToPlc.ActPos;
-				axis[XM].tripCount[i] := axis[XM].tripCount[i] + 1;		
+				
+				axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount].0 := axis[XM].hallSigCal_rtrig[0].Q OR axis[XM].hallSigCal_ftrig[0].Q;
+				axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount].1 := axis[XM].hallSigCal_rtrig[1].Q OR axis[XM].hallSigCal_ftrig[1].Q;
+				axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount].2 := axis[XM].hallSigCal_rtrig[2].Q OR axis[XM].hallSigCal_ftrig[2].Q;
+				axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount].3 := axis[XM].hallSigCal_rtrig[3].Q OR axis[XM].hallSigCal_ftrig[3].Q;
+				axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount].4 := axis[XM].hallSigCal_rtrig[4].Q OR axis[XM].hallSigCal_ftrig[4].Q;
+				axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount].5 := axis[XM].hallSigCal_rtrig[5].Q OR axis[XM].hallSigCal_ftrig[5].Q;
+				axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount].6 := axis[XM].hallSigCal_rtrig[6].Q OR axis[XM].hallSigCal_ftrig[6].Q;
+				axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount].7 := axis[XM].hallSigCal_rtrig[7].Q OR axis[XM].hallSigCal_ftrig[7].Q;
+				axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount].8 := axis[XM].hallSigCal_rtrig[8].Q OR axis[XM].hallSigCal_ftrig[8].Q;
+				axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount].9 := axis[XM].hallSigCal_rtrig[9].Q OR axis[XM].hallSigCal_ftrig[9].Q;
+				axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount].10 := axis[XM].hallSigCal_rtrig[10].Q OR axis[XM].hallSigCal_ftrig[10].Q;
+				axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount].11 := axis[XM].hallSigCal_rtrig[11].Q OR axis[XM].hallSigCal_ftrig[11].Q;
+				axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount].12 := axis[XM].hallSigCal_rtrig[12].Q OR axis[XM].hallSigCal_ftrig[12].Q;
+				axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount].13 := axis[XM].hallSigCal_rtrig[13].Q OR axis[XM].hallSigCal_ftrig[13].Q;
+				axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount].14 := axis[XM].hallSigCal_rtrig[14].Q OR axis[XM].hallSigCal_ftrig[14].Q;
+				
+				axis[XM].hallPosCal[GVL.dirNeg_C, axis[XM].tripCount] := axis[XM].axisRef.NcToPlc.ActPos;
+				
+				axis[XM].tripCount := axis[XM].tripCount + 1;		
+
 			END_IF
 		END_FOR
 
@@ -378,12 +475,29 @@ CASE stateLVL2 OF
 	
 	9040: //Calibrate AxisXM twoards X- side.
 		//record hall trips at rising and falling edge
-		FOR i:=GVL.HALL_LL_XM_C TO GVL.HALL_UL_XM_C BY 1 DO
+		FOR i:=GVL.hallLowerLimit_C TO GVL.hallUpperLimit_C BY 1 DO
 			axis[XM].hallSigCal_rtrig[i](CLK:=GVL.hallSwitch[i]);
 			axis[XM].hallSigCal_ftrig[i](CLK:=GVL.hallSwitch[i]);
 			IF axis[XM].hallSigCal_rtrig[i].Q OR axis[XM].hallSigCal_ftrig[i].Q THEN	
-				axis[XM].hallPosCal[0, i, axis[XM].tripCount[i]] := axis[XM].axisRef.NcToPlc.ActPos;
-				axis[XM].tripCount[i] := axis[XM].tripCount[i] - 1;		
+				
+				axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount].0 := axis[XM].hallSigCal_rtrig[0].Q OR axis[XM].hallSigCal_ftrig[0].Q;
+				axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount].1 := axis[XM].hallSigCal_rtrig[1].Q OR axis[XM].hallSigCal_ftrig[1].Q;
+				axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount].2 := axis[XM].hallSigCal_rtrig[2].Q OR axis[XM].hallSigCal_ftrig[2].Q;
+				axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount].3 := axis[XM].hallSigCal_rtrig[3].Q OR axis[XM].hallSigCal_ftrig[3].Q;
+				axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount].4 := axis[XM].hallSigCal_rtrig[4].Q OR axis[XM].hallSigCal_ftrig[4].Q;
+				axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount].5 := axis[XM].hallSigCal_rtrig[5].Q OR axis[XM].hallSigCal_ftrig[5].Q;
+				axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount].6 := axis[XM].hallSigCal_rtrig[6].Q OR axis[XM].hallSigCal_ftrig[6].Q;
+				axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount].7 := axis[XM].hallSigCal_rtrig[7].Q OR axis[XM].hallSigCal_ftrig[7].Q;
+				axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount].8 := axis[XM].hallSigCal_rtrig[8].Q OR axis[XM].hallSigCal_ftrig[8].Q;
+				axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount].9 := axis[XM].hallSigCal_rtrig[9].Q OR axis[XM].hallSigCal_ftrig[9].Q;
+				axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount].10 := axis[XM].hallSigCal_rtrig[10].Q OR axis[XM].hallSigCal_ftrig[10].Q;
+				axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount].11 := axis[XM].hallSigCal_rtrig[11].Q OR axis[XM].hallSigCal_ftrig[11].Q;
+				axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount].12 := axis[XM].hallSigCal_rtrig[12].Q OR axis[XM].hallSigCal_ftrig[12].Q;
+				axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount].13 := axis[XM].hallSigCal_rtrig[13].Q OR axis[XM].hallSigCal_ftrig[13].Q;
+				axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount].14 := axis[XM].hallSigCal_rtrig[14].Q OR axis[XM].hallSigCal_ftrig[14].Q;
+			
+				axis[XM].hallPosCal[GVL.dirPos_C, axis[XM].tripCount] := axis[XM].axisRef.NcToPlc.ActPos;
+				axis[XM].tripCount := axis[XM].tripCount - 1;	
 			END_IF
 		END_FOR
 	
@@ -410,21 +524,16 @@ END_CASE
 	initStateLVL2 := TRUE;
 	stateLVL2 :=8010;
 	motionBusy := TRUE;
-	test := test+1;
 END_IF	
 
 CASE stateLVL2 OF
 
 	8010: //Clear previous Calibration value
-		FOR i:=GVL.HALL_LL_XP_C TO GVL.HALL_UL_XP_C BY 1 DO
-			FOR j:=0 TO GVL.HALL_TRIP_C BY 1 DO
-				axis[XP].hallPosCal[0,i,j]:=0;
-				axis[XP].hallPosCal[1,i,j]:=0;
-			END_FOR
+		FOR i:=0 TO GVL.tripCount_C BY 1 DO
+			axis[XP].hallPosCal[0,i]:=0;
+			axis[XP].hallPosCal[1,i]:=0;
 		END_FOR
-		FOR i:=GVL.HALL_LL_XP_C TO GVL.HALL_UL_XP_C BY 1 DO
-				axis[XP].tripCount[i] := 0;	
-		END_FOR
+		axis[XP].tripCount := 0;	
 		stateLVL2:=8020;
 		
 	8020: //Put Shutter in Open Position
@@ -437,7 +546,7 @@ CASE stateLVL2 OF
 		END_IF
 		
 		//This section is required to get rid of false trigger when system starts up
-		FOR i:=GVL.HALL_LL_XP_C TO GVL.HALL_UL_XP_C BY 1 DO
+		FOR i:=GVL.hallLowerLimit_C TO GVL.hallUpperLimit_C BY 1 DO
 			axis[XP].hallSigCal_rtrig[i](CLK:=GVL.hallSwitch[i]);
 			axis[XP].hallSigCal_ftrig[i](CLK:=GVL.hallSwitch[i]);
 			IF axis[XP].hallSigCal_rtrig[i].Q OR axis[XP].hallSigCal_ftrig[i].Q THEN
@@ -446,13 +555,32 @@ CASE stateLVL2 OF
 		END_FOR
 
 	8030: //Calibrate AxisXP towards X- side.
-		//record hall trips at rising and falling edge
-		FOR i:=GVL.HALL_LL_XP_C TO GVL.HALL_UL_XP_C BY 1 DO
+		//record position of hall trips at rising and falling edge
+		FOR i:=GVL.hallLowerLimit_C TO GVL.hallUpperLimit_C BY 1 DO
 			axis[XP].hallSigCal_rtrig[i](CLK:=GVL.hallSwitch[i]);
 			axis[XP].hallSigCal_ftrig[i](CLK:=GVL.hallSwitch[i]);
 			IF axis[XP].hallSigCal_rtrig[i].Q OR axis[XP].hallSigCal_ftrig[i].Q THEN	
-				axis[XP].hallPosCal[0, i, axis[XP].tripCount[i]] := axis[XP].axisRef.NcToPlc.ActPos;
-				axis[XP].tripCount[i] := axis[XP].tripCount[i] + 1;		
+
+				axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount].0 := axis[XP].hallSigCal_rtrig[0].Q OR axis[XP].hallSigCal_ftrig[0].Q;
+				axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount].1 := axis[XP].hallSigCal_rtrig[1].Q OR axis[XP].hallSigCal_ftrig[1].Q;
+				axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount].2 := axis[XP].hallSigCal_rtrig[2].Q OR axis[XP].hallSigCal_ftrig[2].Q;
+				axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount].3 := axis[XP].hallSigCal_rtrig[3].Q OR axis[XP].hallSigCal_ftrig[3].Q;
+				axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount].4 := axis[XP].hallSigCal_rtrig[4].Q OR axis[XP].hallSigCal_ftrig[4].Q;
+				axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount].5 := axis[XP].hallSigCal_rtrig[5].Q OR axis[XP].hallSigCal_ftrig[5].Q;
+				axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount].6 := axis[XP].hallSigCal_rtrig[6].Q OR axis[XP].hallSigCal_ftrig[6].Q;
+				axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount].7 := axis[XP].hallSigCal_rtrig[7].Q OR axis[XP].hallSigCal_ftrig[7].Q;
+				axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount].8 := axis[XP].hallSigCal_rtrig[8].Q OR axis[XP].hallSigCal_ftrig[8].Q;
+				axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount].9 := axis[XP].hallSigCal_rtrig[9].Q OR axis[XP].hallSigCal_ftrig[9].Q;
+				axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount].10 := axis[XP].hallSigCal_rtrig[10].Q OR axis[XP].hallSigCal_ftrig[10].Q;
+				axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount].11 := axis[XP].hallSigCal_rtrig[11].Q OR axis[XP].hallSigCal_ftrig[11].Q;
+				axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount].12 := axis[XP].hallSigCal_rtrig[12].Q OR axis[XP].hallSigCal_ftrig[12].Q;
+				axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount].13 := axis[XP].hallSigCal_rtrig[13].Q OR axis[XP].hallSigCal_ftrig[13].Q;
+				axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount].14 := axis[XP].hallSigCal_rtrig[14].Q OR axis[XP].hallSigCal_ftrig[14].Q;
+
+				axis[XP].hallPosCal[GVL.dirPos_C, axis[XP].tripCount] := axis[XP].axisRef.NcToPlc.ActPos;
+				
+				axis[XP].tripCount := axis[XP].tripCount + 1;		
+
 			END_IF
 		END_FOR
 	
@@ -466,12 +594,29 @@ CASE stateLVL2 OF
 		
 	8040: //Calibrate AxisXP towards X+ side.
 		//record hall trips at rising and falling edge
-		FOR i:=GVL.HALL_LL_XP_C TO GVL.HALL_UL_XP_C BY 1 DO
+		FOR i:=GVL.hallLowerLimit_C TO GVL.hallUpperLimit_C BY 1 DO
 			axis[XP].hallSigCal_rtrig[i](CLK:=GVL.hallSwitch[i]);
 			axis[XP].hallSigCal_ftrig[i](CLK:=GVL.hallSwitch[i]);
 			IF axis[XP].hallSigCal_rtrig[i].Q OR axis[XP].hallSigCal_ftrig[i].Q THEN
-				axis[XP].hallPosCal[1, i, axis[XP].tripCount[i]] := axis[XP].axisRef.NcToPlc.ActPos;
-				axis[XP].tripCount[i] := axis[XP].tripCount[i] - 1;	
+				
+				axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount].0 := axis[XP].hallSigCal_rtrig[0].Q OR axis[XP].hallSigCal_ftrig[0].Q;
+				axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount].1 := axis[XP].hallSigCal_rtrig[1].Q OR axis[XP].hallSigCal_ftrig[1].Q;
+				axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount].2 := axis[XP].hallSigCal_rtrig[2].Q OR axis[XP].hallSigCal_ftrig[2].Q;
+				axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount].3 := axis[XP].hallSigCal_rtrig[3].Q OR axis[XP].hallSigCal_ftrig[3].Q;
+				axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount].4 := axis[XP].hallSigCal_rtrig[4].Q OR axis[XP].hallSigCal_ftrig[4].Q;
+				axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount].5 := axis[XP].hallSigCal_rtrig[5].Q OR axis[XP].hallSigCal_ftrig[5].Q;
+				axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount].6 := axis[XP].hallSigCal_rtrig[6].Q OR axis[XP].hallSigCal_ftrig[6].Q;
+				axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount].7 := axis[XP].hallSigCal_rtrig[7].Q OR axis[XP].hallSigCal_ftrig[7].Q;
+				axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount].8 := axis[XP].hallSigCal_rtrig[8].Q OR axis[XP].hallSigCal_ftrig[8].Q;
+				axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount].9 := axis[XP].hallSigCal_rtrig[9].Q OR axis[XP].hallSigCal_ftrig[9].Q;
+				axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount].10 := axis[XP].hallSigCal_rtrig[10].Q OR axis[XP].hallSigCal_ftrig[10].Q;
+				axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount].11 := axis[XP].hallSigCal_rtrig[11].Q OR axis[XP].hallSigCal_ftrig[11].Q;
+				axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount].12 := axis[XP].hallSigCal_rtrig[12].Q OR axis[XP].hallSigCal_ftrig[12].Q;
+				axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount].13 := axis[XP].hallSigCal_rtrig[13].Q OR axis[XP].hallSigCal_ftrig[13].Q;
+				axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount].14 := axis[XP].hallSigCal_rtrig[14].Q OR axis[XP].hallSigCal_ftrig[14].Q;
+			
+				axis[XP].hallPosCal[GVL.dirNeg_C, axis[XP].tripCount] := axis[XP].axisRef.NcToPlc.ActPos;
+				axis[XP].tripCount := axis[XP].tripCount - 1;	
 			END_IF
 		END_FOR
 	
@@ -714,9 +859,174 @@ CASE stateLVL2 OF
 END_CASE]]></ST>
       </Implementation>
     </Action>
-    <Action Name="Visit" Id="{290a6cba-5f49-4def-a018-860e2635ef48}">
+    <Action Name="tracking" Id="{f70340f7-7c55-4a6a-973e-20bf0bb509c6}">
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[
+
+IF stateLVL1 <> 400 THEN
+	
+	//Actual Position Calc AxisXP
+	FOR i:=GVL.hallLowerLimit_C TO GVL.hallUpperLimit_C BY 1 DO
+		axis[XP].hallSigCal_rtrig[i](CLK:=GVL.hallSwitch[i]);
+		axis[XP].hallSigCal_ftrig[i](CLK:=GVL.hallSwitch[i]);
+		IF (axis[XP].hallSigCal_rtrig[i].Q OR axis[XP].hallSigCal_ftrig[i].Q) AND axis[XP].axisRef.Status.Moving THEN
+			
+				//put trigger status of each hall sensor into hallSequence for comparing;
+				GVL.hallSequence.0 := axis[XP].hallSigCal_rtrig[0].Q OR axis[XP].hallSigCal_ftrig[0].Q;
+				GVL.hallSequence.1 := axis[XP].hallSigCal_rtrig[1].Q OR axis[XP].hallSigCal_ftrig[1].Q;
+				GVL.hallSequence.2 := axis[XP].hallSigCal_rtrig[2].Q OR axis[XP].hallSigCal_ftrig[2].Q;
+				GVL.hallSequence.3 := axis[XP].hallSigCal_rtrig[3].Q OR axis[XP].hallSigCal_ftrig[3].Q;
+				GVL.hallSequence.4 := axis[XP].hallSigCal_rtrig[4].Q OR axis[XP].hallSigCal_ftrig[4].Q;
+				GVL.hallSequence.5 := axis[XP].hallSigCal_rtrig[5].Q OR axis[XP].hallSigCal_ftrig[5].Q;
+				GVL.hallSequence.6 := axis[XP].hallSigCal_rtrig[6].Q OR axis[XP].hallSigCal_ftrig[6].Q;
+				GVL.hallSequence.7 := axis[XP].hallSigCal_rtrig[7].Q OR axis[XP].hallSigCal_ftrig[7].Q;
+				GVL.hallSequence.8 := axis[XP].hallSigCal_rtrig[8].Q OR axis[XP].hallSigCal_ftrig[8].Q;
+				GVL.hallSequence.9 := axis[XP].hallSigCal_rtrig[9].Q OR axis[XP].hallSigCal_ftrig[9].Q;
+				GVL.hallSequence.10 := axis[XP].hallSigCal_rtrig[10].Q OR axis[XP].hallSigCal_ftrig[10].Q;
+				GVL.hallSequence.11 := axis[XP].hallSigCal_rtrig[11].Q OR axis[XP].hallSigCal_ftrig[11].Q;
+				GVL.hallSequence.12 := axis[XP].hallSigCal_rtrig[12].Q OR axis[XP].hallSigCal_ftrig[12].Q;
+				GVL.hallSequence.13 := axis[XP].hallSigCal_rtrig[13].Q OR axis[XP].hallSigCal_ftrig[13].Q;
+				GVL.hallSequence.14 := axis[XP].hallSigCal_rtrig[14].Q OR axis[XP].hallSigCal_ftrig[14].Q;	
+		
+			(* Unary XOR of hallSequence. With one blade running, the 16-bit variable would only have 1 bit HIGH while the rest is LOW.
+				Result of 1 indicates presence of one blade sequence. Result of 0 indicates presence of two blade sequence *)
+			xorResult := (GVL.hallSequence.0 XOR GVL.hallSequence.1 XOR GVL.hallSequence.2 XOR GVL.hallSequence.3 XOR GVL.hallSequence.4 XOR
+				GVL.hallSequence.5 XOR GVL.hallSequence.6 XOR GVL.hallSequence.7 XOR GVL.hallSequence.8 XOR GVL.hallSequence.9 XOR
+				GVL.hallSequence.10 XOR GVL.hallSequence.11 XOR GVL.hallSequence.12 XOR GVL.hallSequence.13 XOR GVL.hallSequence.14);
+			IF xorResult THEN
+				axis[XP].seqToCompare := GVL.hallSequence;
+			ELSIF axis[XM].axisRef.status.PositiveDirection THEN
+				axis[XP].seqToCompare := (GVL.hallSequence XOR axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount+1]); //+1 required since XM tripCount does not update until further down
+				IF axis[XP].seqToCompare > GVL.hallSequence THEN
+					axis[XP].seqToCompare := (GVL.hallSequence XOR axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount]);
+				END_IF	
+			ELSIF axis[XM].axisRef.status.NegativeDirection THEN
+				axis[XP].seqToCompare := (GVL.hallSequence XOR axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount-1]);	
+				IF axis[XP].seqToCompare > GVL.hallSequence THEN
+					axis[XP].seqToCompare := (GVL.hallSequence XOR axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount]);
+				END_IF	
+			ELSE
+				; //PUT ERROR CODE HERE
+			END_IF	
+	
+			
+			//Compare current sequence with recorded sequence. Update position if match.
+			IF axis[XP].axisRef.status.PositiveDirection AND axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount] = axis[XP].seqToCompare THEN
+				axis[XP].hallPosAct := axis[XP].hallPosCal[GVL.dirPos_C, axis[XP].tripCount];
+				axis[XP].tripCount := axis[XP].tripCount + 1;	
+			END_IF
+			IF axis[XP].axisRef.status.NegativeDirection AND axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount] = axis[XP].seqToCompare THEN
+				axis[XP].hallPosAct := axis[XP].hallPosCal[GVL.dirNeg_C, axis[XP].tripCount];
+				axis[XP].tripCount := axis[XP].tripCount - 1;	
+			END_IF
+			
+		END_IF
+	END_FOR
+	
+	
+	
+	
+	
+	
+	//Actual Position Calc AxisXM
+	FOR i:=GVL.hallLowerLimit_C TO GVL.hallUpperLimit_C BY 1 DO
+		axis[XM].hallSigCal_rtrig[i](CLK:=GVL.hallSwitch[i]);
+		axis[XM].hallSigCal_ftrig[i](CLK:=GVL.hallSwitch[i]);
+		IF (axis[XM].hallSigCal_rtrig[i].Q OR axis[XM].hallSigCal_ftrig[i].Q) AND axis[XM].axisRef.Status.Moving THEN
+			
+				GVL.hallSequence.0 := axis[XM].hallSigCal_rtrig[0].Q OR axis[XM].hallSigCal_ftrig[0].Q;
+				GVL.hallSequence.1 := axis[XM].hallSigCal_rtrig[1].Q OR axis[XM].hallSigCal_ftrig[1].Q;
+				GVL.hallSequence.2 := axis[XM].hallSigCal_rtrig[2].Q OR axis[XM].hallSigCal_ftrig[2].Q;
+				GVL.hallSequence.3 := axis[XM].hallSigCal_rtrig[3].Q OR axis[XM].hallSigCal_ftrig[3].Q;
+				GVL.hallSequence.4 := axis[XM].hallSigCal_rtrig[4].Q OR axis[XM].hallSigCal_ftrig[4].Q;
+				GVL.hallSequence.5 := axis[XM].hallSigCal_rtrig[5].Q OR axis[XM].hallSigCal_ftrig[5].Q;
+				GVL.hallSequence.6 := axis[XM].hallSigCal_rtrig[6].Q OR axis[XM].hallSigCal_ftrig[6].Q;
+				GVL.hallSequence.7 := axis[XM].hallSigCal_rtrig[7].Q OR axis[XM].hallSigCal_ftrig[7].Q;
+				GVL.hallSequence.8 := axis[XM].hallSigCal_rtrig[8].Q OR axis[XM].hallSigCal_ftrig[8].Q;
+				GVL.hallSequence.9 := axis[XM].hallSigCal_rtrig[9].Q OR axis[XM].hallSigCal_ftrig[9].Q;
+				GVL.hallSequence.10 := axis[XM].hallSigCal_rtrig[10].Q OR axis[XM].hallSigCal_ftrig[10].Q;
+				GVL.hallSequence.11 := axis[XM].hallSigCal_rtrig[11].Q OR axis[XM].hallSigCal_ftrig[11].Q;
+				GVL.hallSequence.12 := axis[XM].hallSigCal_rtrig[12].Q OR axis[XM].hallSigCal_ftrig[12].Q;
+				GVL.hallSequence.13 := axis[XM].hallSigCal_rtrig[13].Q OR axis[XM].hallSigCal_ftrig[13].Q;
+				GVL.hallSequence.14 := axis[XM].hallSigCal_rtrig[14].Q OR axis[XM].hallSigCal_ftrig[14].Q;			
+			
+			IF (GVL.hallSequence.0 XOR GVL.hallSequence.1 XOR GVL.hallSequence.2 XOR GVL.hallSequence.3 XOR GVL.hallSequence.4 XOR
+				GVL.hallSequence.5 XOR GVL.hallSequence.6 XOR GVL.hallSequence.7 XOR GVL.hallSequence.8 XOR GVL.hallSequence.9 XOR
+				GVL.hallSequence.10 XOR GVL.hallSequence.11 XOR GVL.hallSequence.12 XOR GVL.hallSequence.13 XOR GVL.hallSequence.14) THEN
+				axis[XM].seqToCompare := GVL.hallSequence;
+				
+				GVL.testINT := GVL.testINT +1;
+				
+			ELSE
+				GVL.testINT2 := GVL.testINT2 +1;
+				IF axis[XP].axisRef.status.PositiveDirection THEN
+					axis[XM].seqToCompare := (GVL.hallSequence XOR axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount-1]);	
+					IF axis[XM].seqToCompare > GVL.hallSequence THEN
+						axis[XM].seqToCompare := (GVL.hallSequence XOR axis[XP].hallSequence[GVL.dirPos_C, axis[XP].tripCount]);
+					END_IF	
+				ELSIF axis[XP].axisRef.status.NegativeDirection THEN
+					axis[XM].seqToCompare := (GVL.hallSequence XOR axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount+1]);	
+					IF axis[XM].seqToCompare > GVL.hallSequence THEN
+						axis[XM].seqToCompare := (GVL.hallSequence XOR axis[XP].hallSequence[GVL.dirNeg_C, axis[XP].tripCount]);
+					END_IF		
+				ELSE
+					; //PUT ERROR CODE HERE
+				END_IF		
+			END_IF	
+				
+			IF axis[XM].axisRef.status.PositiveDirection AND axis[XM].hallSequence[GVL.dirPos_C, axis[XM].tripCount] = axis[XM].seqToCompare THEN
+				axis[XM].hallPosAct := axis[XM].hallPosCal[GVL.dirPos_C, axis[XM].tripCount];
+				axis[XM].tripCount := axis[XM].tripCount - 1;	
+			END_IF
+			IF axis[XM].axisRef.status.NegativeDirection AND axis[XM].hallSequence[GVL.dirNeg_C, axis[XM].tripCount] = axis[XM].seqToCompare THEN
+				axis[XM].hallPosAct := axis[XM].hallPosCal[GVL.dirNeg_C, axis[XM].tripCount];
+				axis[XM].tripCount := axis[XM].tripCount + 1;	
+			END_IF
+		END_IF
+	END_FOR
+
+ELSE
+	axis[XP].tripCount := 0;	
+	axis[XM].tripCount := 0;
+END_IF
+]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="travellingSlit" Id="{010e22ff-7bc2-4993-b1b3-4a27b2699493}">
+      <Implementation>
+        <ST><![CDATA[IF initStateLVL2 = FALSE THEN
+	initStateLVL2 := TRUE;
+	stateLVL2 :=10000;
+	motionBusy := TRUE;
+END_IF	
+
+CASE stateLVL2 OF
+	
+	10000:
+		motionBusy := TRUE;
+		axis[XP].mcMoveAbs(Axis:=axis[XP].axisRef, Position:= 0, Velocity:=300, Execute:=TRUE);
+		axis[XM].mcMoveAbs(Axis:=axis[XM].axisRef, Position:= 166, Velocity:=300, Execute:=TRUE);
+		IF axis[XP].mcMoveAbs.Done AND axis[XM].mcMoveAbs.Done THEN
+			axis[XP].mcMoveAbs(Axis:=axis[XP].axisRef, Execute:=FALSE);
+			axis[XM].mcMoveAbs(Axis:=axis[XM].axisRef, Execute:=FALSE);
+			stateLVL2 := 10010;
+		END_IF	
+		
+	10010:
+		axis[XP].mcMoveAbs(Axis:=axis[XP].axisRef, Position:= 584, Velocity:=1666, Execute:=TRUE);
+		axis[XM].mcMoveAbs(Axis:=axis[XM].axisRef, Position:= 750, Velocity:=1666, Execute:=TRUE);
+		IF axis[XP].mcMoveAbs.Done AND axis[XM].mcMoveAbs.Done THEN
+			axis[XP].mcMoveAbs(Axis:=axis[XP].axisRef, Execute:=FALSE);
+			axis[XM].mcMoveAbs(Axis:=axis[XM].axisRef, Execute:=FALSE);
+			stateLVL2 := 10020;
+		END_IF			
+
+	10020: //End action
+		initStateLVL2 := FALSE;
+		stateLVL2 := 0;
+		motionBusy := FALSE;
+		
+END_CASE]]></ST>
       </Implementation>
     </Action>
     <LineIds Name="TestMotion">
@@ -861,6 +1171,7 @@ END_CASE]]></ST>
       <LineId Id="1160" Count="0" />
       <LineId Id="1166" Count="0" />
       <LineId Id="2623" Count="4" />
+      <LineId Id="3113" Count="7" />
       <LineId Id="2304" Count="0" />
       <LineId Id="37" Count="0" />
       <LineId Id="696" Count="0" />
@@ -868,13 +1179,45 @@ END_CASE]]></ST>
       <LineId Id="2855" Count="1" />
       <LineId Id="906" Count="0" />
       <LineId Id="1371" Count="3" />
+      <LineId Id="3085" Count="1" />
+      <LineId Id="3099" Count="13" />
+      <LineId Id="3185" Count="0" />
+      <LineId Id="3220" Count="0" />
+      <LineId Id="3225" Count="1" />
+      <LineId Id="3222" Count="0" />
+      <LineId Id="3245" Count="0" />
+      <LineId Id="3247" Count="0" />
+      <LineId Id="3246" Count="0" />
+      <LineId Id="3229" Count="0" />
+      <LineId Id="3248" Count="0" />
+      <LineId Id="3235" Count="0" />
+      <LineId Id="3230" Count="0" />
+      <LineId Id="3240" Count="0" />
+      <LineId Id="3238" Count="0" />
+      <LineId Id="3241" Count="1" />
+      <LineId Id="3239" Count="0" />
+      <LineId Id="3223" Count="0" />
+      <LineId Id="3232" Count="0" />
       <LineId Id="1405" Count="1" />
       <LineId Id="1408" Count="0" />
+      <LineId Id="3177" Count="0" />
+      <LineId Id="3190" Count="0" />
       <LineId Id="1407" Count="0" />
       <LineId Id="1684" Count="0" />
-      <LineId Id="1687" Count="2" />
+      <LineId Id="1687" Count="1" />
+      <LineId Id="3178" Count="0" />
+      <LineId Id="1689" Count="0" />
+      <LineId Id="3084" Count="0" />
       <LineId Id="1381" Count="1" />
-      <LineId Id="2325" Count="14" />
+      <LineId Id="2325" Count="5" />
+      <LineId Id="3195" Count="15" />
+      <LineId Id="3218" Count="0" />
+      <LineId Id="3249" Count="15" />
+      <LineId Id="3219" Count="0" />
+      <LineId Id="3211" Count="5" />
+      <LineId Id="2334" Count="2" />
+      <LineId Id="3217" Count="0" />
+      <LineId Id="2337" Count="2" />
       <LineId Id="1711" Count="0" />
       <LineId Id="2913" Count="0" />
       <LineId Id="2928" Count="0" />
@@ -885,18 +1228,30 @@ END_CASE]]></ST>
       <LineId Id="2929" Count="0" />
       <LineId Id="2533" Count="0" />
       <LineId Id="1450" Count="0" />
+      <LineId Id="3271" Count="1" />
       <LineId Id="9" Count="0" />
     </LineIds>
     <LineIds Name="TestMotion.calibrateXM">
       <LineId Id="71" Count="6" />
       <LineId Id="79" Count="0" />
-      <LineId Id="128" Count="1" />
+      <LineId Id="128" Count="0" />
       <LineId Id="164" Count="1" />
-      <LineId Id="132" Count="23" />
-      <LineId Id="126" Count="1" />
+      <LineId Id="133" Count="0" />
+      <LineId Id="135" Count="0" />
+      <LineId Id="137" Count="18" />
+      <LineId Id="127" Count="0" />
       <LineId Id="81" Count="5" />
-      <LineId Id="166" Count="0" />
-      <LineId Id="88" Count="29" />
+      <LineId Id="167" Count="1" />
+      <LineId Id="317" Count="13" />
+      <LineId Id="169" Count="0" />
+      <LineId Id="334" Count="1" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="201" Count="0" />
+      <LineId Id="89" Count="16" />
+      <LineId Id="336" Count="1" />
+      <LineId Id="339" Count="13" />
+      <LineId Id="338" Count="0" />
+      <LineId Id="106" Count="11" />
       <LineId Id="157" Count="0" />
       <LineId Id="161" Count="0" />
       <LineId Id="163" Count="0" />
@@ -907,17 +1262,31 @@ END_CASE]]></ST>
       <LineId Id="1" Count="0" />
     </LineIds>
     <LineIds Name="TestMotion.calibrateXP">
-      <LineId Id="150" Count="2" />
-      <LineId Id="167" Count="0" />
-      <LineId Id="153" Count="2" />
+      <LineId Id="150" Count="5" />
       <LineId Id="80" Count="0" />
       <LineId Id="149" Count="0" />
-      <LineId Id="81" Count="2" />
+      <LineId Id="81" Count="0" />
+      <LineId Id="83" Count="0" />
       <LineId Id="168" Count="0" />
-      <LineId Id="87" Count="3" />
-      <LineId Id="92" Count="38" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="90" Count="0" />
+      <LineId Id="93" Count="25" />
+      <LineId Id="169" Count="0" />
+      <LineId Id="172" Count="0" />
+      <LineId Id="221" Count="11" />
+      <LineId Id="187" Count="1" />
+      <LineId Id="173" Count="0" />
+      <LineId Id="252" Count="1" />
+      <LineId Id="120" Count="0" />
+      <LineId Id="233" Count="0" />
+      <LineId Id="121" Count="9" />
       <LineId Id="161" Count="0" />
-      <LineId Id="131" Count="17" />
+      <LineId Id="131" Count="5" />
+      <LineId Id="257" Count="1" />
+      <LineId Id="261" Count="13" />
+      <LineId Id="260" Count="0" />
+      <LineId Id="256" Count="0" />
+      <LineId Id="138" Count="10" />
       <LineId Id="162" Count="0" />
       <LineId Id="165" Count="1" />
       <LineId Id="163" Count="1" />
@@ -987,7 +1356,47 @@ END_CASE]]></ST>
       <LineId Id="17" Count="0" />
       <LineId Id="1" Count="0" />
     </LineIds>
-    <LineIds Name="TestMotion.Visit">
+    <LineIds Name="TestMotion.tracking">
+      <LineId Id="2" Count="0" />
+      <LineId Id="4" Count="6" />
+      <LineId Id="136" Count="0" />
+      <LineId Id="11" Count="15" />
+      <LineId Id="135" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="133" Count="0" />
+      <LineId Id="147" Count="2" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="151" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="174" Count="0" />
+      <LineId Id="176" Count="1" />
+      <LineId Id="39" Count="1" />
+      <LineId Id="179" Count="0" />
+      <LineId Id="181" Count="1" />
+      <LineId Id="41" Count="4" />
+      <LineId Id="137" Count="0" />
+      <LineId Id="46" Count="2" />
+      <LineId Id="51" Count="3" />
+      <LineId Id="56" Count="3" />
+      <LineId Id="123" Count="5" />
+      <LineId Id="60" Count="32" />
+      <LineId Id="185" Count="2" />
+      <LineId Id="93" Count="1" />
+      <LineId Id="188" Count="2" />
+      <LineId Id="95" Count="7" />
+      <LineId Id="105" Count="3" />
+      <LineId Id="110" Count="4" />
+      <LineId Id="117" Count="1" />
+      <LineId Id="121" Count="1" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="TestMotion.travellingSlit">
+      <LineId Id="2" Count="16" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="28" Count="6" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="19" Count="5" />
       <LineId Id="1" Count="0" />
     </LineIds>
   </POU>

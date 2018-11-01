@@ -32,7 +32,7 @@ IF stateLVL1>400 THEN
 	END_IF
 END_IF
 
-
+(*
 //prevent axis from being setting position that will cause a collision with the other axis - SINGLE AXIS MOVEMENT ONLY. WILL HAVE TO REWRITE FOR DUAL AXIS MOVEMENT.
 IF stateLVL1=400 THEN
 	checkHomed_TON(IN:=FALSE);
@@ -56,7 +56,7 @@ IF axis[XP].axisRef.Status.Homed AND axis[XM].axisRef.Status.Homed THEN
 		axis[XM].mcStop(Axis:=axis[XM].axisRef, Execute:=TRUE);
 	END_IF
 END_IF
-
+*)
 
 //Brake status check - if brakes are not disengaged, disable axis movement
 IF axis[XP].brake AND axis[XM].brake THEN 
