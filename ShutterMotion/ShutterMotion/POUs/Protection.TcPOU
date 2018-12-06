@@ -19,10 +19,14 @@ END_VAR
 VAR CONSTANT
 	XP : INT := 0;
 	XM : INT := 1;
+	diffLimit : LREAL := 22;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[
+      <ST><![CDATA[(*
+This function block contains the logic for the shutter system protection. 
+*)
+
 //Prevents movement if not homed.
 IF stateLVL1>400 THEN
 	IF NOT axis[XP].axisRef.Status.Homed OR NOT axis[XM].axisRef.Status.Homed THEN
@@ -67,16 +71,17 @@ ELSE
 	axis[XM].mcPower(Axis := axis[XM].axisRef, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE); 
 END_IF
 
-
 //Compare position seen by hall switch with position seen by motor encoder
 posDiff[XP] := axis[XP].axisRef.NcToPlc.ActPos - axis[XP].hallPosAct;
 posDiff[XM] := axis[XM].axisRef.NcToPlc.ActPos - axis[XM].hallPosAct;
-IF ABS(posDiff[XP])>22 THEN
+IF ABS(posDiff[XP])>diffLimit OR ABS(posDiff[XM])>diffLimit THEN
 	; //write code for fast stop here and report error
 END_IF
 	]]></ST>
     </Implementation>
     <LineIds Name="Protection">
+      <LineId Id="178" Count="1" />
+      <LineId Id="177" Count="0" />
       <LineId Id="41" Count="3" />
       <LineId Id="74" Count="0" />
       <LineId Id="45" Count="2" />
@@ -103,7 +108,8 @@ END_IF
       <LineId Id="73" Count="0" />
       <LineId Id="63" Count="0" />
       <LineId Id="66" Count="6" />
-      <LineId Id="146" Count="3" />
+      <LineId Id="146" Count="0" />
+      <LineId Id="148" Count="1" />
       <LineId Id="151" Count="2" />
       <LineId Id="155" Count="1" />
       <LineId Id="9" Count="0" />

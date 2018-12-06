@@ -3,15 +3,11 @@
   <POU Name="MAIN" Id="{f71d400f-d229-45a7-bebf-e505112d31c1}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
-	(*
-	cycler		: Cycler;
-	physicalAxes: ARRAY [ShutterSide.PLUSX .. ShutterSide.MINUSX] OF AXIS_REF; (* Must be linked to Axis1 and 2, respectively, under MOTION. *)
-	axisInfo	: ARRAY [ShutterSide.PLUSX..SHutterSide.MINUSX] OF AxisInfo := [(openPosition:=0.0, closedPosition:=750.0), (openPosition:=750.0, closedPosition:=0.0)];
-		*)
 	start, stop, reset, abort: BOOL;
 	delay		: TON;
+	writeDelay  : TON;
 	acceleration, speed: LREAL;
-	exposure	: TIME;
+	//exposure	: TIME :=T#1s;
 
 	
 	motion			: TestMotion;
@@ -22,8 +18,7 @@ VAR
 	
 	power			: Power;
 	protect			: Protection;
-	
-	//test
+
 END_VAR
 VAR CONSTANT
 	accTitle	: STRING := 'Acceleration';
@@ -39,6 +34,10 @@ IF speed>1667 THEN
 	speed:=0;
 END_IF
 
+IF GVL.expoTime<T#100MS THEN
+	testMotionState := -1;
+END_IF
+
 IF delay.Q THEN
     delay(IN:=FALSE);
 	
@@ -46,37 +45,26 @@ IF delay.Q THEN
 			stateLVL1	:= testMotionState,
 			reset		:= reset);
 	
-	CASE GVL.task OF
-		(*
-		1:
-		cycler(
-        	physicalAxes	:= physicalAxes,
-        	axisInfo 		:= axisInfo,
-        	abortRequest	:= abort,
-        	resetRequest	:= reset,
-        	startRequest	:= start,
-        	stopRequest		:= stop,
-        	exposureTime	:= exposure,
-        	speed			:= speed,
-        	acceleration	:= acceleration);
-			*)
-			
-		2:
-		motion(
-			axis			:= axis,
-			abortRequest	:= abort,
-        	resetRequest	:= reset,
-        	startRequest	:= start,
-        	stopRequest		:= stop,
-			homeRequest		:= home,
-			speed			:= speed,
-			stateLVL1		:= testMotionState,
-			nextInstruct	:= nextInstruct);
-
-	END_CASE
+	motion(
+		axis			:= axis,
+		abortRequest	:= abort,
+		resetRequest	:= reset,
+		startRequest	:= start,
+		stopRequest		:= stop,
+		homeRequest		:= home,
+		speed			:= speed,
+		stateLVL1		:= testMotionState,
+		nextInstruct	:= nextInstruct);
 
 	power(state := testMotionState);
+END_IF
 
+//writing persistent data to file
+IF writeDelay.Q THEN
+	GVL.fbWritePersistentData(NETID:='', PORT:=851, START:=TRUE, TMOUT:=T#1S);
+	writeDelay(IN:=FALSE);
+ELSE
+	writeDelay(IN:=TRUE, PT:=T#2S);
 END_IF
 
 
@@ -85,6 +73,7 @@ END_IF
     </Implementation>
     <LineIds Name="MAIN">
       <LineId Id="117" Count="2" />
+      <LineId Id="355" Count="3" />
       <LineId Id="212" Count="0" />
       <LineId Id="17" Count="1" />
       <LineId Id="55" Count="0" />
@@ -92,25 +81,21 @@ END_IF
       <LineId Id="278" Count="0" />
       <LineId Id="280" Count="0" />
       <LineId Id="245" Count="0" />
-      <LineId Id="61" Count="0" />
-      <LineId Id="100" Count="0" />
-      <LineId Id="208" Count="0" />
-      <LineId Id="62" Count="0" />
-      <LineId Id="91" Count="8" />
-      <LineId Id="101" Count="0" />
-      <LineId Id="209" Count="0" />
-      <LineId Id="102" Count="2" />
+      <LineId Id="103" Count="1" />
       <LineId Id="106" Count="0" />
       <LineId Id="108" Count="3" />
       <LineId Id="116" Count="0" />
       <LineId Id="121" Count="0" />
       <LineId Id="141" Count="0" />
       <LineId Id="107" Count="0" />
-      <LineId Id="63" Count="0" />
-      <LineId Id="19" Count="0" />
       <LineId Id="181" Count="0" />
-      <LineId Id="49" Count="0" />
       <LineId Id="33" Count="0" />
+      <LineId Id="313" Count="0" />
+      <LineId Id="315" Count="0" />
+      <LineId Id="314" Count="0" />
+      <LineId Id="316" Count="0" />
+      <LineId Id="318" Count="0" />
+      <LineId Id="324" Count="2" />
       <LineId Id="167" Count="0" />
       <LineId Id="172" Count="0" />
       <LineId Id="168" Count="0" />

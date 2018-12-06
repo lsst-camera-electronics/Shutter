@@ -4,51 +4,62 @@
     <Declaration><![CDATA[{attribute 'qualified_only'}
 VAR_GLOBAL CONSTANT
 	
-//============================GENERAL HALL SWITCH LOCATION ORDER===============================
-//X-side  ||---14---13-12---11---10---9---8---7---6---5---4---3---2-1----0---MOTORS---||  X+ side
-//
-	 //HALL_LL_XP_C	: INT :=0; //hall switch lower limit for axisXP
-	 //HALL_UL_XP_C	: INT :=12; //hall switch upper limit for axisXP
-	 //HALL_LL_XM_C	: INT :=2; //hall switch lower limit for axisXM
-	 //HALL_UL_XM_C	: INT :=14; //hall switch upper limit for axisXM
+(*
+			============================GENERAL SHUTTER LAYOUT===============================
+			  ________________________________________________________________________________
+	        ||                                  HALL SWITCH                                   \
+	X-side  ||       ----14---13--12---11---10---9---8---7---6---5---4---3---2--1---0----      \    X+ side
+			||_________________________________________________________________________         \	
+			| | 				 |                 **  **  **                 |        \ MotorXP \
+			| |					 |            *                  *            |         \ MotorXM \   
+			| |					 |         *                        *         |          \_________\
+			| |				     |       *                            *       |                   | |
+			| |					 |      *                              *      |                   | |
+			| |		     	     |     *                                *     |                   | |
+			| |		BLADE 	     |     *            APERTURE            *     |       BLADE       | |
+			| |		STACK	     |     *                                *     |       STACK       | |
+			| |		 XM 	     |     *                                *     |        XP         | |
+			| |					 |      *                              *      |                   | |
+			| |					 |       *                            *       |                   | |
+			| |					 |         *                        *         |                   | |
+			| |					 |   	      *                  *            |                   | |
+			|_|__________________|_________________**  **  **_________________|___________________|_|
+			
+			       ---Negative-Direction--->                          <---Positive-Direction---
+*)
+
 	 
-	 //HALL_TRIP_C	: INT := 15; //numbers of rise and fall per hall switch counting from 0
-	 //HALL_TOTAL_C 	: INT := 14; //total numbers of hall counting from 0
-	 
-	 hallLowerLimit_C : INT := 0;
-	 hallUpperLimit_C : INT := 14;
-	 
+	 hallLower_C 	: INT := 0;
+	 hallUpper_C 	: INT := 14;
 	 dirPos_C		: INT := 0;
 	 dirNeg_C		: INT := 1;
-	 position_C		: INT := 0;
-	 sequence_C		: INT := 1;
 	 tripPerHall_C	: INT := 16;
 	 numOfHall_C	: INT := 15;
-	 tripCount_C	: INT := (16*15)-1;
+	 tripCount_C	: INT := (tripPerHall_C*numOfHall_C)-1;
 	
 	
 END_VAR
 VAR_GLOBAL
-	task					: 	INT 	:= 2;
+	task				: 	INT 	:= 2;
 
 	//Hall Switches
-	hallSwitch AT %I*	:	ARRAY[0..14] OF BOOL;
+	hallSwitch AT %I*	:ARRAY[0..14] OF BOOL;
 	hallSequence 		: WORD;
-	hallSequenceTest	: ARRAY [0 .. 240] OF WORD;
 
 	//Timer
 	fbWaitTimer	: TON;
-	expoTime	: TIME; //time specified in milliseconds
+	expoTime	: TIME := T#1s; //time specified in milliseconds
 	
 	//others
 	setPosition : LREAL;
 	
 	//TestVariable
 	testINT : INT;
-	testINT2 : INT;
+	//testINT2 : INT;
 	//testLREAL : LREAL;
 	//testWord : WORD;
 	
+	fbWritePersistentData	: WritePersistentData;
 END_VAR
 
 VAR_GLOBAL PERSISTENT // For million cycle test
