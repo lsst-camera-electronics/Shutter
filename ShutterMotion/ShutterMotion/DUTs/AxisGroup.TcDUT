@@ -14,10 +14,10 @@ STRUCT
 	mcJog		: MC_Jog;
 	
 	
-	//
-	direction 	: BOOL;
-	error		: BOOL;
-	errorID 	: UDINT;
+	//Status
+	error			: BOOL;
+	errorID 		: UDINT;
+	isCalibrated	: BOOL;
 	
 	
 	//linkable variables
@@ -34,7 +34,8 @@ STRUCT
 	tripCount 			: INT;
 	hallSequence		: ARRAY [GVL.dirPos_C .. GVL.dirNeg_C, 0 .. GVL.tripCount_C] OF WORD;
 	seqToCompare		: WORD;
-
+	posDiffAtTrip		: LREAL;
+	trackedFlag			: BOOL;
 	
 	
 END_STRUCT

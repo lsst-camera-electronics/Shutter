@@ -3,8 +3,9 @@
   <POU Name="Protection" Id="{2dceb2c7-c1a1-4d57-b0b3-835d45fe31c4}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK Protection
 VAR_IN_OUT
-	axis  : ARRAY [XP .. XM] OF AxisGroup;
-	stateLVL1 : INT;
+	axis  		: ARRAY [XP .. XM] OF AxisGroup;
+	stateLVL1 	: INT;
+	speed 		: LREAL;
 END_VAR
 VAR_INPUT
 	reset : BOOL;
@@ -13,53 +14,17 @@ VAR_OUTPUT
 END_VAR
 VAR
 	checkHomed_TON 	: TON;
-	posDiff			: ARRAY[XP..XM] OF LREAL;
 END_VAR
 
 VAR CONSTANT
 	XP : INT := 0;
 	XM : INT := 1;
-	diffLimit : LREAL := 22;
+	diffLimit : LREAL := 5;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[(*
 This function block contains the logic for the shutter system protection. 
-*)
-
-//Prevents movement if not homed.
-IF stateLVL1>400 THEN
-	IF NOT axis[XP].axisRef.Status.Homed OR NOT axis[XM].axisRef.Status.Homed THEN
-		 axis[XP].mcStop(Axis:=axis[XP].axisRef, Execute:=TRUE);
-		 axis[XM].mcStop(Axis:=axis[XM].axisRef, Execute:=TRUE);
-		//To-Do later... Add error code for not homed
-	END_IF
-END_IF
-
-(*
-//prevent axis from being setting position that will cause a collision with the other axis - SINGLE AXIS MOVEMENT ONLY. WILL HAVE TO REWRITE FOR DUAL AXIS MOVEMENT.
-IF stateLVL1=400 THEN
-	checkHomed_TON(IN:=FALSE);
-END_IF
-IF axis[XP].axisRef.Status.Homed AND axis[XM].axisRef.Status.Homed THEN	
-	checkHomed_TON(IN:=TRUE, PT:=T#5MS);
-	IF ((axis[XP].axisRef.NcToPlc.TargetPos > (axis[XM].axisRef.NcToPlc.ActPos + 1.0)) OR (axis[XM].axisRef.NcToPlc.TargetPos < (axis[XP].axisRef.NcToPlc.ActPos - 1.0))) 
-	AND checkHomed_TON.Q THEN
-		//add error here 
-		checkHomed_TON(IN:=FALSE);
-		GVL.testINT := GVL.testINT + 1;
-		GVL.testLREAL := axis[XM].axisRef.NcToPlc.TargetPos;		
-		
-		axis[XP].mcStop(Axis:=axis[XP].axisRef, Execute:=FALSE);
-		axis[XM].mcStop(Axis:=axis[XM].axisRef, Execute:=FALSE);
-		axis[XP].mcMoveAbs(axis:=axis[XP].axisRef, Execute:=FALSE);
-		axis[XM].mcMoveAbs(axis:=axis[XM].axisRef, Execute:=FALSE);
-		axis[XP].mcMoveAbs(axis:=axis[XP].axisRef, Position:=axis[XP].axisRef.NcToPlc.ActPos, Execute:=TRUE);
-		axis[XM].mcMoveAbs(axis:=axis[XM].axisRef, Position:=axis[XM].axisRef.NcToPlc.ActPos, Execute:=TRUE);
-		axis[XP].mcStop(Axis:=axis[XP].axisRef, Execute:=TRUE);
-		axis[XM].mcStop(Axis:=axis[XM].axisRef, Execute:=TRUE);
-	END_IF
-END_IF
 *)
 
 //Brake status check - if brakes are not disengaged, disable axis movement
@@ -71,47 +36,52 @@ ELSE
 	axis[XM].mcPower(Axis := axis[XM].axisRef, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE); 
 END_IF
 
+//Prevents movement if not homed.
+IF stateLVL1>400 THEN
+	IF NOT axis[XP].axisRef.Status.Homed OR NOT axis[XM].axisRef.Status.Homed THEN
+		 axis[XP].mcStop(Axis:=axis[XP].axisRef, Execute:=TRUE);
+		 axis[XM].mcStop(Axis:=axis[XM].axisRef, Execute:=TRUE);
+		//To-Do later... Add error code for not homed
+	END_IF
+END_IF
+
+//Check for calibration. If not both blades not calibrated, speed cannot be higher than 200 mms.
+IF NOT axis[XP].isCalibrated AND NOT axis[XM].isCalibrated THEN
+	IF speed > 200 THEN
+		speed := 0;
+	END_IF
+END_IF
+
 //Compare position seen by hall switch with position seen by motor encoder
-posDiff[XP] := axis[XP].axisRef.NcToPlc.ActPos - axis[XP].hallPosAct;
-posDiff[XM] := axis[XM].axisRef.NcToPlc.ActPos - axis[XM].hallPosAct;
-IF ABS(posDiff[XP])>diffLimit OR ABS(posDiff[XM])>diffLimit THEN
-	; //write code for fast stop here and report error
+
+IF axis[XP].isCalibrated AND axis[XM].isCalibrated THEN
+	IF ABS(axis[XP].posDiffAtTrip)>diffLimit OR ABS(axis[XM].posDiffAtTrip)>diffLimit THEN
+		axis[XP].mcStop(Axis := axis[XP].axisRef, Execute := TRUE);
+		axis[XM].mcStop(Axis := axis[XM].axisRef, Execute := TRUE);
+	END_IF
 END_IF
 	]]></ST>
     </Implementation>
     <LineIds Name="Protection">
       <LineId Id="178" Count="1" />
       <LineId Id="177" Count="0" />
-      <LineId Id="41" Count="3" />
-      <LineId Id="74" Count="0" />
-      <LineId Id="45" Count="2" />
-      <LineId Id="64" Count="1" />
-      <LineId Id="48" Count="0" />
-      <LineId Id="109" Count="2" />
-      <LineId Id="50" Count="0" />
-      <LineId Id="83" Count="0" />
-      <LineId Id="40" Count="0" />
-      <LineId Id="84" Count="0" />
-      <LineId Id="54" Count="0" />
-      <LineId Id="107" Count="0" />
-      <LineId Id="93" Count="0" />
-      <LineId Id="95" Count="0" />
-      <LineId Id="127" Count="0" />
-      <LineId Id="120" Count="1" />
-      <LineId Id="114" Count="1" />
-      <LineId Id="122" Count="0" />
-      <LineId Id="113" Count="0" />
-      <LineId Id="97" Count="1" />
-      <LineId Id="19" Count="0" />
-      <LineId Id="53" Count="0" />
-      <LineId Id="62" Count="0" />
-      <LineId Id="73" Count="0" />
-      <LineId Id="63" Count="0" />
-      <LineId Id="66" Count="6" />
+      <LineId Id="65" Count="7" />
       <LineId Id="146" Count="0" />
+      <LineId Id="208" Count="0" />
+      <LineId Id="210" Count="6" />
+      <LineId Id="209" Count="0" />
+      <LineId Id="200" Count="0" />
+      <LineId Id="202" Count="1" />
+      <LineId Id="205" Count="1" />
+      <LineId Id="204" Count="0" />
+      <LineId Id="201" Count="0" />
       <LineId Id="148" Count="1" />
-      <LineId Id="151" Count="2" />
-      <LineId Id="155" Count="1" />
+      <LineId Id="218" Count="0" />
+      <LineId Id="152" Count="1" />
+      <LineId Id="217" Count="0" />
+      <LineId Id="155" Count="0" />
+      <LineId Id="219" Count="0" />
+      <LineId Id="156" Count="0" />
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>
