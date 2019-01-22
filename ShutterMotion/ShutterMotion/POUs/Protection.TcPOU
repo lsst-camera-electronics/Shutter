@@ -14,12 +14,20 @@ VAR_OUTPUT
 END_VAR
 VAR
 	checkHomed_TON 	: TON;
+	
+	//for use end of travel protection
+	eotDistTravel	: ARRAY [XP .. XM, lmHome .. lmDeploy] OF LREAL;
+	eotDistStart	: ARRAY [XP .. XM, lmHome .. lmDeploy] OF LREAL;
+	eotRtrig		: ARRAY [XP .. XM, lmHome .. lmDeploy] OF R_Trig;
 END_VAR
 
 VAR CONSTANT
-	XP : INT := 0;
-	XM : INT := 1;
-	diffLimit : LREAL := 5;
+	XP 			: INT 	:= 0;
+	XM 			: INT 	:= 1;
+	lmHome 		: INT 	:= 0;
+	lmDeploy	: INT 	:= 1;
+	eotTravelLm	: LREAL := 2;
+	diffLimit 	: LREAL	:= 5;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -53,14 +61,88 @@ IF NOT axis[XP].isCalibrated AND NOT axis[XM].isCalibrated THEN
 END_IF
 
 //Compare position seen by hall switch with position seen by motor encoder
-
 IF axis[XP].isCalibrated AND axis[XM].isCalibrated THEN
 	IF ABS(axis[XP].posDiffAtTrip)>diffLimit OR ABS(axis[XM].posDiffAtTrip)>diffLimit THEN
 		axis[XP].mcStop(Axis := axis[XP].axisRef, Execute := TRUE);
 		axis[XM].mcStop(Axis := axis[XM].axisRef, Execute := TRUE);
 	END_IF
 END_IF
-	]]></ST>
+
+
+(* limit switch protection no enabled; require all limit switch to function ....	
+//End of travel stop
+eotRtrig[XP,lmHome](CLK := axis[XM].limitHome);
+eotRtrig[XP,lmDeploy](CLK := axis[XP].limitDeployed);
+eotRtrig[XM,lmHome](CLK := axis[XM].limitHome);
+eotRtrig[XM,lmDeploy](CLK := axis[XM].limitDeployed);
+IF eotRtrig[XP,lmHome].Q THEN
+	eotDistStart[XP,lmHome] := axis[XP].axisRef.NcToPlc.ActPos;
+END_IF
+IF eotRtrig[XP,lmDeploy].Q THEN
+	eotDistStart[XP,lmDeploy] := axis[XP].axisRef.NcToPlc.ActPos;
+END_IF
+IF eotRtrig[XM,lmHome].Q THEN
+	eotDistStart[XM,lmHome] := axis[XM].axisRef.NcToPlc.ActPos;
+END_IF
+IF eotRtrig[XM,lmDeploy].Q THEN
+	eotDistStart[XM,lmDeploy] := axis[XM].axisRef.NcToPlc.ActPos;
+END_IF
+
+IF axis[XP].limitHome THEN
+	eotDistTravel[XP,lmHome] := eotDistStart[XP,lmHome] - axis[XP].axisRef.NcToPlc.ActPos;
+	IF eotDistTravel[XP,lmHome] > eotTravelLm THEN
+		axis[XP].mcPower(Axis := axis[XP].axisRef, Enable_Negative := FALSE);
+	END_IF
+ELSE
+	axis[XP].mcPower(Axis := axis[XP].axisRef, Enable_Negative := TRUE);
+END_IF
+
+IF axis[XP].limitDeployed THEN
+	eotDistTravel[XP,lmDeploy] := axis[XP].axisRef.NcToPlc.ActPos - eotDistStart[XP,lmDeploy];
+	IF eotDistTravel[XP,lmHome] > eotTravelLm THEN
+		axis[XP].mcPower(Axis := axis[XP].axisRef, Enable_Positive := FALSE);
+	END_IF
+ELSE
+	axis[XP].mcPower(Axis := axis[XP].axisRef, Enable_Positive := TRUE);
+END_IF
+
+
+IF axis[XM].limitHome THEN
+	eotDistTravel[XM,lmHome] := axis[XM].axisRef.NcToPlc.ActPos - eotDistStart[XM,lmHome];
+	IF eotDistTravel[XM,lmHome] > eotTravelLm THEN
+		axis[XM].mcPower(Axis := axis[XM].axisRef, Enable_Positive := FALSE);
+	END_IF
+ELSE
+	axis[XM].mcPower(Axis := axis[XM].axisRef, Enable_Positive := TRUE);
+END_IF
+
+IF axis[XM].limitDeployed THEN
+	eotDistTravel[XM,lmDeploy] := eotDistStart[XM,lmDeploy] - axis[XM].axisRef.NcToPlc.ActPos;
+	IF eotDistTravel[XM,lmHome] > eotTravelLm THEN
+		axis[XM].mcPower(Axis := axis[XM].axisRef, Enable_Negative := FALSE);
+	END_IF
+ELSE
+	axis[XM].mcPower(Axis := axis[XM].axisRef, Enable_Negative := TRUE);
+END_IF
+
+*)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+]]></ST>
     </Implementation>
     <LineIds Name="Protection">
       <LineId Id="178" Count="1" />
@@ -75,13 +157,28 @@ END_IF
       <LineId Id="205" Count="1" />
       <LineId Id="204" Count="0" />
       <LineId Id="201" Count="0" />
-      <LineId Id="148" Count="1" />
+      <LineId Id="148" Count="0" />
       <LineId Id="218" Count="0" />
       <LineId Id="152" Count="1" />
       <LineId Id="217" Count="0" />
       <LineId Id="155" Count="0" />
       <LineId Id="219" Count="0" />
       <LineId Id="156" Count="0" />
+      <LineId Id="324" Count="1" />
+      <LineId Id="240" Count="0" />
+      <LineId Id="251" Count="3" />
+      <LineId Id="256" Count="0" />
+      <LineId Id="278" Count="10" />
+      <LineId Id="277" Count="0" />
+      <LineId Id="241" Count="1" />
+      <LineId Id="289" Count="0" />
+      <LineId Id="292" Count="1" />
+      <LineId Id="295" Count="1" />
+      <LineId Id="243" Count="0" />
+      <LineId Id="297" Count="9" />
+      <LineId Id="257" Count="0" />
+      <LineId Id="307" Count="16" />
+      <LineId Id="258" Count="18" />
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>
