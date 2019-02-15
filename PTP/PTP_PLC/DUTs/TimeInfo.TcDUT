@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="TimeInfo" Id="{6fb7af14-518c-40e5-95d9-d3ee85114f02}">
+    <Declaration><![CDATA[TYPE TimeInfo :
+STRUCT
+	dctime: T_DCTIME64; (* The DC time gotten from F_GetActualDcTime64(). *)
+    dctotcoff: LINT; (* Offset between DC and TwinCAT time (in ns). *)
+	dctoextoff: LINT; (* Offset between DC and external time (in ns). *)
+	internalstamp: ULINT; (* Internal timestamp from EL6688. *)
+	externalstamp: ULINT; (* External timestamp from EL6688. *)
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

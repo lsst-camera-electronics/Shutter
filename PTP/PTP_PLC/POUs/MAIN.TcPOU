@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <POU Name="MAIN" Id="{1c59ba86-a61a-4229-9611-39b5a8ef3be6}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	dctotcoff AT %I*: LINT; (* Offset between DC and TwinCAT time (in ns). *)
+	dctoextoff AT %I*: LINT; (* Offset between DC and external time (in ns). *)
+	internalstamp AT %I*: ULINT; (* Internal timestamp from EL6688. *)
+	externalstamp AT %I*: ULINT; (* External timestamp from EL6688. *)
+	first: BOOL := TRUE;
+	timer: TON;
+	tinfo: TimeInfo;
+END_VAR
+
+    ]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF first THEN
+	first := FALSE;
+	timer(in:=FALSE, pt:=T#1S);
+END_IF
+timer(in:=TRUE);
+IF timer.Q THEN
+	tinfo.dctime := F_GetActualDcTime64();
+	tinfo.dctoextoff := dctoextoff;
+	tinfo.dctotcoff := dctotcoff;
+	tinfo.externalstamp := externalstamp;
+	tinfo.internalstamp := internalstamp;
+	timer(in:=FALSE);
+END_IF
+]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="17" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="22" Count="2" />
+      <LineId Id="28" Count="3" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="14" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
