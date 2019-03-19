@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+  <DUT Name="States" Id="{857c5b72-5307-43e0-8ed2-f928c0641fd0}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE States :
+(
+	error			:= -1,
+	reset			:= 0, 	//reset flags and error
+	init 			:= 1, 	//initialise shutter. Home if necessary, then close shutter plus X direction
+	openingPX		:= 10,	//shutter open, plus X blade retracting
+	openedPX		:= 20,	//shutter opened, plus X blade retracted
+	closingPX		:= 30,	//shutter close, minus X blade extending
+	closedPX		:= 40,	//shutter closed in plus X direction
+	openingMX		:= 50,	//shutter open, minus X blade retracting
+	openedMX		:= 60,	//shutter opened, minus X blade retracted
+	closingMX		:= 70,	//shutter close, plus X blade extending
+	closedMX		:= 80,	//shutter closed, plus X blade extended
+	travellingPX	:= 90,	//dual blade motion in plus X direction
+	travellingMX	:= 100,	//dual blade motion in minus X direction
+	homing			:= 110,	//blades performing homing routine
+	calibrating		:= 120,	//blades performing calibration routing
+	engineering		:= 130,	//in engineeringMode or engineeringFault
+	ready			:= 140
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

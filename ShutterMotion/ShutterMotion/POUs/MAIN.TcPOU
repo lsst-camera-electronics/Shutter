@@ -4,16 +4,17 @@
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
 	start, stop, reset, abort: BOOL;
+	
 	delay		: TON;
 	writeDelay  : TON;
 	acceleration, speed: LREAL;
-	//exposure	: TIME :=T#1s;
-
 	
-	motion			: TestMotion;
+	shutterFSM		: ShutterFSM;
+	shutterMode		: Mode;
+	command			: Commands := commands.noCommand;
+	motion			: Motions;
 	axis			: ARRAY [XP .. XM] OF AxisGroup;
-	home 			: BYTE;
-	testMotionState	: INT :=100;
+	motionState		: INT :=100;
 	nextInstruct	: BOOL;
 	
 	power			: Power;
@@ -35,32 +36,42 @@ IF speed>1667 THEN
 END_IF
 
 IF GVL.expoTime<T#100MS THEN
-	testMotionState := -1;
+	motionState := 0;
 END_IF
 
 IF delay.Q THEN
     delay(IN:=FALSE);
-	
+	(*
 	protect(axis 		:= axis,
-			stateLVL1	:= testMotionState,
+			stateLVL1	:= motionState,
 			speed		:= speed,
 			reset		:= reset);
-
-	motion(
+	*)
+	shutterFSM(
 		axis			:= axis,
-		abortRequest	:= abort,
-		resetRequest	:= reset,
-		startRequest	:= start,
-		stopRequest		:= stop,
-		homeRequest		:= home,
-		speed			:= speed,
-		stateLVL1		:= testMotionState,
-		nextInstruct	:= nextInstruct);
-
-	power(state := testMotionState);
+		shutterMode		:= shutterMode,
+		command			:= command,
+		speed			:= speed);
+		
+(*
+			motion(
+					axis			:= axis,
+					abortRequest	:= abort,
+					resetRequest	:= reset,
+					startRequest	:= start,
+					stopRequest		:= stop,
+					homeRequest		:= home,
+					speed			:= speed,
+					stateLVL1		:= motionState,
+					nextInstruct	:= nextInstruct);
+*)
+	power(state := motionState);
+	
+	
 END_IF
 
-//writing persistent data to file
+
+//write persistent data to file every second
 IF writeDelay.Q THEN
 	GVL.fbWritePersistentData(NETID:='', PORT:=851, START:=TRUE, TMOUT:=T#1S);
 	writeDelay(IN:=FALSE);
@@ -84,15 +95,19 @@ END_IF
       <LineId Id="280" Count="0" />
       <LineId Id="245" Count="0" />
       <LineId Id="103" Count="1" />
-      <LineId Id="106" Count="0" />
-      <LineId Id="108" Count="3" />
+      <LineId Id="451" Count="0" />
+      <LineId Id="448" Count="0" />
       <LineId Id="116" Count="0" />
-      <LineId Id="121" Count="0" />
-      <LineId Id="141" Count="0" />
+      <LineId Id="436" Count="0" />
+      <LineId Id="447" Count="0" />
+      <LineId Id="437" Count="9" />
       <LineId Id="107" Count="0" />
       <LineId Id="181" Count="0" />
+      <LineId Id="384" Count="0" />
+      <LineId Id="391" Count="0" />
       <LineId Id="33" Count="0" />
       <LineId Id="313" Count="0" />
+      <LineId Id="455" Count="0" />
       <LineId Id="315" Count="0" />
       <LineId Id="314" Count="0" />
       <LineId Id="316" Count="0" />

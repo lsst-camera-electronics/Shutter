@@ -15,19 +15,19 @@
     <LibraryReferences>{b62c7209-1799-4d59-aa70-cbf2e993793f}</LibraryReferences>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="DUTs\AxisInfo.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="DUTs\AxisGroup.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\Components.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\ShutterSide.TcDUT">
+    <Compile Include="DUTs\Commands.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\ShutterState.TcDUT">
+    <Compile Include="DUTs\Mode.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\States.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GlobalTextList.TcGTLO">
@@ -40,7 +40,7 @@
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\Cycler.TcPOU">
+    <Compile Include="POUs\ShutterFSM.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\Power.TcPOU">
@@ -49,7 +49,7 @@
     <Compile Include="POUs\Protection.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\TestMotion.TcPOU">
+    <Compile Include="POUs\Motions.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\MAIN.TcPOU">
@@ -58,11 +58,11 @@
     <Compile Include="Visualization Manager.TcVMO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VISUs\CyclerGUI.TcVIS">
+    <Compile Include="VISUs\TestMotionGUI.TcVIS">
       <SubType>Code</SubType>
       <DependentUpon>Visualization Manager.TcVMO</DependentUpon>
     </Compile>
-    <Compile Include="VISUs\TestMotionGUI.TcVIS">
+    <Compile Include="VISUs\ShutterGUI.TcVIS">
       <SubType>Code</SubType>
       <DependentUpon>Visualization Manager.TcVMO</DependentUpon>
     </Compile>
@@ -119,6 +119,10 @@
     <PlaceholderReference Include="Tc2_Drive">
       <DefaultResolution>Tc2_Drive, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc2_Drive</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc2_EtherCAT">
+      <DefaultResolution>Tc2_EtherCAT, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_EtherCAT</Namespace>
     </PlaceholderReference>
     <PlaceholderReference Include="Tc2_MC2">
       <DefaultResolution>Tc2_MC2, * (Beckhoff Automation GmbH)</DefaultResolution>

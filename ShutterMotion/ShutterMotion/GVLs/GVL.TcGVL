@@ -40,7 +40,6 @@ VAR_GLOBAL CONSTANT
 	
 END_VAR
 VAR_GLOBAL
-	task				: 	INT 	:= 2;
 
 	//Hall Switches
 	hallSwitch AT %I*	:ARRAY[0..14] OF BOOL;

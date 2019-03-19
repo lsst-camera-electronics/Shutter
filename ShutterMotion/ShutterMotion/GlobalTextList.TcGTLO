@@ -126,6 +126,11 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"47"</v>
+              <v n="TextDefault">"Init"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"36"</v>
               <v n="TextDefault">"Motion Control"</v>
               <l n="LanguageTexts" t="ArrayList" />
@@ -223,6 +228,11 @@
             <o>
               <v n="TextID">"41"</v>
               <v n="TextDefault">"STOP CYCLER"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"46"</v>
+              <v n="TextDefault">"Take Exposure"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>

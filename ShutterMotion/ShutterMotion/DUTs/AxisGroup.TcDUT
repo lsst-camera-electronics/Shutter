@@ -13,12 +13,11 @@ STRUCT
 	mcStop		: MC_Stop;
 	mcJog		: MC_Jog;
 	
-	
 	//Status
 	error			: BOOL;
 	errorID 		: UDINT;
 	isCalibrated	: BOOL;
-	
+	isHomed			: BOOL;
 	
 	//linkable variables
 	axisRef					: AXIS_REF;;
@@ -31,13 +30,14 @@ STRUCT
 	hallSigCal_ftrig 	: ARRAY [GVL.hallLower_C .. GVL.hallUpper_C] OF F_TRIG;
 	hallPosCal			: ARRAY [GVL.dirPos_C .. GVL.dirNeg_C, 0 .. GVL.tripCount_C] OF LREAL;
 	hallPosAct			: LREAL;
+	recordedPosition	: ARRAY [0 .. 1000] OF LREAL;
+	recordedTime		: ARRAY [0 .. 1000] OF T_DCTIME64;
 	tripCount 			: INT;
 	hallSequence		: ARRAY [GVL.dirPos_C .. GVL.dirNeg_C, 0 .. GVL.tripCount_C] OF WORD;
 	seqToCompare		: WORD;
 	posDiffAtTrip		: LREAL;
 	trackedFlag			: BOOL;
-	
-	
+
 END_STRUCT
 END_TYPE
 ]]></Declaration>

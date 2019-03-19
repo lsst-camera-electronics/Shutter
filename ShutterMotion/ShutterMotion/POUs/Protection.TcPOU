@@ -35,6 +35,7 @@ END_VAR
 This function block contains the logic for the shutter system protection. 
 *)
 
+
 //Brake status check - if brakes are not disengaged, disable axis movement
 IF axis[XP].brake AND axis[XM].brake THEN 
 	axis[XP].mcPower(Axis := axis[XP].axisRef, Enable := TRUE, Enable_Positive := TRUE, Enable_Negative := TRUE);
@@ -45,6 +46,7 @@ ELSE
 END_IF
 
 //Prevents movement if not homed.
+(*
 IF stateLVL1>400 THEN
 	IF NOT axis[XP].axisRef.Status.Homed OR NOT axis[XM].axisRef.Status.Homed THEN
 		 axis[XP].mcStop(Axis:=axis[XP].axisRef, Execute:=TRUE);
@@ -52,6 +54,7 @@ IF stateLVL1>400 THEN
 		//To-Do later... Add error code for not homed
 	END_IF
 END_IF
+*)
 
 //Check for calibration. If not both blades not calibrated, speed cannot be higher than 200 mms.
 IF NOT axis[XP].isCalibrated AND NOT axis[XM].isCalibrated THEN
@@ -147,11 +150,14 @@ END_IF
     <LineIds Name="Protection">
       <LineId Id="178" Count="1" />
       <LineId Id="177" Count="0" />
+      <LineId Id="326" Count="0" />
       <LineId Id="65" Count="7" />
       <LineId Id="146" Count="0" />
       <LineId Id="208" Count="0" />
+      <LineId Id="355" Count="0" />
       <LineId Id="210" Count="6" />
       <LineId Id="209" Count="0" />
+      <LineId Id="356" Count="0" />
       <LineId Id="200" Count="0" />
       <LineId Id="202" Count="1" />
       <LineId Id="205" Count="1" />
