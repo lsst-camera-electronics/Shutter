@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="E_StatesTop" Id="{5369fa98-da0c-4000-a711-9460e8401e23}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE E_StatesTop :
+(
+	Disabled	:=	10000,
+	Enabled		:=	20000
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

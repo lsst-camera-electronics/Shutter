@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="ST_GoToProd" Id="{ee7e163b-ab4c-44b6-89aa-0cf351d81427}">
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+TYPE ST_GoToProd EXTENDS ST_MsgToPLC:
+STRUCT
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

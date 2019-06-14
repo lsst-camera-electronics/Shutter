@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="FB_Cycler" Id="{bb96b1e0-07e6-4103-8cee-58a6db5cc14f}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Cycler
+VAR_IN_OUT
+	stAxis  : ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;
+	bTopEntry	: BOOL;	
+END_VAR
+VAR_INPUT
+	stopRequest : BOOL;
+	bMotionDone : BOOL;
+END_VAR
+VAR
+	//state-machine
+	nCurrentState	: INT;
+	nNextState		: INT;
+	bLowerEntry		: BOOL;
+	tExpoTime		: TIME := T#1S; //change this to desired time
+	fSpeed			: LREAL := 0; //change this to desired speed
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[///////////////////////////////////////////////////////
+//Performs open/close motion until commanded to stop.//
+///////////////////////////////////////////////////////
+IF bTopEntry = TRUE THEN
+	bTopEntry := FALSE;
+	nNextState := E_StatesProd.Closed;
+END_IF	
+IF nCurrentState <> nNextState THEN
+	bLowerEntry := TRUE;
+END_IF
+nCurrentState := nNextState
+
+CASE nCurrentState OF
+
+	3010: 
+		GVL.fbWaitTimer(IN:=TRUE, PT:=tExpoTime);
+		stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:= GVL.cPosEnd, Velocity:=fSpeed, Execute:=TRUE);
+		IF GVL.fbWaitTimer.Q THEN
+			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:= GVL.cPosEnd, Velocity:=fSpeed, Execute:=TRUE);
+		END_IF
+		IF stAxis[GVL.cXP].mcMoveAbs.Done AND stAxis[GVL.cXM].mcMoveAbs.Done THEN
+			GVL.strokeXP := GVL.strokeXP + 1;
+			GVL.strokeXM := GVL.strokeXM + 1;
+			GVL.fbWaitTimer(IN:=FALSE);
+			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
+			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
+			nNextState:=3020;
+		END_IF
+		
+	3020:
+		GVL.fbWaitTimer(IN:=TRUE, PT:=T#100MS,);
+		IF GVL.fbWaitTimer.Q THEN
+			GVL.fbWaitTimer(IN:=FALSE);
+			IF stopRequest THEN
+				stopRequest:=FALSE;
+				nNextState:=3999;
+			ELSE
+				nNextState:=3030;
+			END_IF
+		END_IF
+		
+	3030: 
+		GVL.fbWaitTimer(IN:=TRUE, PT:=tExpoTime);
+		stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:= GVL.cPosStart, Velocity:=fSpeed, Execute:=TRUE);
+		IF GVL.fbWaitTimer.Q THEN
+			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:= GVL.cPosStart, Velocity:=fSpeed, Execute:=TRUE);
+		END_IF
+		IF stAxis[GVL.cXP].mcMoveAbs.Done AND stAxis[GVL.cXM].mcMoveAbs.Done THEN
+			GVL.strokeXP := GVL.strokeXP + 1;
+			GVL.strokeXM := GVL.strokeXM + 1;
+			GVL.fbWaitTimer(IN:=FALSE);
+			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
+			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
+			nNextState:=3040;
+		END_IF	
+		
+	3040:
+		GVL.fbWaitTimer(IN:=TRUE, PT:=T#100MS,);
+		IF GVL.fbWaitTimer.Q THEN
+			GVL.fbWaitTimer(IN:=FALSE);
+			IF stopRequest THEN
+				stopRequest:=FALSE;
+				nNextState:=3999;
+			ELSE
+				nNextState:=3010;
+			END_IF
+		END_IF
+
+		
+	3999: //End action
+		nNextState := 0;
+		bMotionDone := TRUE;
+END_CASE
+]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Cycler">
+      <LineId Id="310" Count="14" />
+      <LineId Id="326" Count="54" />
+      <LineId Id="382" Count="2" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

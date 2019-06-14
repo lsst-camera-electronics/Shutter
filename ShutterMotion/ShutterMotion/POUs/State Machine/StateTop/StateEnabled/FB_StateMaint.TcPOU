@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="FB_StateMaint" Id="{37b42c71-d02c-4f0b-9d4a-8f4651b67341}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_StateMaint
+VAR_IN_OUT
+	stAxis  	: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;
+	bTopEntry	: BOOL;
+END_VAR
+VAR_INPUT
+	stInCommand	: ST_Commands;
+END_VAR
+VAR
+	//state-machine
+	eCurrentState	: E_StatesMaint;
+	eNextState		: E_StatesMaint;
+	fbCalibrating	: FB_StateCalibrating;
+	fbMoving		: FB_StateMoving;
+	fbStill			: FB_StateStill;
+	bLowerEntry 	: BOOL;
+	
+	//Event
+	bMotionDone		: BOOL;
+
+	//other var
+	eCopyCommand	: E_Commands;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+IF bTopEntry = TRUE THEN
+	bTopEntry := FALSE;
+	eNextState := E_StatesMaint.Still;
+END_IF	
+IF eCurrentState <> eNextState THEN
+	bLowerEntry := TRUE;
+END_IF
+eCurrentState := eNextState;
+
+//State Machine
+CASE eCurrentState OF
+	
+	E_StatesMaint.Still:
+		fbStill(stAxis:=stAxis, bTopEntry:=bLowerEntry, stInCommand:=stInCommand);
+		IF stInCommand.eCommand = E_Commands.calibrate THEN
+			eNextState := E_StatesMaint.Calibrating;
+		END_IF		
+		IF stInCommand.eCommand = E_Commands.closeShutter OR_ELSE
+			stInCommand.eCommand = E_Commands.goToCenter OR_ELSE
+			stInCommand.eCommand = E_Commands.homeAxis OR_ELSE
+			stInCommand.eCommand = E_Commands.jog OR_ELSE
+			stInCommand.eCommand = E_Commands.moveAxisAbsolute OR_ELSE
+			stInCommand.eCommand = E_Commands.moveAxisRelative THEN
+				eNextState := E_StatesMaint.Moving;
+				eCopyCommand := stInCommand.eCommand; //need to copy since stInCommand.eCommand is only valid for 1 cycle. It gets reset to noCommand next cycle.
+		END_IF
+	
+	E_StatesMaint.Calibrating:
+		fbCalibrating(stAxis:=stAxis, bTopEntry:=bLowerEntry);
+		IF fbCalibrating.bCalibDone THEN
+			eNextState := E_StatesMaint.Still;
+		END_IF
+		
+	E_StatesMaint.Moving:
+		fbMoving(stAxis:=stAxis, bTopEntry:=bLowerEntry, eCommand:=eCopyCommand, stInCommand:=stInCommand, bMotionDone=>bMotionDone);
+		IF bMotionDone THEN
+			eNextState := E_StatesMaint.Still;
+		END_IF
+END_CASE
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="FB_StateMaint">
+      <LineId Id="111" Count="2" />
+      <LineId Id="236" Count="0" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="68" Count="1" />
+      <LineId Id="166" Count="0" />
+      <LineId Id="165" Count="0" />
+      <LineId Id="164" Count="0" />
+      <LineId Id="163" Count="0" />
+      <LineId Id="162" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="62" Count="2" />
+      <LineId Id="141" Count="6" />
+      <LineId Id="151" Count="0" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="59" Count="2" />
+      <LineId Id="35" Count="1" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="157" Count="1" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="235" Count="0" />
+      <LineId Id="215" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

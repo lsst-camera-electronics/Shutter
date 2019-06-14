@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="ST_HomeAxis" Id="{06aead2c-fc92-4f56-9b66-cf2ac1527113}">
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+TYPE ST_HomeAxis EXTENDS ST_MsgToPLC:
+STRUCT
+    nAxisIndex: DINT;
+END_STRUCT
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

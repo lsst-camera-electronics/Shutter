@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="FB_StateEnabled" Id="{b94d2bdc-9aa0-4455-a0cd-476d7bce246d}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_StateEnabled
+VAR_IN_OUT
+	stAxis  	: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;
+	bTopEntry	: BOOL;
+END_VAR
+VAR_INPUT
+	stInCommand	: ST_Commands;
+END_VAR
+VAR
+	//state-machine
+	eCurrentState	: E_StatesEnabled;
+	eNextState		: E_StatesEnabled;
+	fbMaint			: FB_StateMaint;
+	fbProd			: FB_StateProd;
+	eStateEnabled	: E_StatesEnabled;
+	bLowerEntry		: BOOL;
+	
+	//Event
+	bIsCalibrated	: BOOL;
+	bStopMotion		: BOOL;
+	bShutterReady	: BOOL;
+
+	
+	//Other var
+	fbReset			: FB_Reset;
+	bResetting		: BOOL;
+	bStopping		: BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+IF bTopEntry = TRUE THEN
+	bTopEntry := FALSE;
+	(*Check if shutter blade sets are calibrated. If not, then go to still, otherwise go to previous state*)
+	IF stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated THEN
+		eNextState := eCurrentState;
+	ELSE
+		eNextState := E_StatesEnabled.Maint;
+	END_IF
+END_IF	
+
+IF eCurrentState <> eNextState THEN
+	bLowerEntry := TRUE;
+END_IF
+
+(* State Machine *)
+CASE eStateEnabled OF
+	
+	E_StatesEnabled.Maint:
+		fbMaint(stAxis := stAxis, bTopEntry := bLowerEntry, stInCommand	:= stInCommand);	
+		IF stInCommand.eCommand=E_Commands.reset THEN
+			eStateEnabled := E_StatesEnabled.Maint;
+		END_IF
+		IF bShutterReady AND stInCommand.eCommand = E_Commands.goToProd THEN
+			eStateEnabled := E_StatesEnabled.Prod;
+		END_IF
+	
+	E_StatesEnabled.Prod:
+		fbProd(stAxis := stAxis, bTopEntry := bLowerEntry, stInCommand := stInCommand);	
+		IF stInCommand.eCommand=E_Commands.reset THEN
+			eStateEnabled := E_StatesEnabled.Maint;
+		END_IF
+
+END_CASE
+
+//Reset routine
+IF stInCommand.eCommand = E_Commands.reset THEN
+	bResetting := TRUE;
+END_IF
+IF bResetting THEN
+	fbReset(stAxis:=stAxis, bResetting:=bResetting);
+	eNextState := E_StatesEnabled.Maint;
+	bLowerEntry := TRUE;
+END_IF
+
+//Stop routine (similar to reset but without resetting)
+IF stinCommand.eCommand = E_Commands.stopAllMotion THEN
+	bStopping := TRUE;
+END_IF
+IF bStopping THEN
+	stAxis[GVL.cXP].mcHalt(Axis:=stAxis[GVL.cXP].axisRef, Execute:=TRUE);
+	stAxis[GVL.cXM].mcHalt(Axis:=stAxis[GVL.cXM].axisRef, Execute:=TRUE);
+	IF stAxis[GVL.cXP].mcHalt.Done AND stAxis[GVL.cXM].mcHalt.Done THEN
+		stAxis[GVL.cXP].mcHalt(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
+		stAxis[GVL.cXM].mcHalt(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
+		bStopping := FALSE;
+	END_IF
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_StateEnabled">
+      <LineId Id="150" Count="0" />
+      <LineId Id="130" Count="1" />
+      <LineId Id="156" Count="0" />
+      <LineId Id="132" Count="0" />
+      <LineId Id="139" Count="0" />
+      <LineId Id="141" Count="0" />
+      <LineId Id="144" Count="0" />
+      <LineId Id="140" Count="0" />
+      <LineId Id="133" Count="3" />
+      <LineId Id="128" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="79" Count="2" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="85" Count="1" />
+      <LineId Id="82" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="184" Count="7" />
+      <LineId Id="196" Count="0" />
+      <LineId Id="183" Count="0" />
+      <LineId Id="210" Count="0" />
+      <LineId Id="209" Count="0" />
+      <LineId Id="211" Count="2" />
+      <LineId Id="198" Count="0" />
+      <LineId Id="201" Count="2" />
+      <LineId Id="208" Count="0" />
+      <LineId Id="207" Count="0" />
+      <LineId Id="204" Count="0" />
+      <LineId Id="206" Count="0" />
+      <LineId Id="200" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

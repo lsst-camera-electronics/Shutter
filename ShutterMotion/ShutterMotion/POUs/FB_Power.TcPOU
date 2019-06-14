@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="FB_Power" Id="{cd82df6c-11f2-4b61-8c52-0b244f02b6d6}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Power
+
+VAR_IN_OUT
+	state : INT;
+END_VAR
+
+VAR
+	//Power variable
+	Vraw AT %I*	: ARRAY [0 .. E_Components.system] OF DINT;
+	Vsense		: ARRAY [0 .. E_Components.system] OF REAL;
+	Iin			: ARRAY [0 .. E_Components.system] OF REAL;
+	Pin		 	: ARRAY [0 .. E_Components.system] OF REAL;
+	Pin_max		: ARRAY [0 .. E_Components.system] OF REAL;
+	Pin_avg		: ARRAY [0 .. E_Components.system] OF REAL;
+	
+	//counter
+	i 				: INT;
+	powerTotal		: ARRAY [0 .. E_Components.system] OF REAL;
+	powerCounter 	: ARRAY [0 .. E_Components.system] OF DINT;
+	
+	//timer
+	timer 			: TON;
+	timeElapsed		: TIME;
+	timer_rtrig		: R_TRIG;
+	
+	//testvar
+	test : INT;
+END_VAR
+
+VAR CONSTANT
+	Rsense			: REAL := 0.051;
+	AdcResolution	: DINT := 8388607; //24bit adc (positive and minus)
+	Vin				: ARRAY[0..1] OF REAL := [24.0, 48.0];
+	Vref			: REAL := 1.25;
+	CountTo			: TIME := T#1000H;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(*This function block is used to monitor shutter system power usage.
+The module calculates instantanuous power, average power usage over a motion duration, and max power  *)
+
+//reset power values
+IF state=0 THEN
+	FOR i := 0 TO E_Components.system BY 1 DO
+		Pin_max[i] := 0;
+	END_FOR
+END_IF
+
+
+FOR i:=0 TO (E_Components.system - 1) BY 1 DO 
+
+//Calculate instantanuous power
+	Vsense[i] := (DINT_TO_REAL(Vraw[i])*Vref)/DINT_TO_REAL(AdcResolution);
+	Iin[i] := Vsense[i]/Rsense;
+	
+	IF i=E_Components.motorXM OR i=E_Components.motorXP THEN
+		Pin[i] := Vin[1]*Iin[i];
+	ELSE
+		Pin[i] := Vin[0]*Iin[i];
+	END_IF
+
+	
+//Calculate average power
+	IF state <> 100 THEN
+		powerTotal[i] := powerTotal[i]+Pin[i];
+		powerCounter[i] := powerCounter[i]+1;
+		Pin_avg[i] 		:= PowerTotal[i]/DINT_TO_REAL(powerCounter[i]);
+	ELSE
+			powertotal[i] 	:= 0;
+			powerCounter[i]	:= 0;	
+	END_IF
+
+	
+//Calculate max power
+	IF Pin_max[i] < Pin[i] THEN
+		Pin_max[i] := Pin[i];
+	END_IF
+	
+END_FOR
+
+
+//Calculate power of entire shutter
+Pin[E_Components.system] := Pin[E_Components.motorXP]+Pin[E_Components.motorXM]+Pin[E_Components.brakes]
+								+ Pin[E_Components.controller]+Pin[E_Components.terminals];
+Pin_avg[E_Components.system] := Pin_avg[E_Components.motorXP]+Pin_avg[E_Components.motorXM]+Pin_avg[E_Components.brakes]
+								+ Pin_avg[E_Components.controller]+Pin_avg[E_Components.terminals];
+IF Pin_max[E_Components.system] < Pin[E_Components.system] THEN
+	Pin_max[E_Components.system] := Pin[E_Components.system];
+END_IF					]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Power">
+      <LineId Id="287" Count="1" />
+      <LineId Id="286" Count="0" />
+      <LineId Id="244" Count="6" />
+      <LineId Id="229" Count="0" />
+      <LineId Id="178" Count="0" />
+      <LineId Id="194" Count="0" />
+      <LineId Id="190" Count="1" />
+      <LineId Id="207" Count="2" />
+      <LineId Id="212" Count="1" />
+      <LineId Id="210" Count="0" />
+      <LineId Id="192" Count="0" />
+      <LineId Id="185" Count="0" />
+      <LineId Id="161" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="145" Count="0" />
+      <LineId Id="147" Count="0" />
+      <LineId Id="220" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="216" Count="0" />
+      <LineId Id="218" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="196" Count="0" />
+      <LineId Id="195" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="46" Count="1" />
+      <LineId Id="177" Count="0" />
+      <LineId Id="174" Count="0" />
+      <LineId Id="197" Count="0" />
+      <LineId Id="226" Count="0" />
+      <LineId Id="206" Count="0" />
+      <LineId Id="198" Count="3" />
+      <LineId Id="203" Count="2" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

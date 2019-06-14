@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="FB_StateOpened" Id="{596682f8-87ed-401d-9eb9-43883efdf49e}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_StateOpened
+VAR_IN_OUT
+	stAxis  	: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;	
+	bTopEntry	: BOOL;
+END_VAR
+VAR
+	//state-machine
+	nCurrentState	: INT;
+	nNextState		: INT;
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+IF bTopEntry = TRUE THEN
+	bTopEntry := FALSE;
+	nNextState := 1200;
+END_IF	
+nCurrentState := nNextState;
+
+CASE nCurrentState OF
+	1200:
+		stAxis[GVL.cXP].bBrake := GVL.cBrakeOn;
+		stAxis[GVL.cXP].bBrake := GVL.cBrakeOn;
+
+
+END_CASE
+
+
+
+
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="FB_StateOpened">
+      <LineId Id="19" Count="4" />
+      <LineId Id="14" Count="1" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="98" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="37" Count="4" />
+      <LineId Id="36" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

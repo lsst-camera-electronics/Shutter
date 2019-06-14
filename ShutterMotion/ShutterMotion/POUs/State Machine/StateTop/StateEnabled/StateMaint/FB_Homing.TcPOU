@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="FB_Homing" Id="{67eb6d7f-00ee-47b8-9057-855207043b52}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Homing
+VAR_IN_OUT
+	stAxis  	: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;
+	bTopEntry	: BOOL;
+END_VAR
+VAR_OUTPUT
+	bMotionDone		: BOOL;
+END_VAR
+VAR
+	//state-machine
+	nCurrentState	: INT;
+	nNextState		: INT;
+
+	//other var
+	fbHomeDelay		: TON;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//////////////////////////////////////////////////
+//Performs homing routine						//
+//////////////////////////////////////////////////
+
+IF bTopEntry = TRUE THEN
+	bTopEntry := FALSE;
+	nNextState := E_StatesProd.Closed;
+END_IF	
+nCurrentState := nNextState;
+
+CASE nCurrentState OF
+	
+	410: //Clear Homed flag and calibrated flag
+		stAxis[GVL.cXP].mcHome(Axis := stAxis[GVL.cXP].axisRef, HomingMode := MC_ResetCalibration, bCalibrationCam := TRUE, Execute := TRUE);
+		stAxis[GVL.cXM].mcHome(Axis := stAxis[GVL.cXM].axisRef, HomingMode := MC_ResetCalibration, bCalibrationCam := TRUE, Execute := TRUE);
+		stAxis[GVL.cXP].bIsCalibrated := FALSE;
+		stAxis[GVL.cXM].bIsCalibrated := FALSE;
+		IF stAxis[GVL.cXP].mcHome.Done AND stAxis[GVL.cXM].mcHome.Done THEN
+			nNextState := 420;
+		END_IF
+		
+	420: //Scan for home switch
+		stAxis[GVL.cXP].mcHome(Axis := stAxis[GVL.cXP].axisRef, Execute := FALSE);
+		stAxis[GVL.cXM].mcHome(Axis := stAxis[GVL.cXM].axisRef, Execute := FALSE);
+		stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXP].axisRef, Mode := MC_JOGMODE_CONTINOUS, Velocity := GVL.cScanVel, JogBackwards := NOT stAxis[GVL.cXP].bLimitHome);
+		stAxis[GVL.cXM].mcJog(Axis := stAxis[GVL.cXM].axisRef, Mode := MC_JOGMODE_CONTINOUS, Velocity := GVL.cScanVel, JogForward := NOT stAxis[GVL.cXM].bLimitHome);
+		IF stAxis[GVL.cXP].bLimitHome AND stAxis[GVL.cXM].bLimitHome THEN
+			stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXP].axisRef, Mode := MC_JOGMODE_CONTINOUS, JogBackwards := FALSE);
+			stAxis[GVL.cXM].mcJog(Axis := stAxis[GVL.cXM].axisRef, Mode := MC_JOGMODE_CONTINOUS, JogForward := FALSE);
+			nNextState := 430;
+		END_IF
+
+	430: //back off from switch
+		stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXP].axisRef, Mode := MC_JOGMODE_CONTINOUS, Velocity := GVL.cScanVel, JogForward := stAxis[GVL.cXP].bLimitHome);
+		stAxis[GVL.cXM].mcJog(Axis := stAxis[GVL.cXM].axisRef, Mode := MC_JOGMODE_CONTINOUS, Velocity := GVL.cScanVel, JogBackwards := stAxis[GVL.cXM].bLimitHome);
+		IF NOT stAxis[GVL.cXP].bLimitHome AND NOT stAxis[GVL.cXM].bLimitHome THEN
+			stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXP].axisRef, Mode := MC_JOGMODE_CONTINOUS, JogForward := FALSE);
+			stAxis[GVL.cXM].mcJog(Axis := stAxis[GVL.cXM].axisRef, Mode := MC_JOGMODE_CONTINOUS, JogBackwards := FALSE);
+			nNextState := 440;
+		END_IF
+		
+	440: //slowly homed back to switch
+		stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXP].axisRef, Mode := MC_JOGMODE_CONTINOUS, Velocity := GVL.cHomeVel, JogBackwards := NOT stAxis[GVL.cXP].bLimitHome);
+		stAxis[GVL.cXM].mcJog(Axis := stAxis[GVL.cXM].axisRef, Mode := MC_JOGMODE_CONTINOUS, Velocity := GVL.cHomeVel, JogForward := NOT stAxis[GVL.cXM].bLimitHome);
+		IF stAxis[GVL.cXP].bLimitHome AND stAxis[GVL.cXM].bLimitHome THEN
+			stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXP].axisRef, Mode := MC_JOGMODE_CONTINOUS, JogBackwards := FALSE);
+			stAxis[GVL.cXM].mcJog(Axis := stAxis[GVL.cXM].axisRef, Mode := MC_JOGMODE_CONTINOUS, JogForward := FALSE);
+			nNextState := 450;
+		END_IF	
+
+	450://delay
+		fbHomeDelay(IN:=TRUE, PT:=T#100MS);
+		IF fbHomeDelay.Q THEN
+			fbHomeDelay(IN:=FALSE);	
+			nNextState := 460;
+		END_IF
+		
+	460://set home
+		stAxis[GVL.cXP].mcHome(Axis := stAxis[GVL.cXP].axisRef, Position := GVL.cPosStart, HomingMode := MC_DIRECT, Execute := TRUE);
+		stAxis[GVL.cXM].mcHome(Axis := stAxis[GVL.cXM].axisRef, Position := GVL.cPosEnd, HomingMode := MC_DIRECT, Execute := TRUE);	
+		IF stAxis[GVL.cXP].mcHome.Done AND stAxis[GVL.cXM].mcHome.Done THEN
+			stAxis[GVL.cXP].mcHome(Axis := stAxis[GVL.cXP].axisRef, Execute := FALSE);
+			stAxis[GVL.cXM].mcHome(Axis := stAxis[GVL.cXM].axisRef, Execute := FALSE);
+			nNextState := 470;
+		END_IF	
+		
+	470: //End Action
+		bMotionDone := TRUE;
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Homing">
+      <LineId Id="10" Count="3" />
+      <LineId Id="134" Count="3" />
+      <LineId Id="18" Count="57" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

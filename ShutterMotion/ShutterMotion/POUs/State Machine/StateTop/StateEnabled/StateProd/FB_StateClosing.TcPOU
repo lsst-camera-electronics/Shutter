@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="FB_StateClosing" Id="{5bb1c0c5-a4f5-402a-a529-8672ede7a771}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_StateClosing
+VAR_IN_OUT
+	stAxis 	 	: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;	
+	bTopEntry	: BOOL;
+END_VAR
+VAR_INPUT
+	nExt	: INT;
+	fSpeed	: LREAL;
+END_VAR
+VAR_OUTPUT
+	bMotionDone	: BOOL;
+END_VAR
+VAR
+	//state-machine
+	nCurrentState	: INT;
+	nNextState		: INT;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//////////////////////////////////////////////////
+//Closes shutter								//
+//////////////////////////////////////////////////
+IF bTopEntry = TRUE THEN
+	bTopEntry := FALSE;
+	nNextState := 1300;
+END_IF
+
+bMotionDone := FALSE;
+nCurrentState := nNextState;
+
+CASE nCurrentState OF
+	
+(*Perform Open Shutter Motion*)
+	1300:
+		
+		IF nExt = GVL.cXP THEN
+			stAxis[GVL.cXP].bBrake := GVL.cBrakeOff;
+			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosEnd, Velocity:=fSpeed, Execute:=TRUE);
+		ELSIF nExt = GVL.cXM THEN	
+			stAxis[GVL.cXM].bBrake := GVL.cBrakeOff;
+			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosStart, Velocity:=fSpeed, Execute:=TRUE);
+		END_IF
+		IF stAxis[GVL.cXP].mcMoveAbs.Done OR stAxis[GVL.cXM].mcMoveAbs.Done THEN
+			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
+			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
+			nNextState := 1310;
+		END_IF	
+		
+	1310: //End action
+		bMotionDone := TRUE;
+
+END_CASE
+]]></ST>
+    </Implementation>
+    <LineIds Name="FB_StateClosing">
+      <LineId Id="14" Count="4" />
+      <LineId Id="159" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="29" Count="7" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="176" Count="0" />
+      <LineId Id="40" Count="1" />
+      <LineId Id="177" Count="0" />
+      <LineId Id="42" Count="9" />
+      <LineId Id="92" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="93" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

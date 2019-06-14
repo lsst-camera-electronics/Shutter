@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmItem" TcSmVersion="1.0" TcVersion="3.1.4020.32" ClassName="CNestedPlcProjDef">
+<TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmItem" TcSmVersion="1.0" TcVersion="3.1.4022.29" ClassName="CNestedPlcProjDef">
 	<DataTypes>
 		<DataType>
 			<Name GUID="{4C3FC5AC-D5AA-44C6-AC5A-159774BA0F6D}" Namespace="MC" TcBaseType="true" HideType="true" IecDeclaration="DWORD;">NCTOPLC_AXIS_REF_STATE</Name>
@@ -701,7 +701,7 @@ External Setpoint Generation:
 			</Relations>
 		</DataType>
 		<DataType>
-			<Name GUID="{18071995-0000-0000-0000-000C00000006}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..5] OF DINT</Name>
+			<Name GUID="{59CB7A65-AEAB-E588-EB2A-AFE112B8A9C4}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..5] OF DINT</Name>
 			<BitSize>192</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000009}">DINT</BaseType>
 			<ArrayInfo>
@@ -710,7 +710,7 @@ External Setpoint Generation:
 			</ArrayInfo>
 		</DataType>
 		<DataType>
-			<Name GUID="{18071995-0000-0000-0000-00210000000F}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..14] OF BOOL</Name>
+			<Name GUID="{1F02D6B8-A7D2-F43A-E709-30725419E942}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..14] OF BOOL</Name>
 			<BitSize>120</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000030}">BOOL</BaseType>
 			<ArrayInfo>
@@ -898,13 +898,13 @@ External Setpoint Generation:
 		</DataType>
 	</DataTypes>
 	<Project GUID="{20651501-9D50-4E0C-AF06-8B577D14FDDA}" Name="ShutterMotion" PrjFilePath="..\..\ShutterMotion\ShutterMotion.plcproj" TmcFilePath="..\..\ShutterMotion\ShutterMotion.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e">
-		<Instance Id="#x01010010" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="1">
+		<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="1" TmcPath="ShutterMotion\ShutterMotion.tmc">
 			<Name>ShutterMotion Instance</Name>
 			<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 			<Vars VarGrpType="1">
 				<Name>PlcTask Inputs</Name>
 				<Var>
-					<Name>MAIN.axis[0].axisRef.NcToPlc</Name>
+					<Name>MAIN.stAxis[0].axisRef.NcToPlc</Name>
 					<Type GUID="{6A65C767-34E5-42BF-AD87-E1A503EAC7BE}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
 					<SubVar>
 						<Name>AxisState</Name>
@@ -953,15 +953,15 @@ External Setpoint Generation:
 					</SubVar>
 				</Var>
 				<Var>
-					<Name>MAIN.axis[0].limitHome</Name>
+					<Name>MAIN.stAxis[0].bLimitHome</Name>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.axis[0].limitDeployed</Name>
+					<Name>MAIN.stAxis[0].bLimitDeployed</Name>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.axis[1].axisRef.NcToPlc</Name>
+					<Name>MAIN.stAxis[1].axisRef.NcToPlc</Name>
 					<Type GUID="{6A65C767-34E5-42BF-AD87-E1A503EAC7BE}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
 					<SubVar>
 						<Name>AxisState</Name>
@@ -1010,44 +1010,55 @@ External Setpoint Generation:
 					</SubVar>
 				</Var>
 				<Var>
-					<Name>MAIN.axis[1].limitHome</Name>
+					<Name>MAIN.stAxis[1].bLimitHome</Name>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.axis[1].limitDeployed</Name>
+					<Name>MAIN.stAxis[1].bLimitDeployed</Name>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.power.Vraw</Name>
+					<Name>MAIN.fbPower.Vraw</Name>
 					<Comment>
 						<![CDATA[Power variable]]>
 					</Comment>
-					<Type GUID="{18071995-0000-0000-0000-000C00000006}">ARRAY [0..5] OF DINT</Type>
+					<Type GUID="{59CB7A65-AEAB-E588-EB2A-AFE112B8A9C4}">ARRAY [0..5] OF DINT</Type>
 				</Var>
 				<Var>
-					<Name>GVL.hallSwitch</Name>
+					<Name>GVL.bHallSwitch</Name>
 					<Comment>
 						<![CDATA[Hall Switches]]>
 					</Comment>
-					<Type GUID="{18071995-0000-0000-0000-00210000000F}">ARRAY [0..14] OF BOOL</Type>
+					<Type GUID="{1F02D6B8-A7D2-F43A-E709-30725419E942}">ARRAY [0..14] OF BOOL</Type>
+				</Var>
+				<Var>
+					<Name>GVL.testInput</Name>
+					<Comment>
+						<![CDATA[testing timing module]]>
+					</Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>GVL.testTime</Name>
+					<Type>UDINT</Type>
 				</Var>
 			</Vars>
 			<Vars VarGrpType="2">
 				<Name>PlcTask Outputs</Name>
 				<Var>
-					<Name>MAIN.axis[0].axisRef.PlcToNc</Name>
+					<Name>MAIN.stAxis[0].axisRef.PlcToNc</Name>
 					<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.axis[0].brake</Name>
+					<Name>MAIN.stAxis[0].bBrake</Name>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.axis[1].axisRef.PlcToNc</Name>
+					<Name>MAIN.stAxis[1].axisRef.PlcToNc</Name>
 					<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.axis[1].brake</Name>
+					<Name>MAIN.stAxis[1].bBrake</Name>
 					<Type>BOOL</Type>
 				</Var>
 			</Vars>
@@ -1062,22 +1073,22 @@ External Setpoint Generation:
 			<UnrestoredVarLinks ImportTime="2018-08-28T18:44:36">
 				<OwnerA Name="InputDst" Prefix="TIPC^Cycler^Cycler Instance" Type="1">
 					<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 3 (EL1819)">
-						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 10^Input" Size="1" OffsA="9" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
-						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 11^Input" Size="1" OffsA="10" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
-						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 12^Input" Size="1" OffsA="11" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
-						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 13^Input" Size="1" OffsA="12" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
-						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 14^Input" Size="1" OffsA="13" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
-						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 15^Input" Size="1" OffsA="14" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
-						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 16^Input" Size="1" OffsA="15" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
-						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 1^Input" Size="1" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
-						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 2^Input" Size="1" OffsA="1" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
-						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 3^Input" Size="1" OffsA="2" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
-						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 4^Input" Size="1" OffsA="3" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
-						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 5^Input" Size="1" OffsA="4" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
-						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 6^Input" Size="1" OffsA="5" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
-						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 7^Input" Size="1" OffsA="6" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
-						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 8^Input" Size="1" OffsA="7" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
-						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 9^Input" Size="1" OffsA="8" RestoreInfo="TypeMismatch" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 10^Input" Size="1" OffsA="9" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}" RestoreInfo="BNotFound"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 11^Input" Size="1" OffsA="10" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}" RestoreInfo="BNotFound"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 12^Input" Size="1" OffsA="11" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}" RestoreInfo="BNotFound"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 13^Input" Size="1" OffsA="12" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}" RestoreInfo="BNotFound"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 14^Input" Size="1" OffsA="13" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}" RestoreInfo="BNotFound"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 15^Input" Size="1" OffsA="14" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}" RestoreInfo="BNotFound"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 16^Input" Size="1" OffsA="15" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}" RestoreInfo="BNotFound"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 1^Input" Size="1" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}" RestoreInfo="BNotFound"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 2^Input" Size="1" OffsA="1" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}" RestoreInfo="BNotFound"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 3^Input" Size="1" OffsA="2" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}" RestoreInfo="BNotFound"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 4^Input" Size="1" OffsA="3" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}" RestoreInfo="BNotFound"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 5^Input" Size="1" OffsA="4" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}" RestoreInfo="BNotFound"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 6^Input" Size="1" OffsA="5" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}" RestoreInfo="BNotFound"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 7^Input" Size="1" OffsA="6" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}" RestoreInfo="BNotFound"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 8^Input" Size="1" OffsA="7" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}" RestoreInfo="BNotFound"/>
+						<Link VarA="GVL.hallSwitch" TypeA="WORD" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Channel 9^Input" Size="1" OffsA="8" OldTypeA="WORD" OldGuidA="{18071995-0000-0000-0000-000000000004}" NewTypeA="ARRAY [0..14] OF BOOL" NewGuidA="{18071995-0000-0000-0000-00210000000F}" RestoreInfo="BNotFound"/>
 					</OwnerB>
 				</OwnerA>
 			</UnrestoredVarLinks>
@@ -1113,60 +1124,76 @@ External Setpoint Generation:
 					</OwnerB>
 				</OwnerA>
 			</UnrestoredVarLinks>
+			<UnrestoredVarLinks ImportTime="2019-06-12T16:54:03">
+				<OwnerA Name="OutputSrc" Prefix="TIPC^ShutterMotion^ShutterMotion Instance" Type="2">
+					<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 5 (EL2622)">
+						<Link VarA="MAIN.axis[0].brake" TypeA="BOOL" InOutA="1" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="Channel 1^Output" Size="1" RestoreInfo="ANotFound"/>
+						<Link VarA="MAIN.axis[1].brake" TypeA="BOOL" InOutA="1" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="Channel 2^Output" Size="1" RestoreInfo="ANotFound"/>
+					</OwnerB>
+					<OwnerB Name="TINC^NC-Task 1 SAF^Axes^Axis 1">
+						<Link VarA="MAIN.axis[0].axisRef.PlcToNc" TypeA="MC.PLCTONC_AXIS_REF" InOutA="1" GuidA="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" VarB="Inputs^FromPlc" RestoreInfo="ANotFound"/>
+					</OwnerB>
+					<OwnerB Name="TINC^NC-Task 1 SAF^Axes^Axis 2">
+						<Link VarA="MAIN.axis[1].axisRef.PlcToNc" TypeA="MC.PLCTONC_AXIS_REF" InOutA="1" GuidA="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" VarB="Inputs^FromPlc" RestoreInfo="ANotFound"/>
+					</OwnerB>
+				</OwnerA>
+				<OwnerA Name="InputDst" Prefix="TIPC^ShutterMotion^ShutterMotion Instance" Type="1">
+					<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EL1258)">
+						<Link VarA="GVL.hallSwitch[0]" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTI Inputs 1x Channel 1^Inputs^Input event state 1" Size="1" RestoreInfo="ANotFound"/>
+						<Link VarA="GVL.hallSwitch[1]" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTI Inputs 1x Channel 2^Status^Input state" Size="1" RestoreInfo="ANotFound"/>
+						<Link VarA="GVL.hallSwitch[2]" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTI Inputs 1x Channel 3^Status^Input state" Size="1" RestoreInfo="ANotFound"/>
+						<Link VarA="GVL.hallSwitch[3]" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTI Inputs 1x Channel 4^Status^Input state" Size="1" RestoreInfo="ANotFound"/>
+						<Link VarA="GVL.hallSwitch[4]" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTI Inputs 1x Channel 5^Status^Input state" Size="1" RestoreInfo="ANotFound"/>
+						<Link VarA="GVL.hallSwitch[5]" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTI Inputs 1x Channel 6^Status^Input state" Size="1" RestoreInfo="ANotFound"/>
+						<Link VarA="GVL.hallSwitch[6]" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTI Inputs 1x Channel 7^Status^Input state" Size="1" RestoreInfo="ANotFound"/>
+						<Link VarA="GVL.hallSwitch[7]" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTI Inputs 1x Channel 8^Status^Input state" Size="1" RestoreInfo="ANotFound"/>
+					</OwnerB>
+					<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 12 (EL1259)">
+						<Link VarA="GVL.hallSwitch[10]" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTI Inputs 1x Channel 3^Status^Input state" Size="1" RestoreInfo="ANotFound"/>
+						<Link VarA="GVL.hallSwitch[11]" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTI Inputs 1x Channel 4^Status^Input state" Size="1" RestoreInfo="ANotFound"/>
+						<Link VarA="GVL.hallSwitch[12]" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTI Inputs 1x Channel 5^Status^Input state" Size="1" RestoreInfo="ANotFound"/>
+						<Link VarA="GVL.hallSwitch[13]" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTI Inputs 1x Channel 6^Status^Input state" Size="1" RestoreInfo="ANotFound"/>
+						<Link VarA="GVL.hallSwitch[14]" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTI Inputs 1x Channel 7^Status^Input state" Size="1" RestoreInfo="ANotFound"/>
+						<Link VarA="GVL.hallSwitch[8]" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTI Inputs 1x Channel 1^Status^Input state" Size="1" RestoreInfo="ANotFound"/>
+						<Link VarA="GVL.hallSwitch[9]" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTI Inputs 1x Channel 2^Status^Input state" Size="1" RestoreInfo="ANotFound"/>
+					</OwnerB>
+					<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 2 (EL7047)">
+						<Link VarA="MAIN.axis[0].limitDeployed" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="STM Status^Status^Digital input 2" Size="1" RestoreInfo="ANotFound"/>
+						<Link VarA="MAIN.axis[0].limitHome" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="STM Status^Status^Digital input 1" Size="1" RestoreInfo="ANotFound"/>
+					</OwnerB>
+					<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 4 (EL7047)">
+						<Link VarA="MAIN.axis[1].limitDeployed" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="STM Status^Status^Digital input 2" Size="1" RestoreInfo="ANotFound"/>
+						<Link VarA="MAIN.axis[1].limitHome" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="STM Status^Status^Digital input 1" Size="1" RestoreInfo="ANotFound"/>
+					</OwnerB>
+					<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 15 (EK1100)^Term 26 (EL3602)">
+						<Link VarA="MAIN.power.Vraw[0]" TypeA="DINT" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000009}" VarB="AI Inputs Channel 1^Value" RestoreInfo="ANotFound"/>
+						<Link VarA="MAIN.power.Vraw[1]" TypeA="DINT" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000009}" VarB="AI Inputs Channel 2^Value" RestoreInfo="ANotFound"/>
+					</OwnerB>
+					<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 15 (EK1100)^Term 27 (EL3602)">
+						<Link VarA="MAIN.power.Vraw[3]" TypeA="DINT" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000009}" VarB="AI Inputs Channel 1^Value" RestoreInfo="ANotFound"/>
+						<Link VarA="MAIN.power.Vraw[4]" TypeA="DINT" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000009}" VarB="AI Inputs Channel 2^Value" RestoreInfo="ANotFound"/>
+					</OwnerB>
+					<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 15 (EK1100)^Term 32 (EL3681)">
+						<Link VarA="MAIN.power.Vraw[2]" TypeA="DINT" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000009}" VarB="SAI Inputs^Value" RestoreInfo="ANotFound"/>
+					</OwnerB>
+					<OwnerB Name="TINC^NC-Task 1 SAF^Axes^Axis 1">
+						<Link VarA="MAIN.axis[0].axisRef.NcToPlc" TypeA="MC.NCTOPLC_AXIS_REF" InOutA="0" GuidA="{6A65C767-34E5-42BF-AD87-E1A503EAC7BE}" VarB="Outputs^ToPlc" RestoreInfo="ANotFound"/>
+					</OwnerB>
+					<OwnerB Name="TINC^NC-Task 1 SAF^Axes^Axis 2">
+						<Link VarA="MAIN.axis[1].axisRef.NcToPlc" TypeA="MC.NCTOPLC_AXIS_REF" InOutA="0" GuidA="{6A65C767-34E5-42BF-AD87-E1A503EAC7BE}" VarB="Outputs^ToPlc" RestoreInfo="ANotFound"/>
+					</OwnerB>
+				</OwnerA>
+			</UnrestoredVarLinks>
 			<TaskPouOids>
-				<TaskPouOid Prio="20" OTCID="#x01010011"/>
+				<TaskPouOid Prio="7" OTCID="#x08502001"/>
 			</TaskPouOids>
 		</Instance>
 	</Project>
 	<Mappings>
 		<OwnerA Name="ShutterMotion Instance">
-			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 2 (EL7047)">
-				<Link VarA="PlcTask Inputs^MAIN.axis[0].limitDeployed" VarB="STM Status^Status^Digital input 2"/>
-				<Link VarA="PlcTask Inputs^MAIN.axis[0].limitHome" VarB="STM Status^Status^Digital input 1"/>
-			</OwnerB>
-			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 3 (EL1819)">
-				<Link VarA="PlcTask Inputs^GVL.hallSwitch[0]" VarB="Channel 1^Input"/>
-				<Link VarA="PlcTask Inputs^GVL.hallSwitch[10]" VarB="Channel 11^Input"/>
-				<Link VarA="PlcTask Inputs^GVL.hallSwitch[11]" VarB="Channel 12^Input"/>
-				<Link VarA="PlcTask Inputs^GVL.hallSwitch[12]" VarB="Channel 13^Input"/>
-				<Link VarA="PlcTask Inputs^GVL.hallSwitch[13]" VarB="Channel 14^Input"/>
-				<Link VarA="PlcTask Inputs^GVL.hallSwitch[14]" VarB="Channel 15^Input"/>
-				<Link VarA="PlcTask Inputs^GVL.hallSwitch[1]" VarB="Channel 2^Input"/>
-				<Link VarA="PlcTask Inputs^GVL.hallSwitch[2]" VarB="Channel 3^Input"/>
-				<Link VarA="PlcTask Inputs^GVL.hallSwitch[3]" VarB="Channel 4^Input"/>
-				<Link VarA="PlcTask Inputs^GVL.hallSwitch[4]" VarB="Channel 5^Input"/>
-				<Link VarA="PlcTask Inputs^GVL.hallSwitch[5]" VarB="Channel 6^Input"/>
-				<Link VarA="PlcTask Inputs^GVL.hallSwitch[6]" VarB="Channel 7^Input"/>
-				<Link VarA="PlcTask Inputs^GVL.hallSwitch[7]" VarB="Channel 8^Input"/>
-				<Link VarA="PlcTask Inputs^GVL.hallSwitch[8]" VarB="Channel 9^Input"/>
-				<Link VarA="PlcTask Inputs^GVL.hallSwitch[9]" VarB="Channel 10^Input"/>
-			</OwnerB>
-			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 4 (EL7047)">
-				<Link VarA="PlcTask Inputs^MAIN.axis[1].limitDeployed" VarB="STM Status^Status^Digital input 2"/>
-				<Link VarA="PlcTask Inputs^MAIN.axis[1].limitHome" VarB="STM Status^Status^Digital input 1"/>
-			</OwnerB>
-			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 5 (EL2622)">
-				<Link VarA="PlcTask Outputs^MAIN.axis[0].brake" VarB="Channel 1^Output"/>
-				<Link VarA="PlcTask Outputs^MAIN.axis[1].brake" VarB="Channel 2^Output"/>
-			</OwnerB>
-			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 15 (EK1100)^Term 26 (EL3602)">
-				<Link VarA="PlcTask Inputs^MAIN.power.Vraw[0]" VarB="AI Inputs Channel 1^Value"/>
-				<Link VarA="PlcTask Inputs^MAIN.power.Vraw[1]" VarB="AI Inputs Channel 2^Value"/>
-			</OwnerB>
-			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 15 (EK1100)^Term 27 (EL3602)">
-				<Link VarA="PlcTask Inputs^MAIN.power.Vraw[3]" VarB="AI Inputs Channel 1^Value"/>
-				<Link VarA="PlcTask Inputs^MAIN.power.Vraw[4]" VarB="AI Inputs Channel 2^Value"/>
-			</OwnerB>
-			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 15 (EK1100)^Term 32 (EL3681)">
-				<Link VarA="PlcTask Inputs^MAIN.power.Vraw[2]" VarB="SAI Inputs^Value"/>
-			</OwnerB>
-			<OwnerB Name="TINC^NC-Task 1 SAF^Axes^Axis 1">
-				<Link VarA="PlcTask Inputs^MAIN.axis[0].axisRef.NcToPlc" VarB="Outputs^ToPlc"/>
-				<Link VarA="PlcTask Outputs^MAIN.axis[0].axisRef.PlcToNc" VarB="Inputs^FromPlc"/>
-			</OwnerB>
-			<OwnerB Name="TINC^NC-Task 1 SAF^Axes^Axis 2">
-				<Link VarA="PlcTask Inputs^MAIN.axis[1].axisRef.NcToPlc" VarB="Outputs^ToPlc"/>
-				<Link VarA="PlcTask Outputs^MAIN.axis[1].axisRef.PlcToNc" VarB="Inputs^FromPlc"/>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 12 (EL1259)">
+				<Link VarA="PlcTask Inputs^GVL.testInput" VarB="MTI Inputs 1x Channel 8^Status^Input state"/>
+				<Link VarA="PlcTask Inputs^GVL.testTime" VarB="MTI Inputs 1x Channel 8^Input event time 1"/>
 			</OwnerB>
 		</OwnerA>
 	</Mappings>

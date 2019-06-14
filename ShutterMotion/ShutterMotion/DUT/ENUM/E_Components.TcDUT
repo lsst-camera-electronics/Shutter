@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="E_Components" Id="{74e76de3-b03e-41b3-82c7-5ef2e22c7ddc}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+//{attribute 'strict'}
+TYPE E_Components :
+(
+	motorXP,
+	motorXM,
+	brakes,
+	terminals,
+	controller,
+	(*Leave 'system' as the last item on this list. 
+	Any new components should be added before 'system' on this enum list, lest you break the code. *)
+	system 
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="ST_AxisGroup" Id="{2b563dca-bb77-4e19-946f-8445edcd73f2}">
+    <Declaration><![CDATA[TYPE ST_AxisGroup :
+STRUCT
+	//basic built in functions
+	mcPower		: MC_Power;
+	mcReset		: MC_Reset;
+	mcMoveAbs	: MC_MoveAbsolute;
+	mcMoveRel	: MC_MoveRelative;
+	mcSetPos	: MC_SetPosition;
+	mcHome		: MC_Home;
+	mcHalt		: MC_Halt;
+	mcStop		: MC_Stop;
+	mcJog		: MC_Jog;
+	
+	//Status
+	bError			: BOOL;
+	nErrorID 		: UDINT;
+	bIsCalibrated	: BOOL;
+	bIsHomed		: BOOL;
+	
+	//linkable variables
+	axisRef					: AXIS_REF;;
+	bBrake AT %Q* 			: BOOL;
+	bLimitHome AT %I*		: BOOL;
+	bLimitDeployed AT %I*	: BOOL;
+
+	//used for tracking linear motion using hall sensors
+	fbHallSigCal_rtrig	: ARRAY [GVL.cHallLower .. GVL.cHallUpper] OF R_TRIG;
+	fbHallSigCal_ftrig 	: ARRAY [GVL.cHallLower .. GVL.cHallUpper] OF F_TRIG;
+	fHallPosCal			: ARRAY [GVL.cDirPos .. GVL.cDirNeg, 0 .. GVL.cTripCount] OF LREAL;
+	fHallPosAct			: LREAL;
+	fRecordedPosition	: ARRAY [0 .. 1000] OF LREAL;
+	tRecordedTime		: ARRAY [0 .. 1000] OF T_DCTIME64;
+	nTripCount 			: INT;
+	nHallSequence		: ARRAY [GVL.cDirPos .. GVL.cDirNeg, 0 .. GVL.cTripCount] OF WORD;
+	nSeqToCompare		: WORD;
+	fPosDiffAtTrip		: LREAL;
+	bTrackedFlag		: BOOL;
+
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

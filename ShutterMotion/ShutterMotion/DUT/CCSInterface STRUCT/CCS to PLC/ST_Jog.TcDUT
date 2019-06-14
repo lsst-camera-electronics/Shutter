@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="ST_Jog" Id="{82723e70-fe16-42e0-83da-e6b59bea9250}">
+    <Declaration><![CDATA[
+{attribute 'pack_mode' := '1'}
+TYPE ST_Jog EXTENDS ST_MsgToPLC:
+STRUCT
+    nAxisIndex: DINT;
+    nDirection: BOOL; //FALSE = Forward, TRUE = Backward
+    fSpeed: LREAL;
+END_STRUCT
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

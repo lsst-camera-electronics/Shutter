@@ -15,19 +15,115 @@
     <LibraryReferences>{b62c7209-1799-4d59-aa70-cbf2e993793f}</LibraryReferences>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="DUTs\AxisGroup.TcDUT">
+    <Compile Include="DUT\AxisStruct\ST_AxisGroup.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\Components.TcDUT">
+    <Compile Include="DUT\AxisStruct\ST_MotionParameters.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\Commands.TcDUT">
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_Calibrate.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\Mode.TcDUT">
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_ChangeAxisEnable.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\States.TcDUT">
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_ChangeBrakeState.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_ClearAllFaults.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_ClearAxisFaults.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_CloseShutter.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_DisableAllAxes.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_EnableAllAxes.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_GoToCenter.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_GoToProd.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_HomeAxis.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_Jog.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_MoveAxisAbsolute.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_MoveAxisRelative.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_OpenShutter.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_Reset.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_StopMotion.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\CCS to PLC\ST_TakeExposure.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\PLC to CCS\ST_AxisStatus.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\PLC to CCS\ST_CalibDone.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\PLC to CCS\ST_Disable.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\PLC to CCS\ST_Enable.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\PLC to CCS\ST_Error.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\PLC to CCS\ST_Ignored.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\PLC to CCS\ST_ShutterStatus.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\PLC to CCS\ST_Timer.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\ST_Commands.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\ST_MsgToPLC.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\CCSInterface STRUCT\ST_PLCMsg.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\ENUM\E_Commands.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\ENUM\E_Components.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\ENUM\State ENUM\E_StatesEnabled.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\ENUM\State ENUM\E_StatesMaint.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\ENUM\State ENUM\E_StatesProd.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUT\ENUM\State ENUM\E_StatesTop.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GlobalTextList.TcGTLO">
@@ -40,27 +136,71 @@
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\ShutterFSM.TcPOU">
+    <Compile Include="POUs\FB_Power.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\Power.TcPOU">
+    <Compile Include="POUs\FB_Protection.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\Protection.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="POUs\Motions.TcPOU">
+    <Compile Include="POUs\F_HaveDifferentIDs.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\MAIN.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Visualization Manager.TcVMO">
+    <Compile Include="POUs\State Machine\FB_Cycler.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VISUs\TestMotionGUI.TcVIS">
+    <Compile Include="POUs\State Machine\FB_ShutterSM.TcPOU">
       <SubType>Code</SubType>
-      <DependentUpon>Visualization Manager.TcVMO</DependentUpon>
+    </Compile>
+    <Compile Include="POUs\State Machine\FB_Tracking.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\State Machine\StateTop\FB_StateDisabled.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\State Machine\StateTop\FB_StateEnabled.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\State Machine\StateTop\StateEnabled\FB_Reset.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\State Machine\StateTop\StateEnabled\FB_StateMaint.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\State Machine\StateTop\StateEnabled\FB_StateProd.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateMaint\FB_Homing.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateMaint\FB_StateCalibrating.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateMaint\FB_StateMoving.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateMaint\FB_StateStill.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateProd\FB_StateClosed.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateProd\FB_StateClosing.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateProd\FB_StateOpened.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateProd\FB_StateOpening.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateProd\FB_StateTravelling.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Visualization Manager.TcVMO">
+      <SubType>Code</SubType>
     </Compile>
     <Compile Include="VISUs\ShutterGUI.TcVIS">
       <SubType>Code</SubType>
@@ -68,8 +208,19 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DUTs" />
+    <Folder Include="DUT\AxisStruct" />
+    <Folder Include="DUT\CCSInterface STRUCT" />
+    <Folder Include="DUT\CCSInterface STRUCT\CCS to PLC" />
+    <Folder Include="DUT\CCSInterface STRUCT\PLC to CCS" />
+    <Folder Include="DUT\ENUM" />
+    <Folder Include="DUT\ENUM\State ENUM" />
     <Folder Include="GVLs" />
+    <Folder Include="DUT" />
+    <Folder Include="POUs\State Machine" />
+    <Folder Include="POUs\State Machine\StateTop" />
+    <Folder Include="POUs\State Machine\StateTop\StateEnabled" />
+    <Folder Include="POUs\State Machine\StateTop\StateEnabled\StateProd" />
+    <Folder Include="POUs\State Machine\StateTop\StateEnabled\StateMaint" />
     <Folder Include="VISUs" />
     <Folder Include="POUs" />
   </ItemGroup>

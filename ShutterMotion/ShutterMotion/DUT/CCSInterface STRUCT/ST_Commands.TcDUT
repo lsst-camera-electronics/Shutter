@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="ST_Commands" Id="{3fcac2c0-5c8d-4f54-858a-02487bc3faef}">
+    <Declaration><![CDATA[TYPE ST_Commands :
+STRUCT
+	stCalibrate			: ST_Calibrate;
+	stChangeAxisEnable	: ST_ChangeAxisEnable;
+	stChangeBrakeState	: ST_ChangeBrakeState;
+	stClearAllFaults	: ST_ClearAllFaults;
+	stClearAxisFaults	: ST_ClearAxisFaults;
+	stCloseShutter		: ST_CloseShutter;
+	stDisableAllAxes	: ST_DisableAllAxes;
+	stEnableAllAxes		: ST_EnableAllAxes;
+	stGoToCenter		: ST_GoToCenter;
+	stGoToProd			: ST_GoToProd;
+	stHomeAxis			: ST_HomeAxis;
+	stJog				: ST_Jog;
+	stMoveAxisAbsolute	: ST_MoveAxisAbsolute;
+	stMoveAxisRelative	: ST_MoveAxisRelative;
+	stOpenShutter		: ST_OpenShutter;
+	stReset				: ST_Reset;
+	stStopMotion		: ST_StopMotion;
+	stTakeExposure		: ST_TakeExposure;
+	
+	eCommand			: E_Commands;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

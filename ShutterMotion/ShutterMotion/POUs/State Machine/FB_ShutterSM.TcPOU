@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="FB_ShutterSM" Id="{bb014c99-9246-4485-a45b-7048ac4294d5}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ShutterSM
+VAR_IN_OUT
+	stAxis  	: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;
+END_VAR
+VAR_INPUT
+	bAuxElxPermit	: BOOL;	
+	stInCommand	: ST_Commands;
+END_VAR
+VAR
+	//state-machine
+	eCurrentState	: E_StatesTop;
+	eNextState		: E_StatesTop;
+	fbEnabled		: FB_StateEnabled;
+	fbDisabled		: FB_StateDisabled;
+	bLowerEntry		: BOOL;
+
+	//used in homeShutter Action
+	fbHomeDelay : TON;
+	fbTracking	: FB_Tracking;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(* *)
+
+//update Axis_Ref status
+stAxis[GVL.cXP].axisRef.ReadStatus();
+stAxis[GVL.cXM].axisRef.ReadStatus();
+
+IF eCurrentState <> eNextState THEN
+	bLowerEntry := TRUE;
+END_IF
+
+(*Start of state machine*)
+CASE eCurrentState OF
+	E_StatesTop.Disabled: 
+		fbDisabled(stAxis := stAxis, btopEntry:=bLowerEntry);
+		IF bAuxElxPermit = 1 THEN
+			eNextState := E_StatesTop.Enabled;
+		END_IF
+			
+	E_StatesTop.Enabled:
+		fbEnabled(stAxis := stAxis, stInCommand	:= stInCommand, bTopEntry := bLowerEntry);
+		IF bAuxElxPermit = 0 THEN
+			eNextState := E_StatesTop.Disabled;
+		END_IF
+			
+END_CASE
+
+//track motion of both blades
+fbTracking(stAxis:=stAxis);]]></ST>
+    </Implementation>
+    <LineIds Name="FB_ShutterSM">
+      <LineId Id="60" Count="0" />
+      <LineId Id="65" Count="3" />
+      <LineId Id="1184" Count="2" />
+      <LineId Id="378" Count="0" />
+      <LineId Id="318" Count="0" />
+      <LineId Id="1048" Count="1" />
+      <LineId Id="1104" Count="0" />
+      <LineId Id="1108" Count="0" />
+      <LineId Id="1115" Count="2" />
+      <LineId Id="1110" Count="2" />
+      <LineId Id="1118" Count="0" />
+      <LineId Id="1120" Count="2" />
+      <LineId Id="1105" Count="0" />
+      <LineId Id="1188" Count="0" />
+      <LineId Id="224" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

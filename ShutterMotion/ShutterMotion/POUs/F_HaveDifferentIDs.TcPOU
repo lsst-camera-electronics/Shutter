@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="F_HaveDifferentIDs" Id="{efee81a6-e141-448b-8c77-517e06ad4102}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_HaveDifferentIDs : BOOL
+VAR_INPUT
+    stMsg1: ST_MsgToPLC;
+    stMsg2: ST_MsgToPLC;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(* First compare the fields most likely to have changed. *)
+F_HaveDifferentIDs :=
+    (stMsg1.nDtime 		<> stMsg2.nDtime) OR_ELSE
+    (stMsg1.nSequence 	<> stMsg2.nSequence) OR_ELSE
+    (stMsg1.nLowUUID 	<> stMsg2.nLowUUID) OR_ELSE
+    (stMsg1.nHighUUID	<> stMsg2.nHighUUID);]]></ST>
+    </Implementation>
+    <LineIds Name="F_HaveDifferentIDs">
+      <LineId Id="11" Count="4" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

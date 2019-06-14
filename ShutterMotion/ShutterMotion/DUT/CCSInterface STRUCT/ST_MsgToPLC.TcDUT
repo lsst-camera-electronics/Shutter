@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="ST_MsgToPLC" Id="{987d0f11-b4fb-4391-86af-0a6bd82a8e9f}">
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+TYPE ST_MsgToPLC EXTENDS ST_PLCMsg:
+STRUCT
+    nLowUUID	: LINT;	(* The low-order part of the UUID. *)
+    nHighUUID	: LINT;	(* The high-order part of the UUID. *)
+    nDtime		: DINT;	(* Time of day of sending, in milliseconds. *)
+    nSequence	: DINT;	(* Message sequence number. *)
+END_STRUCT
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="FB_StateTravelling" Id="{f3ba0f82-9934-451f-bef4-1d94ed0cc61c}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_StateTravelling
+VAR_IN_OUT
+	stAxis 	 	: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;	
+	bTopEntry	: BOOL;
+END_VAR
+VAR_INPUT
+	nExt	: INT;
+	nRet	: INT;
+	fSpeed	: LREAL;
+END_VAR
+VAR_OUTPUT
+	bMotionDone	: BOOL;
+END_VAR
+VAR
+	//state-machine
+	nCurrentState	: INT;
+	nNextState		: INT;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+IF bTopEntry = TRUE THEN
+	bTopEntry := FALSE;
+	nNextState := 1400;
+END_IF
+
+bMotionDone := FALSE;
+nCurrentState := nNextState;
+
+CASE nCurrentState OF
+	
+(*Perform Open Shutter Motion*)
+	1400:
+		stAxis[GVL.cXP].bBrake := GVL.cBrakeOff;
+		stAxis[GVL.cXM].bBrake := GVL.cBrakeOff;
+		
+		IF nRet = GVL.cXP THEN
+			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosStart, Velocity:=fSpeed, Execute:=TRUE);
+		ELSIF nRet = GVL.cXM THEN
+			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosEnd, Velocity:=fSpeed, Execute:=TRUE);
+		END_IF
+		
+		IF nExt = GVL.cXP THEN
+			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosEnd, Velocity:=fSpeed, Execute:=TRUE);
+		ELSIF nExt = GVL.cXM THEN	
+			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosStart, Velocity:=fSpeed, Execute:=TRUE);
+		END_IF
+	
+		IF stAxis[GVL.cXP].mcMoveAbs.Done THEN
+			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
+			nNextState := 1410;
+		END_IF			
+		IF stAxis[GVL.cXM].mcMoveAbs.Done THEN
+			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
+			nNextState := 1410;
+		END_IF	
+		
+	1410: //End action
+		bMotionDone := TRUE;
+
+END_CASE
+]]></ST>
+    </Implementation>
+    <LineIds Name="FB_StateTravelling">
+      <LineId Id="60" Count="1" />
+      <LineId Id="30" Count="14" />
+      <LineId Id="89" Count="3" />
+      <LineId Id="87" Count="1" />
+      <LineId Id="45" Count="4" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="111" Count="1" />
+      <LineId Id="114" Count="0" />
+      <LineId Id="110" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="52" Count="7" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

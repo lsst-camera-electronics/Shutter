@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="E_StatesMaint" Id="{15793634-9ca2-4cea-8173-a05181fa96d1}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE E_StatesMaint :
+(
+	Still 		:=	21010,
+	Calibrating	:=	21020,
+	Moving		:=	21030
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

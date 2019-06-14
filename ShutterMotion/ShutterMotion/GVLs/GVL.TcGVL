@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <GVL Name="GVL" Id="{543590d2-21dc-426c-bb1c-cff8b9e02654}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 VAR_GLOBAL CONSTANT
@@ -29,36 +29,55 @@ VAR_GLOBAL CONSTANT
 *)
 
 	 
-	 hallLower_C 	: INT := 0;
-	 hallUpper_C 	: INT := 14;
-	 dirPos_C		: INT := 0;
-	 dirNeg_C		: INT := 1;
-	 tripPerHall_C	: INT := 16;
-	 numOfHall_C	: INT := 15;
-	 tripCount_C	: INT := (tripPerHall_C*numOfHall_C)-1;
+	cHallLower 		: INT := 0;
+	cHallUpper 		: INT := 14;
+	cDirPos			: INT := 0;
+	cDirNeg			: INT := 1;
+	cTripPerHall	: INT := 16;
+	cNumOfHall		: INT := 15;
+	cTripCount		: INT := (cTripPerHall*cNumOfHall)-1;
+	 
+	 
+	cBrakeOff		: BOOL	:= TRUE;
+	cBrakeOn		: BOOL	:= FALSE;
+	cScanVel		: LREAL := 60;
+	cHomeVel		: LREAL	:= 3;
+	cCalibrateVel	: LREAL	:= 100;
+	cPositionVel	: LREAL := 300;
+	cPosStart		: LREAL := 0;
+	cPosEnd			: LREAL := 751;
+	cHomeOffSetXP	: LREAL	:= (cPosStart+35);
+	cHomeOffSetXM	: LREAL	:= (cPosEnd-84);
+	
+	//SIZE_HALL_SW_C 	: LREAL := SIZEOF(GVL.hallPosCalXP);
+	
+	//For indexing axis
+	cXP : INT := 0;
+	cXM : INT := 1;
 	
 	
 END_VAR
 VAR_GLOBAL
 
 	//Hall Switches
-	hallSwitch AT %I*	:ARRAY[0..14] OF BOOL;
-	hallSequence 		: WORD;
+	bHallSwitch AT %I*	:ARRAY[0..14] OF BOOL;
+	nHallSequence 		: WORD;
 
 	//Timer
 	fbWaitTimer	: TON;
-	expoTime	: TIME := T#1s; //time specified in milliseconds
-	
-	//others
-	setPosition : LREAL;
 	
 	//TestVariable
 	testINT : INT;
-	//testINT2 : INT;
+	testINT2 : INT;
+	testTime AT %I* : UDINT;
+	testTime2 : UDINT;
 	//testLREAL : LREAL;
 	//testWord : WORD;
 	
 	fbWritePersistentData	: WritePersistentData;
+	
+	//testing timing module
+	testInput AT %I*	: BOOL;
 END_VAR
 
 VAR_GLOBAL PERSISTENT // For million cycle test

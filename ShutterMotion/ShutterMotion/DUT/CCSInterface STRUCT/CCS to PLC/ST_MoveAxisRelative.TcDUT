@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="ST_MoveAxisRelative" Id="{c2c2b5e6-c8e8-4cb0-8e05-7e03253b0949}">
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+TYPE ST_MoveAxisRelative EXTENDS ST_MsgToPLC:
+STRUCT
+    nAxisIndex: DINT;
+    fDistance: LREAL;
+    fSpeed: LREAL;
+END_STRUCT
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="FB_StateProd" Id="{40a07a3a-fb23-4dc3-b994-cc6c85e7bf0e}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_StateProd
+VAR_IN_OUT
+	stAxis  	: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;	
+	bTopEntry	: BOOL;
+END_VAR
+VAR_INPUT
+	stInCommand	: ST_Commands;
+END_VAR
+VAR_OUTPUT
+	bMotionDone	: BOOL;
+END_VAR
+VAR
+	//state-machine
+	eCurrentState	: E_StatesProd;
+	eNextState		: E_StatesProd;
+	fbClosed		: FB_StateClosed;
+	fbClosing		: FB_StateClosing;
+	fbOpened		: FB_StateOpened;
+	fbOpening		: FB_StateOpening;
+	fbTravelling	: FB_StateTravelling;
+	bLowerEntry	: BOOL;
+
+	//shutter blade
+	nRet	: INT;
+	nExt	: INT;
+	
+	//Taking Exposure Variable
+	bTakingExposure	: BOOL;
+	fbExpoTimer		:  TON;
+	
+	//other var
+	fSpeed	: LREAL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+IF bTopEntry = TRUE THEN
+	bTopEntry := FALSE;
+	eNextState := E_StatesProd.Closed;
+END_IF	
+IF eCurrentState <> eNextState THEN
+	bLowerEntry := TRUE;
+END_IF
+IF stInCommand.eCommand = E_Commands.closeShutter THEN
+	fSpeed := stInCommand.stCloseShutter.fSpeed;
+ELSIF stInCommand.eCommand = E_Commands.openShutter THEN
+	fSpeed := stInCommand.stOpenShutter.fSpeed;
+ELSIF stInCommand.eCommand = E_Commands.takeExposure THEN
+	fSpeed := stInCommand.stTakeExposure.fSpeed;
+END_IF
+	
+
+eCurrentState := eNextState;
+fbExpoTimer(IN:=bTakingExposure, PT:=stInCommand.stTakeExposure.tExposureTime);
+
+CASE eCurrentState OF
+	
+	E_StatesProd.Closed:
+		fbClosed(stAxis:=stAxis, bTopEntry:=bLowerEntry, nRet=>nRet, nExt=>nExt, bTakingExposure=>bTakingExposure);
+		IF stInCommand.eCommand = E_Commands.openShutter OR stInCommand.eCommand = E_Commands.takeExposure THEN
+			IF stInCommand.eCommand = E_Commands.takeExposure THEN
+				bTakingExposure := TRUE;
+			END_IF
+			eNextState := E_StatesProd.Opening;
+		END_IF
+
+	E_StatesProd.Opening:
+		fbOpening(stAxis:=stAxis, bTopEntry:=bLowerEntry, fSpeed:=fSpeed, nRet:=nRet, bMotionDone=>bMotionDone);
+		IF bMotionDone THEN
+			eNextState := E_StatesProd.Opened;
+		END_IF
+		IF fbExpoTimer.Q THEN 
+			eNextState := E_StatesProd.Traveling;
+		END_IF
+	
+	E_StatesProd.Opened:
+		fbOpened(stAxis:=stAxis, bTopEntry:=bLowerEntry);
+		IF stInCommand.eCommand = E_Commands.closeShutter OR fbExpoTimer.Q THEN
+			eNextState := E_StatesProd.Closing;
+		END_IF
+		
+	E_StatesProd.Closing:
+		fbClosing(stAxis:=stAxis, bTopEntry:=bLowerEntry, nExt:=nExt, fSpeed:=fSpeed, bMotionDone=>bMotionDone);
+		IF bMotionDone THEN
+			eNextState := E_StatesProd.Closed;
+		END_IF
+	
+	E_StatesProd.Traveling:
+		fbTravelling(stAxis:=stAxis, bTopEntry:=bLowerEntry, nExt:=nExt, nRet:=nRet, fSpeed:=fspeed, bMotionDone=>bMotionDone);
+		IF bMotionDone THEN
+			eNextState := E_StatesProd.Closing;
+		END_IF
+	
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="FB_StateProd">
+      <LineId Id="56" Count="0" />
+      <LineId Id="58" Count="2" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="53" Count="2" />
+      <LineId Id="225" Count="2" />
+      <LineId Id="229" Count="4" />
+      <LineId Id="224" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="215" Count="0" />
+      <LineId Id="19" Count="1" />
+      <LineId Id="217" Count="0" />
+      <LineId Id="21" Count="1" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="117" Count="1" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="79" Count="1" />
+      <LineId Id="23" Count="2" />
+      <LineId Id="83" Count="2" />
+      <LineId Id="218" Count="0" />
+      <LineId Id="168" Count="1" />
+      <LineId Id="26" Count="2" />
+      <LineId Id="119" Count="2" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="30" Count="1" />
+      <LineId Id="123" Count="2" />
+      <LineId Id="32" Count="1" />
+      <LineId Id="170" Count="3" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

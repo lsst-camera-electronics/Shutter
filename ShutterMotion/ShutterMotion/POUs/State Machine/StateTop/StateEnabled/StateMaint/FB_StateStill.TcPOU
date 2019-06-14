@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="FB_StateStill" Id="{fac21632-7010-4c07-91b9-f12f78686b07}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_StateStill
+VAR_IN_OUT
+	stAxis  	: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;
+	bTopEntry	: BOOL;
+END_VAR
+VAR_INPUT
+	stInCommand	: ST_Commands;
+END_VAR
+VAR
+	//state-machine
+	nCurrentState	: INT;
+	nNextState		: INT;
+	fbCalibrating	: FB_StateCalibrating;
+	fbMoving		: FB_StateMoving;
+	bLowerEntry 	: BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+IF bTopEntry = TRUE THEN
+	bTopEntry := FALSE;
+END_IF	
+
+IF stInCommand.eCommand = E_Commands.clearAllFaults THEN
+	nNextState := 1000;
+ELSIF stInCommand.eCommand = E_Commands.changeAxisEnable THEN
+	nNextState := 1010	;
+ELSIF stInCommand.eCommand = E_Commands.clearAxisFaults THEN
+	nNextState := 1020;
+ELSIF stInCommand.eCommand = E_Commands.enableAllAxes THEN
+	nNextState := 1030;
+ELSIF stInCommand.eCommand = E_Commands.disableAllAxes THEN
+	nNextState := 1040;
+ELSIF stInCommand.eCommand = E_Commands.changeBrakeState THEN
+	nNextState := 1050;
+ELSIF stInCommand.eCommand = E_Commands.releaseAllBrakes THEN
+	nNextState := 1060;
+ELSIF stInCommand.eCommand = E_Commands.engageAllBrakes THEN
+	nNextState := 1070;
+END_IF
+
+nCurrentState := nNextState;
+
+CASE nCurrentState OF
+
+	1000:
+		stAxis[GVL.cXM].mcReset(Axis:=stAxis[GVL.cXM].axisRef, Execute:=TRUE);
+		stAxis[GVL.cXM].mcReset(Axis:=stAxis[GVL.cXM].axisRef, Execute:=TRUE);
+		IF stAxis[GVL.cXP].mcReset.Done AND stAxis[GVL.cXM].mcReset.Done THEN
+			stAxis[GVL.cXM].mcReset(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
+			stAxis[GVL.cXM].mcReset(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
+			nNextState := 2000; 
+		END_IF
+		
+	1010:	
+		stAxis[stInCommand.stChangeAxisEnable.nAxisIndex].mcPower(Axis:=stAxis[stInCommand.stChangeAxisEnable.nAxisIndex].axisRef,
+			 Enable:=stInCommand.stChangeAxisEnable.bEnabled);
+		nNextState := 2000; 
+
+	1020:	
+		stAxis[stInCommand.stClearAxisFaults.nAxisIndex].mcReset(Axis:=stAxis[stInCommand.stClearAxisFaults.nAxisIndex].axisRef, Execute:=TRUE);
+		IF stAxis[stInCommand.stClearAxisFaults.nAxisIndex].mcReset.Done THEN
+			stAxis[stInCommand.stClearAxisFaults.nAxisIndex].mcReset(Axis:=stAxis[stInCommand.stClearAxisFaults.nAxisIndex].axisRef, Execute:=FALSE);
+			nNextState := 2000; 
+		END_IF
+
+	1030:
+		stAxis[GVL.cXP].mcPower(Axis:=stAxis[GVL.cXP].axisRef, Enable:=TRUE);
+		stAxis[GVL.cXM].mcPower(Axis:=stAxis[GVL.cXM].axisRef, Enable:=TRUE);
+		nNextState := 2000; 
+
+	1040:	
+		stAxis[GVL.cXP].mcPower(Axis:=stAxis[GVL.cXP].axisRef, Enable:=FALSE);
+		stAxis[GVL.cXM].mcPower(Axis:=stAxis[GVL.cXM].axisRef, Enable:=FALSE);
+		nNextState := 2000; 
+		
+	1050:
+		stAxis[stInCommand.stChangeBrakeState.nAxisIndex].bBrake := stInCommand.stChangeBrakeState.nState;
+		nNextState := 2000; 
+		
+	1060:	
+		stAxis[GVL.cXP].bBrake := GVL.cBrakeOff;
+		stAxis[GVL.cXP].bBrake := GVL.cBrakeOff;
+		nNextState := 2000; 
+
+		
+	1070:	
+		stAxis[GVL.cXP].bBrake := GVL.cBrakeOn;
+		stAxis[GVL.cXP].bBrake := GVL.cBrakeOn;
+		nNextState := 2000; 
+
+	2000:
+		
+	
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="FB_StateStill">
+      <LineId Id="17" Count="2" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="239" Count="0" />
+      <LineId Id="241" Count="15" />
+      <LineId Id="240" Count="0" />
+      <LineId Id="238" Count="0" />
+      <LineId Id="25" Count="4" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="260" Count="0" />
+      <LineId Id="231" Count="0" />
+      <LineId Id="261" Count="1" />
+      <LineId Id="232" Count="1" />
+      <LineId Id="178" Count="1" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="230" Count="0" />
+      <LineId Id="259" Count="0" />
+      <LineId Id="176" Count="1" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="263" Count="1" />
+      <LineId Id="266" Count="0" />
+      <LineId Id="265" Count="0" />
+      <LineId Id="175" Count="0" />
+      <LineId Id="85" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="267" Count="0" />
+      <LineId Id="173" Count="0" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="268" Count="0" />
+      <LineId Id="170" Count="1" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="269" Count="0" />
+      <LineId Id="168" Count="1" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="270" Count="0" />
+      <LineId Id="65" Count="0" />
+      <LineId Id="166" Count="1" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="271" Count="0" />
+      <LineId Id="235" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="236" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

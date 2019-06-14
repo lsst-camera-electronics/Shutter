@@ -849,7 +849,7 @@
                     <v n="VisualElementIdentifier">"GenElemInst_44"</v>
                     <n n="VisualElementOfflinePaintCommands" />
                     <n n="VisualElementFrameInformation" />
-                    <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
+                    <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
                       <v>OnMouseUp</v>
                       <a cet="STSnippetInputAction">
                         <o>
@@ -1191,7 +1191,7 @@
                     <v n="VisualElementIdentifier">"GenElemInst_40"</v>
                     <n n="VisualElementOfflinePaintCommands" />
                     <n n="VisualElementFrameInformation" />
-                    <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
+                    <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
                       <v>OnMouseUp</v>
                       <a cet="STSnippetInputAction">
                         <o>
@@ -1362,7 +1362,7 @@
                     <v n="VisualElementIdentifier">"GenElemInst_42"</v>
                     <n n="VisualElementOfflinePaintCommands" />
                     <n n="VisualElementFrameInformation" />
-                    <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
+                    <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
                       <v>OnMouseUp</v>
                       <a cet="STSnippetInputAction">
                         <o>
@@ -2483,7 +2483,7 @@ MAIN.axis[1].brake:=TRUE;"</v>
                 <v n="VisualElementIdentifier">"GenElemInst_20"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
                   <v>OnMouseUp</v>
                   <a cet="STSnippetInputAction">
                     <o>
@@ -2654,7 +2654,7 @@ MAIN.axis[1].brake:=TRUE;"</v>
                 <v n="VisualElementIdentifier">"GenElemInst_26"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
                   <v>OnMouseUp</v>
                   <a cet="STSnippetInputAction">
                     <o>
@@ -3913,7 +3913,7 @@ MAIN.axis[1].brake:=TRUE;"</v>
                 <v n="VisualElementIdentifier">"GenElemInst_79"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
                   <v>OnMouseUp</v>
                   <a cet="STSnippetInputAction">
                     <o>
@@ -4028,10 +4028,10 @@ MAIN.axis[1].brake:=TRUE;"</v>
               <d n="FbMethods" t="CaseInsensitiveHashtable" ckt="String" cvt="Guid">
                 <v>FB_Init</v>
                 <v>363d3bc6-51c5-4da9-9e5d-e88004de46a5</v>
-                <v>FB_Reinit</v>
-                <v>da0b33e4-74de-4b5b-964f-cab228936b3a</v>
                 <v>FB_Exit</v>
                 <v>f1ad3da7-5643-47f6-bec7-91354b79c744</v>
+                <v>FB_Reinit</v>
+                <v>da0b33e4-74de-4b5b-964f-cab228936b3a</v>
               </d>
               <v n="FbName">"NotImportant"</v>
               <v n="FbGuid">{dfeac3d8-80a4-466d-8684-52280440cdd6}</v>
