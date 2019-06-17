@@ -36,7 +36,6 @@ stInCommand.eCommand := E_Commands.noCommand;
 IF F_HaveDifferentIDs(stInCommand.stCalibrate, stAckCommand.stCalibrate) THEN
 	stAckCommand.stCalibrate := stInCommand.stCalibrate;
 	stInCommand.eCommand := E_Commands.calibrate;
-	if stAckCommand.stTakeExposure
 	
 ELSIF F_HaveDifferentIDs(stInCommand.stChangeAxisEnable, stAckcommand.stChangeAxisEnable) THEN
 	stAckCommand.stChangeAxisEnable	:= stInCommand.stChangeAxisEnable;
@@ -145,7 +144,6 @@ END_IF
       <LineId Id="733" Count="0" />
       <LineId Id="783" Count="0" />
       <LineId Id="781" Count="0" />
-      <LineId Id="840" Count="0" />
       <LineId Id="824" Count="0" />
       <LineId Id="736" Count="0" />
       <LineId Id="735" Count="0" />

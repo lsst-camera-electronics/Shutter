@@ -28,6 +28,15 @@
 				<Task Id="11" Priority="7" CycleTime="3333" AmsPort="356" AdtTasks="true">
 					<Name>PlcTask6</Name>
 				</Task>
+				<Task Id="12" Priority="9" CycleTime="3333" AmsPort="357" AdtTasks="true">
+					<Name>PlcTask7</Name>
+				</Task>
+				<Task Id="13" Priority="10" CycleTime="3333" AmsPort="358" AdtTasks="true">
+					<Name>PlcTask8</Name>
+				</Task>
+				<Task Id="14" Priority="12" CycleTime="3333" AmsPort="359" AdtTasks="true">
+					<Name>PlcTask9</Name>
+				</Task>
 			</Tasks>
 		</System>
 		<Motion>
@@ -42,6 +51,6 @@
 	</Project>
 	<Mappings>
 		<MappingInfo Identifier="{00000000-0010-0304-3000-040310000403}" Id="#x02030010"/>
-		<MappingInfo Identifier="{00000000-2001-0850-0020-500841000403}" Id="#x02030030"/>
+		<MappingInfo Identifier="{00000000-2001-0850-0020-500841000403}" Id="#x02030020"/>
 	</Mappings>
 </TcSmProject>
