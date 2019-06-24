@@ -34,9 +34,6 @@ CASE nCurrentState OF
 	
 (*Perform Open Shutter Motion*)
 	1400:
-		stAxis[GVL.cXP].bBrake := GVL.cBrakeOff;
-		stAxis[GVL.cXM].bBrake := GVL.cBrakeOff;
-		
 		IF nRet = GVL.cXP THEN
 			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosStart, Velocity:=fSpeed, Execute:=TRUE);
 		ELSIF nRet = GVL.cXM THEN
@@ -66,7 +63,7 @@ END_CASE
     </Implementation>
     <LineIds Name="FB_StateTravelling">
       <LineId Id="60" Count="1" />
-      <LineId Id="30" Count="14" />
+      <LineId Id="30" Count="11" />
       <LineId Id="89" Count="3" />
       <LineId Id="87" Count="1" />
       <LineId Id="45" Count="4" />

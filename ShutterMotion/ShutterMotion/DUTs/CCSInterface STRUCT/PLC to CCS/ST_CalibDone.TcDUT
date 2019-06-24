@@ -9,7 +9,7 @@ STRUCT
        while moving axis a+1 in direction d.
        d=0 for positive, d=1 for negative.
      *)
-    fHallPosCal: ARRAY [0..1, 0..1, 0..239] OF LREAL;
+    hallPosCal: ARRAY [0..1, 0..1, 0..239] OF LREAL;
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

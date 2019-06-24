@@ -45,16 +45,10 @@
     <Compile Include="DUTs\CCSInterface STRUCT\CCS to PLC\ST_EnableAllAxes.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\CCSInterface STRUCT\CCS to PLC\ST_GoToCenter.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="DUTs\CCSInterface STRUCT\CCS to PLC\ST_GoToProd.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\CCSInterface STRUCT\CCS to PLC\ST_HomeAxis.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DUTs\CCSInterface STRUCT\CCS to PLC\ST_Jog.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\CCSInterface STRUCT\CCS to PLC\ST_MoveAxisAbsolute.TcDUT">
@@ -75,7 +69,7 @@
     <Compile Include="DUTs\CCSInterface STRUCT\CCS to PLC\ST_TakeExposure.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\CCSInterface STRUCT\PLC to CCS\ST_AxisStatus.TcDUT">
+    <Compile Include="DUTs\CCSInterface STRUCT\PLC to CCS\AxisStatus.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\CCSInterface STRUCT\PLC to CCS\ST_CalibDone.TcDUT">
@@ -97,9 +91,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\CCSInterface STRUCT\PLC to CCS\ST_Timer.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DUTs\CCSInterface STRUCT\ST_Commands.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\CCSInterface STRUCT\ST_MsgToPLC.TcDUT">

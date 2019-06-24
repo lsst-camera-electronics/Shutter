@@ -4,7 +4,7 @@
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
 TYPE ST_ClearAxisFaults EXTENDS ST_MsgToPLC :
 STRUCT
-    nAxisIndex: DINT;
+    axisIndex: DINT;
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

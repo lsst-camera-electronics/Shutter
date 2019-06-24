@@ -8,10 +8,11 @@ VAR_IN_OUT
 END_VAR
 VAR
 	nCurrentState 	: INT;
-	nNextState		: INT;
+	nNextState		: INT := 100;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[
+
 nCurrentState := nNextState;
 CASE nCurrentstate OF
 	
@@ -52,6 +53,7 @@ END_CASE
     </Implementation>
     <LineIds Name="FB_Reset">
       <LineId Id="115" Count="0" />
+      <LineId Id="146" Count="0" />
       <LineId Id="36" Count="0" />
       <LineId Id="82" Count="0" />
       <LineId Id="85" Count="0" />

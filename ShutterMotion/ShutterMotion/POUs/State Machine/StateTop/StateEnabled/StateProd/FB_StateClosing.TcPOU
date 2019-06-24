@@ -34,12 +34,9 @@ CASE nCurrentState OF
 	
 (*Perform Open Shutter Motion*)
 	1300:
-		
 		IF nExt = GVL.cXP THEN
-			stAxis[GVL.cXP].bBrake := GVL.cBrakeOff;
 			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosEnd, Velocity:=fSpeed, Execute:=TRUE);
 		ELSIF nExt = GVL.cXM THEN	
-			stAxis[GVL.cXM].bBrake := GVL.cBrakeOff;
 			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosStart, Velocity:=fSpeed, Execute:=TRUE);
 		END_IF
 		IF stAxis[GVL.cXP].mcMoveAbs.Done OR stAxis[GVL.cXM].mcMoveAbs.Done THEN
@@ -59,12 +56,7 @@ END_CASE
       <LineId Id="159" Count="0" />
       <LineId Id="21" Count="0" />
       <LineId Id="29" Count="7" />
-      <LineId Id="127" Count="0" />
-      <LineId Id="39" Count="0" />
-      <LineId Id="176" Count="0" />
-      <LineId Id="40" Count="1" />
-      <LineId Id="177" Count="0" />
-      <LineId Id="42" Count="9" />
+      <LineId Id="39" Count="12" />
       <LineId Id="92" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="93" Count="0" />

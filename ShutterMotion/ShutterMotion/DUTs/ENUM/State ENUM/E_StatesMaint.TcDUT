@@ -8,7 +8,7 @@ TYPE E_StatesMaint :
 	Still 		:=	21010,
 	Calibrating	:=	21020,
 	Moving		:=	21030
-);
+) DINT;
 END_TYPE
 ]]></Declaration>
   </DUT>

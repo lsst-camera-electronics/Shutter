@@ -4,8 +4,7 @@
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
 TYPE ST_CloseShutter EXTENDS ST_MsgToPLC:
 STRUCT
-    fSpeed		: LREAL;
-	fDirection 	: INT;
+
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

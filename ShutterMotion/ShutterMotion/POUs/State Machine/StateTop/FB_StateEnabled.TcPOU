@@ -7,7 +7,30 @@ VAR_IN_OUT
 	bTopEntry	: BOOL;
 END_VAR
 VAR_INPUT
-	stInCommand	: ST_Commands;
+	eCommand			: E_Commands;
+	stCalibrate			: ST_Calibrate;
+	stChangeAxisEnable	: ST_ChangeAxisEnable;
+	stChangeBrakeState	: ST_ChangeBrakeState;
+	stClearAllFaults	: ST_ClearAllFaults;
+	stClearAxisFaults	: ST_ClearAxisFaults;
+	stCloseShutter		: ST_CloseShutter;
+	stDisableAllAxes	: ST_DisableAllAxes;
+	stEnableAllAxes		: ST_EnableAllAxes;
+	stGoToProd			: ST_GoToProd;
+	stHomeAxis			: ST_HomeAxis;
+	stMoveAxisAbsolute	: ST_MoveAxisAbsolute;
+	stMoveAxisRelative	: ST_MoveAxisRelative;
+	stOpenShutter		: ST_OpenShutter;
+	stReset				: ST_Reset;
+	stStopMotion		: ST_StopMotion;
+	stTakeExposure		: ST_TakeExposure;
+END_VAR
+VAR_OUTPUT
+	stOutCalibDone		: ST_CalibDone;
+	stOutError			: ST_Error;
+	stOutTimer			: ST_Timer;
+	
+	nSMState			: DINT;
 END_VAR
 VAR
 	//state-machine
@@ -31,7 +54,7 @@ VAR
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[
+      <ST><![CDATA[(**)
 IF bTopEntry = TRUE THEN
 	bTopEntry := FALSE;
 	(*Check if shutter blade sets are calibrated. If not, then go to still, otherwise go to previous state*)
@@ -50,24 +73,45 @@ END_IF
 CASE eStateEnabled OF
 	
 	E_StatesEnabled.Maint:
-		fbMaint(stAxis := stAxis, bTopEntry := bLowerEntry, stInCommand	:= stInCommand);	
-		IF stInCommand.eCommand=E_Commands.reset THEN
-			eStateEnabled := E_StatesEnabled.Maint;
-		END_IF
-		IF bShutterReady AND stInCommand.eCommand = E_Commands.goToProd THEN
-			eStateEnabled := E_StatesEnabled.Prod;
+		fbMaint(
+			//inputs
+			stAxis 				:= stAxis, 
+			bTopEntry 			:= bLowerEntry, 
+			stCalibrate			:= stCalibrate,
+			stChangeAxisEnable	:= stChangeAxisEnable,
+			stChangeBrakeState	:= stChangeBrakeState,
+			stClearAllFaults	:= stClearAllFaults,
+			stClearAxisFaults	:= stClearAxisFaults,
+			stDisableAllAxes	:= stDisableAllAxes,
+			stEnableAllAxes		:= stEnableAllAxes,
+			stGoToProd			:= stGoToProd,
+			stHomeAxis			:= stHomeAxis,
+			stMoveAxisAbsolute	:= stMoveAxisAbsolute,
+			stMoveAxisRelative	:= stMoveAxisRelative,
+			//outputs
+			stOutCalibDone		=> stOutCalibDone,
+			stOutError			=> stOutError,
+			nSMState			=> nSMState);	
+		IF bShutterReady AND eCommand = E_Commands.goToProd THEN
+			eNextState := E_StatesEnabled.Prod;
 		END_IF
 	
 	E_StatesEnabled.Prod:
-		fbProd(stAxis := stAxis, bTopEntry := bLowerEntry, stInCommand := stInCommand);	
-		IF stInCommand.eCommand=E_Commands.reset THEN
-			eStateEnabled := E_StatesEnabled.Maint;
-		END_IF
+		fbProd(
+			//inputs
+			stAxis			:= stAxis, 
+			bTopEntry 		:= bLowerEntry, 
+			stOpenShutter	:= stOpenShutter,
+			stCloseShutter	:= stCloseShutter,
+			stTakeExposure	:= stTakeExposure,
+			//outputs
+			stOutError		=> stOutError,
+			nSMState		=> nSMState);	
 
 END_CASE
 
 //Reset routine
-IF stInCommand.eCommand = E_Commands.reset THEN
+IF eCommand = E_Commands.reset THEN
 	bResetting := TRUE;
 END_IF
 IF bResetting THEN
@@ -77,7 +121,7 @@ IF bResetting THEN
 END_IF
 
 //Stop routine (similar to reset but without resetting)
-IF stinCommand.eCommand = E_Commands.stopAllMotion THEN
+IF eCommand = E_Commands.stopAllMotion THEN
 	bStopping := TRUE;
 END_IF
 IF bStopping THEN
@@ -107,15 +151,22 @@ END_IF]]></ST>
       <LineId Id="83" Count="0" />
       <LineId Id="75" Count="0" />
       <LineId Id="37" Count="0" />
-      <LineId Id="55" Count="0" />
-      <LineId Id="59" Count="0" />
-      <LineId Id="58" Count="0" />
+      <LineId Id="290" Count="0" />
+      <LineId Id="257" Count="1" />
+      <LineId Id="260" Count="4" />
+      <LineId Id="266" Count="5" />
+      <LineId Id="291" Count="0" />
+      <LineId Id="359" Count="0" />
+      <LineId Id="294" Count="0" />
+      <LineId Id="300" Count="0" />
       <LineId Id="79" Count="2" />
       <LineId Id="40" Count="0" />
       <LineId Id="38" Count="0" />
       <LineId Id="44" Count="0" />
-      <LineId Id="85" Count="1" />
-      <LineId Id="82" Count="0" />
+      <LineId Id="353" Count="0" />
+      <LineId Id="276" Count="4" />
+      <LineId Id="354" Count="1" />
+      <LineId Id="357" Count="0" />
       <LineId Id="39" Count="0" />
       <LineId Id="36" Count="0" />
       <LineId Id="184" Count="7" />

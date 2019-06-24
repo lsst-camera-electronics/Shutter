@@ -7,7 +7,23 @@ VAR_IN_OUT
 	bTopEntry	: BOOL;
 END_VAR
 VAR_INPUT
-	stInCommand	: ST_Commands;
+	eCommand			: E_Commands;
+	stCalibrate			: ST_Calibrate;
+	stChangeAxisEnable	: ST_ChangeAxisEnable;
+	stChangeBrakeState	: ST_ChangeBrakeState;
+	stClearAllFaults	: ST_ClearAllFaults;
+	stClearAxisFaults	: ST_ClearAxisFaults;
+	stDisableAllAxes	: ST_DisableAllAxes;
+	stEnableAllAxes		: ST_EnableAllAxes;
+	stGoToProd			: ST_GoToProd;
+	stHomeAxis			: ST_HomeAxis;
+	stMoveAxisAbsolute	: ST_MoveAxisAbsolute;
+	stMoveAxisRelative	: ST_MoveAxisRelative;
+END_VAR
+VAR_OUTPUT
+	stOutCalibDone		: ST_CalibDone;
+	stOutError			: ST_Error;
+	nSMState			: DINT;
 END_VAR
 VAR
 	//state-machine
@@ -40,34 +56,48 @@ eCurrentState := eNextState;
 CASE eCurrentState OF
 	
 	E_StatesMaint.Still:
-		fbStill(stAxis:=stAxis, bTopEntry:=bLowerEntry, stInCommand:=stInCommand);
-		IF stInCommand.eCommand = E_Commands.calibrate THEN
-			eNextState := E_StatesMaint.Calibrating;
-		END_IF		
-		IF stInCommand.eCommand = E_Commands.closeShutter OR_ELSE
-			stInCommand.eCommand = E_Commands.goToCenter OR_ELSE
-			stInCommand.eCommand = E_Commands.homeAxis OR_ELSE
-			stInCommand.eCommand = E_Commands.jog OR_ELSE
-			stInCommand.eCommand = E_Commands.moveAxisAbsolute OR_ELSE
-			stInCommand.eCommand = E_Commands.moveAxisRelative THEN
-				eNextState := E_StatesMaint.Moving;
-				eCopyCommand := stInCommand.eCommand; //need to copy since stInCommand.eCommand is only valid for 1 cycle. It gets reset to noCommand next cycle.
+		fbStill(
+			stAxis				:= stAxis, 
+			bTopEntry			:= bLowerEntry, 
+			eCommand			:= eCommand,
+			stChangeAxisEnable 	:= stChangeAxisEnable,
+			stChangeBrakeState	:= stChangeBrakeState,
+			stClearAllFaults	:= stClearAllFaults,
+			stClearAxisFaults	:= stClearAxisFaults,
+			stDisableAllAxes	:= stDisableAllAxes,
+			stEnableAllAxes		:= stEnableAllAxes);
+		IF eCommand <> E_Commands.noCommand THEN (*checks if there is a new command*)
+			IF eCommand = E_Commands.calibrate AND (stAxis[GVL.cXP].bIsHomed AND stAxis[GVL.cXM].bIsHomed) THEN
+				eNextState := E_StatesMaint.Calibrating;
+			ELSIF eCommand = E_Commands.closeShutter OR_ELSE
+				eCommand = E_Commands.goToCenter OR_ELSE
+				eCommand = E_Commands.homeAxis OR_ELSE
+				eCommand = E_Commands.jog OR_ELSE
+				eCommand = E_Commands.moveAxisAbsolute OR_ELSE
+				eCommand = E_Commands.moveAxisRelative THEN
+					eNextState := E_StatesMaint.Moving;
+					eCopyCommand := eCommand; (*need to copy since eCommand is only valid for 1 cycle. Resets to noCommand next cycle.*)
+			END_IF
 		END_IF
 	
 	E_StatesMaint.Calibrating:
-		fbCalibrating(stAxis:=stAxis, bTopEntry:=bLowerEntry);
+		fbCalibrating(stAxis:=stAxis, bTopEntry:=bLowerEntry, stOutCalibDone=>stOutCalibDone);
 		IF fbCalibrating.bCalibDone THEN
 			eNextState := E_StatesMaint.Still;
 		END_IF
 		
 	E_StatesMaint.Moving:
-		fbMoving(stAxis:=stAxis, bTopEntry:=bLowerEntry, eCommand:=eCopyCommand, stInCommand:=stInCommand, bMotionDone=>bMotionDone);
+		fbMoving(
+			stAxis			:= stAxis, 
+			bTopEntry		:= bLowerEntry, 
+			eCommand		:= eCopyCommand,
+			bMotionDone		=>bMotionDone);
 		IF bMotionDone THEN
 			eNextState := E_StatesMaint.Still;
 		END_IF
 END_CASE
 
-]]></ST>
+nSMState := eCurrentState;]]></ST>
     </Implementation>
     <LineIds Name="FB_StateMaint">
       <LineId Id="111" Count="2" />
@@ -82,20 +112,28 @@ END_CASE
       <LineId Id="75" Count="0" />
       <LineId Id="31" Count="0" />
       <LineId Id="37" Count="0" />
+      <LineId Id="277" Count="1" />
+      <LineId Id="280" Count="0" />
+      <LineId Id="279" Count="0" />
+      <LineId Id="281" Count="4" />
+      <LineId Id="347" Count="0" />
       <LineId Id="62" Count="2" />
-      <LineId Id="141" Count="6" />
+      <LineId Id="142" Count="5" />
       <LineId Id="151" Count="0" />
       <LineId Id="80" Count="0" />
+      <LineId Id="350" Count="0" />
       <LineId Id="76" Count="0" />
       <LineId Id="34" Count="0" />
       <LineId Id="38" Count="0" />
       <LineId Id="59" Count="2" />
       <LineId Id="35" Count="1" />
       <LineId Id="39" Count="0" />
+      <LineId Id="286" Count="2" />
+      <LineId Id="290" Count="0" />
       <LineId Id="74" Count="0" />
       <LineId Id="157" Count="1" />
       <LineId Id="32" Count="0" />
-      <LineId Id="235" Count="0" />
+      <LineId Id="305" Count="0" />
       <LineId Id="215" Count="0" />
     </LineIds>
   </POU>

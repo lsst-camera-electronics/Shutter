@@ -10,7 +10,7 @@ TYPE E_StatesProd :
 	Opened		:= 	22060,
 	Closing		:= 	22070,
 	Traveling	:=	22080
-);
+) DINT;
 END_TYPE
 ]]></Declaration>
   </DUT>

@@ -4,10 +4,10 @@
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
 TYPE ST_MsgToPLC EXTENDS ST_PLCMsg:
 STRUCT
-    nLowUUID	: LINT;	(* The low-order part of the UUID. *)
-    nHighUUID	: LINT;	(* The high-order part of the UUID. *)
-    nDtime		: DINT;	(* Time of day of sending, in milliseconds. *)
-    nSequence	: DINT;	(* Message sequence number. *)
+    lowUUID		: LINT;	(* The low-order part of the UUID. *)
+    highUUID	: LINT;	(* The high-order part of the UUID. *)
+    dtime		: DINT;	(* Time of day of sending, in milliseconds. *)
+    sequence	: DINT;	(* Message sequence number. *)
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

@@ -37,6 +37,24 @@
 				<Task Id="14" Priority="12" CycleTime="3333" AmsPort="359" AdtTasks="true">
 					<Name>PlcTask9</Name>
 				</Task>
+				<Task Id="15" Priority="13" CycleTime="3333" AmsPort="360" AdtTasks="true">
+					<Name>PlcTask10</Name>
+				</Task>
+				<Task Id="16" Priority="14" CycleTime="3333" AmsPort="361" AdtTasks="true">
+					<Name>PlcTask11</Name>
+				</Task>
+				<Task Id="17" Priority="15" CycleTime="3333" AmsPort="362" AdtTasks="true">
+					<Name>PlcTask12</Name>
+				</Task>
+				<Task Id="18" Priority="16" CycleTime="3333" AmsPort="363" AdtTasks="true">
+					<Name>PlcTask13</Name>
+				</Task>
+				<Task Id="19" Priority="17" CycleTime="3333" AmsPort="364" AdtTasks="true">
+					<Name>PlcTask14</Name>
+				</Task>
+				<Task Id="20" Priority="18" CycleTime="3333" AmsPort="365" AdtTasks="true">
+					<Name>PlcTask15</Name>
+				</Task>
 			</Tasks>
 		</System>
 		<Motion>

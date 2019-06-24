@@ -8,7 +8,9 @@ VAR_IN_OUT
 	eCommand	: E_Commands;
 END_VAR
 VAR_INPUT
-	stInCommand	: ST_Commands;
+	stHomeAxis			: ST_HomeAxis;
+	stMoveAxisAbsolute	: ST_MoveAxisAbsolute;
+	stMoveAxisRelative	: ST_MoveAxisRelative;
 END_VAR
 VAR_OUTPUT
 	bMotionDone : BOOL;
@@ -18,8 +20,10 @@ VAR
 	nCurrentState	: INT;
 	nNextState		: INT;
 	bLowerEntry 	: BOOL;
-	
+	//homing subroutine
 	fbHoming	: FB_Homing;
+	//move relative vars
+	fTime, fSpeed, fAccel, fJerk : LREAL;
 
 END_VAR
 ]]></Declaration>
@@ -28,20 +32,23 @@ END_VAR
 	bTopEntry := FALSE;
 	stAxis[GVL.cXP].bBrake := GVL.cBrakeOff;
 	stAxis[GVL.cXM].bBrake := GVL.cBrakeOff;
-	IF eCommand = E_Commands.closeShutter THEN
+
+	IF eCommand = E_Commands.homeAxis THEN
 		nNextState := 1000;
-	ELSIF eCommand = E_Commands.goToCenter THEN
-		nNextState := 1010;
-	ELSIF eCommand = E_Commands.homeAxis THEN
-		nNextState := 1020;
-	ELSIF eCommand = E_Commands.jog THEN
-		nNextState := 1030;
 	ELSIF eCommand = E_Commands.moveAxisAbsolute THEN
-		nNextState := 1040;
+		nNextState := 1010;
 	ELSIF eCommand = E_Commands.moveAxisRelative THEN
-		nNextState := 1050;
-	ELSIF eCommand = E_Commands.openShutter THEN
-		nNextState := 1060;
+		(* 
+			equations  		(distance in mm, time in sec)
+			Velocity 		= 2*distance/time
+			Acceleration 	= 8*distance/time^2
+			jerk 			= 32*distance/time^3
+		*)
+		fTime	:= TIME_TO_LREAL(stMoveAxisRelative.moveTime)/1000;
+		fSpeed 	:= (2*stMoveAxisRelative.distance)/(fTime);
+		fAccel 	:= (8*stMoveAxisRelative.distance)/(fTime*fTime);
+		fJerk	:= (32*stMoveAxisRelative.distance)/(fTime*fTime*fTime);
+		nNextState := 1020;
 	END_IF
 	eCommand := E_Commands.noCommand;	
 END_IF	
@@ -51,113 +58,58 @@ END_IF
 nCurrentState := nNextState;
 
 CASE nCurrentState OF
-
-	1000: //Close Shutter
-		IF stInCommand.stCloseShutter.fDirection = GVL.cDirPos THEN
-			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosStart, Velocity:=stInCommand.stCloseShutter.fSpeed, Execute:=TRUE);
-			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosStart, Velocity:=stInCommand.stCloseShutter.fSpeed, Execute:=TRUE);
-		ELSIF stInCommand.stCloseShutter.fDirection = GVL.cDirNeg THEN
-			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosEnd, Velocity:=stInCommand.stCloseShutter.fSpeed, Execute:=TRUE);
-			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosEnd, Velocity:=stInCommand.stCloseShutter.fSpeed, Execute:=TRUE);
-		END_IF
-		IF stAxis[GVL.cXP].mcMoveAbs.Done OR stAxis[GVL.cXM].mcMoveAbs.Done THEN
-			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
-			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
-			bMotionDone := TRUE;
-			nNextState := 2000;
-		END_IF	
 		
-	1010: //goToCenter
-		stAxis[GVL.cXP].bBrake := GVL.cBrakeOff;
-		stAxis[GVL.cXM].bBrake := GVL.cBrakeOff;
-			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosStart, Velocity:=stInCommand.stGoToCenter.fSpeed, Execute:=TRUE);
-			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosStart, Velocity:=stInCommand.stGoToCenter.fSpeed, Execute:=TRUE);
-		IF stAxis[GVL.cXP].mcMoveAbs.Done AND stAxis[GVL.cXM].mcMoveAbs.Done THEN
-			stAxis[GVL.cXP].bBrake := GVL.cBrakeOn;
-			stAxis[GVL.cXM].bBrake := GVL.cBrakeOn;
-			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
-			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
-			bMotionDone := TRUE;
-			nNextState := 2000;
-		END_IF	
-		
-	1020://Homing routine
+	1000://Homing routine
 		fbHoming(stAxis:=stAxis, bTopEntry:=bLowerEntry, bMotionDone=>bMotionDone);
 		IF bMotionDone THEN
 			nNextState := 2000;
 		END_IF
 		
-	1030://Jog
-		stAxis[stInCommand.stJog.nAxisIndex].mcJog(Axis:=stAxis[stInCommand.stJog.nAxisIndex].axisRef,
-			Mode:=MC_JOGMODE_CONTINOUS, JogForward:=NOT stInCommand.stJog.nDirection  , JogBackwards:=stInCommand.stJog.nDirection );
-			
-	1040://move absolute
-		stAxis[stInCommand.stMoveAxisAbsolute.nAxisIndex].mcMoveAbs(Axis:=stAxis[stInCommand.stMoveAxisAbsolute.nAxisIndex].axisRef,
-			Position:=stInCommand.stMoveAxisAbsolute.fPosition, Velocity:=stInCommand.stMoveAxisAbsolute.fSpeed, Execute:=TRUE);
-		IF stAxis[stInCommand.stMoveAxisAbsolute.nAxisIndex].mcMoveAbs.Done THEN
-			stAxis[stInCommand.stMoveAxisAbsolute.nAxisIndex].mcMoveAbs(Axis:=stAxis[stInCommand.stMoveAxisAbsolute.nAxisIndex].axisRef, Execute:=FALSE);
+	1010://move absolute
+		stAxis[stMoveAxisAbsolute.axisIndex].mcMoveAbs(Axis:=stAxis[stMoveAxisAbsolute.axisIndex].axisRef,
+			Position:=stMoveAxisAbsolute.position, Velocity:=stMoveAxisAbsolute.speed, Execute:=TRUE);
+		IF stAxis[stMoveAxisAbsolute.axisIndex].mcMoveAbs.Done THEN
+			stAxis[stMoveAxisAbsolute.axisIndex].mcMoveAbs(Axis:=stAxis[stMoveAxisAbsolute.axisIndex].axisRef, Execute:=FALSE);
 			bMotionDone := TRUE;
 			nNextState := 2000;
 		END_IF
 		
-	1050://move relative
-		stAxis[stInCommand.stMoveAxisRelative.nAxisIndex].mcMoveRel(Axis:=stAxis[stInCommand.stMoveAxisRelative.nAxisIndex].axisRef,
-			Distance:=stInCommand.stMoveAxisRelative.fDistance, Velocity:=stInCommand.stMoveAxisRelative.fSpeed, Execute:=TRUE);
-		IF stAxis[stInCommand.stMoveAxisRelative.nAxisIndex].mcMoveRel.Done THEN
-			stAxis[stInCommand.stMoveAxisRelative.nAxisIndex].mcMoveRel(Axis:=stAxis[stInCommand.stMoveAxisRelative.nAxisIndex].axisRef, Execute:=FALSE);
-			bMotionDone := TRUE;
-		END_IF
-		
-	1060://Open Shutter
-		stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosStart, Velocity:=stInCommand.stOpenShutter.fSpeed, Execute:=TRUE);
-		stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosEnd, Velocity:=stInCommand.stOpenShutter.fSpeed, Execute:=TRUE);
-		IF stAxis[GVL.cXP].mcMoveAbs.Done OR stAxis[GVL.cXM].mcMoveAbs.Done THEN
-			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
-			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
+	1020://move relative with different motion profile parameter
+		stAxis[stMoveAxisRelative.axisIndex].mcMoveRel(Axis:=stAxis[stMoveAxisRelative.axisIndex].axisRef,
+			Distance:=stMoveAxisRelative.distance, Velocity:=fSpeed, Acceleration:=fAccel, Jerk:=fJerk, Execute:=TRUE);
+		IF stAxis[stMoveAxisRelative.axisIndex].mcMoveRel.Done THEN
+			stAxis[stMoveAxisRelative.axisIndex].mcMoveRel(Axis:=stAxis[stMoveAxisRelative.axisIndex].axisRef, Execute:=FALSE);
 			bMotionDone := TRUE;
 			nNextState := 2000;
-		END_IF	
+		END_IF
+		
 			
 	2000:
-		stAxis[GVL.cXP].bBrake := GVL.cBrakeOn;
-		stAxis[GVL.cXM].bBrake := GVL.cBrakeOn;
+
 	
 END_CASE]]></ST>
     </Implementation>
     <LineIds Name="FB_StateMoving">
       <LineId Id="31" Count="1" />
       <LineId Id="153" Count="1" />
-      <LineId Id="33" Count="0" />
-      <LineId Id="78" Count="1" />
-      <LineId Id="81" Count="12" />
+      <LineId Id="81" Count="1" />
+      <LineId Id="233" Count="0" />
+      <LineId Id="86" Count="2" />
+      <LineId Id="248" Count="4" />
+      <LineId Id="247" Count="0" />
+      <LineId Id="255" Count="0" />
+      <LineId Id="246" Count="0" />
+      <LineId Id="253" Count="1" />
+      <LineId Id="89" Count="0" />
+      <LineId Id="92" Count="1" />
       <LineId Id="34" Count="0" />
       <LineId Id="143" Count="1" />
       <LineId Id="140" Count="0" />
-      <LineId Id="35" Count="4" />
-      <LineId Id="109" Count="0" />
-      <LineId Id="111" Count="0" />
-      <LineId Id="114" Count="0" />
-      <LineId Id="112" Count="0" />
-      <LineId Id="117" Count="1" />
-      <LineId Id="115" Count="0" />
-      <LineId Id="105" Count="2" />
-      <LineId Id="149" Count="0" />
-      <LineId Id="108" Count="0" />
-      <LineId Id="94" Count="0" />
-      <LineId Id="125" Count="1" />
-      <LineId Id="128" Count="0" />
-      <LineId Id="127" Count="0" />
-      <LineId Id="119" Count="0" />
-      <LineId Id="129" Count="5" />
-      <LineId Id="150" Count="0" />
-      <LineId Id="135" Count="0" />
-      <LineId Id="120" Count="0" />
+      <LineId Id="35" Count="2" />
       <LineId Id="67" Count="1" />
       <LineId Id="138" Count="0" />
       <LineId Id="145" Count="2" />
-      <LineId Id="157" Count="2" />
-      <LineId Id="165" Count="0" />
-      <LineId Id="162" Count="0" />
+      <LineId Id="157" Count="0" />
       <LineId Id="151" Count="0" />
       <LineId Id="168" Count="0" />
       <LineId Id="170" Count="2" />
@@ -165,14 +117,12 @@ END_CASE]]></ST>
       <LineId Id="173" Count="0" />
       <LineId Id="176" Count="5" />
       <LineId Id="183" Count="0" />
+      <LineId Id="232" Count="0" />
       <LineId Id="182" Count="0" />
-      <LineId Id="184" Count="1" />
-      <LineId Id="188" Count="1" />
-      <LineId Id="194" Count="4" />
-      <LineId Id="186" Count="0" />
+      <LineId Id="184" Count="0" />
       <LineId Id="166" Count="0" />
       <LineId Id="152" Count="0" />
-      <LineId Id="155" Count="1" />
+      <LineId Id="156" Count="0" />
       <LineId Id="69" Count="0" />
       <LineId Id="9" Count="0" />
     </LineIds>

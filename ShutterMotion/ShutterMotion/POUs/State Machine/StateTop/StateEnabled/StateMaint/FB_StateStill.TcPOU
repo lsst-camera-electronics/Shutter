@@ -7,38 +7,45 @@ VAR_IN_OUT
 	bTopEntry	: BOOL;
 END_VAR
 VAR_INPUT
-	stInCommand	: ST_Commands;
+	eCommand			: E_Commands;
+	stChangeAxisEnable	: ST_ChangeAxisEnable;
+	stChangeBrakeState	: ST_ChangeBrakeState;
+	stClearAllFaults	: ST_ClearAllFaults;
+	stClearAxisFaults	: ST_ClearAxisFaults;
+	stDisableAllAxes	: ST_DisableAllAxes;
+	stEnableAllAxes		: ST_EnableAllAxes;
+END_VAR
+VAR_OUTPUT
+	bBusy	: BOOL;
 END_VAR
 VAR
 	//state-machine
 	nCurrentState	: INT;
 	nNextState		: INT;
-	fbCalibrating	: FB_StateCalibrating;
-	fbMoving		: FB_StateMoving;
-	bLowerEntry 	: BOOL;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[
 IF bTopEntry = TRUE THEN
 	bTopEntry := FALSE;
+	bBusy := TRUE;
 END_IF	
 
-IF stInCommand.eCommand = E_Commands.clearAllFaults THEN
+IF eCommand = E_Commands.clearAllFaults THEN
 	nNextState := 1000;
-ELSIF stInCommand.eCommand = E_Commands.changeAxisEnable THEN
+ELSIF eCommand = E_Commands.changeAxisEnable THEN
 	nNextState := 1010	;
-ELSIF stInCommand.eCommand = E_Commands.clearAxisFaults THEN
+ELSIF eCommand = E_Commands.clearAxisFaults THEN
 	nNextState := 1020;
-ELSIF stInCommand.eCommand = E_Commands.enableAllAxes THEN
+ELSIF eCommand = E_Commands.enableAllAxes THEN
 	nNextState := 1030;
-ELSIF stInCommand.eCommand = E_Commands.disableAllAxes THEN
+ELSIF eCommand = E_Commands.disableAllAxes THEN
 	nNextState := 1040;
-ELSIF stInCommand.eCommand = E_Commands.changeBrakeState THEN
+ELSIF eCommand = E_Commands.changeBrakeState THEN
 	nNextState := 1050;
-ELSIF stInCommand.eCommand = E_Commands.releaseAllBrakes THEN
+ELSIF eCommand = E_Commands.releaseAllBrakes THEN
 	nNextState := 1060;
-ELSIF stInCommand.eCommand = E_Commands.engageAllBrakes THEN
+ELSIF eCommand = E_Commands.engageAllBrakes THEN
 	nNextState := 1070;
 END_IF
 
@@ -56,14 +63,14 @@ CASE nCurrentState OF
 		END_IF
 		
 	1010:	
-		stAxis[stInCommand.stChangeAxisEnable.nAxisIndex].mcPower(Axis:=stAxis[stInCommand.stChangeAxisEnable.nAxisIndex].axisRef,
-			 Enable:=stInCommand.stChangeAxisEnable.bEnabled);
+		stAxis[stChangeAxisEnable.axisIndex].mcPower(Axis:=stAxis[stChangeAxisEnable.axisIndex].axisRef,
+			 Enable:=stChangeAxisEnable.enabled);
 		nNextState := 2000; 
 
 	1020:	
-		stAxis[stInCommand.stClearAxisFaults.nAxisIndex].mcReset(Axis:=stAxis[stInCommand.stClearAxisFaults.nAxisIndex].axisRef, Execute:=TRUE);
-		IF stAxis[stInCommand.stClearAxisFaults.nAxisIndex].mcReset.Done THEN
-			stAxis[stInCommand.stClearAxisFaults.nAxisIndex].mcReset(Axis:=stAxis[stInCommand.stClearAxisFaults.nAxisIndex].axisRef, Execute:=FALSE);
+		stAxis[stClearAxisFaults.axisIndex].mcReset(Axis:=stAxis[stClearAxisFaults.axisIndex].axisRef, Execute:=TRUE);
+		IF stAxis[stClearAxisFaults.axisIndex].mcReset.Done THEN
+			stAxis[stClearAxisFaults.axisIndex].mcReset(Axis:=stAxis[stClearAxisFaults.axisIndex].axisRef, Execute:=FALSE);
 			nNextState := 2000; 
 		END_IF
 
@@ -78,27 +85,27 @@ CASE nCurrentState OF
 		nNextState := 2000; 
 		
 	1050:
-		stAxis[stInCommand.stChangeBrakeState.nAxisIndex].bBrake := stInCommand.stChangeBrakeState.nState;
+		stAxis[stChangeBrakeState.axisIndex].bBrake := stChangeBrakeState.state;
 		nNextState := 2000; 
 		
 	1060:	
 		stAxis[GVL.cXP].bBrake := GVL.cBrakeOff;
 		stAxis[GVL.cXP].bBrake := GVL.cBrakeOff;
 		nNextState := 2000; 
-
-		
+	
 	1070:	
 		stAxis[GVL.cXP].bBrake := GVL.cBrakeOn;
 		stAxis[GVL.cXP].bBrake := GVL.cBrakeOn;
 		nNextState := 2000; 
 
 	2000:
-		
+		bBusy := FALSE;
 	
 END_CASE]]></ST>
     </Implementation>
     <LineIds Name="FB_StateStill">
       <LineId Id="17" Count="2" />
+      <LineId Id="294" Count="0" />
       <LineId Id="24" Count="0" />
       <LineId Id="239" Count="0" />
       <LineId Id="241" Count="15" />
@@ -136,7 +143,6 @@ END_CASE]]></ST>
       <LineId Id="67" Count="0" />
       <LineId Id="74" Count="0" />
       <LineId Id="270" Count="0" />
-      <LineId Id="65" Count="0" />
       <LineId Id="166" Count="1" />
       <LineId Id="70" Count="0" />
       <LineId Id="75" Count="0" />

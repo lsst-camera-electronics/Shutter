@@ -7,7 +7,7 @@ TYPE E_StatesTop :
 (
 	Disabled	:=	10000,
 	Enabled		:=	20000
-);
+) DINT;
 END_TYPE
 ]]></Declaration>
   </DUT>

@@ -4,8 +4,7 @@
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
 TYPE ST_TakeExposure EXTENDS ST_MsgToPLC:
 STRUCT
-    tExposureTime: TIME;
-	fSpeed		 : LREAL;
+    exposureTime: TIME;
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

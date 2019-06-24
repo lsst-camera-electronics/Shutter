@@ -7,7 +7,31 @@ VAR_IN_OUT
 END_VAR
 VAR_INPUT
 	bAuxElxPermit	: BOOL;	
-	stInCommand	: ST_Commands;
+	//commands
+	eCommand			: E_Commands;
+	stCalibrate			: ST_Calibrate;
+	stChangeAxisEnable	: ST_ChangeAxisEnable;
+	stChangeBrakeState	: ST_ChangeBrakeState;
+	stClearAllFaults	: ST_ClearAllFaults;
+	stClearAxisFaults	: ST_ClearAxisFaults;
+	stCloseShutter		: ST_CloseShutter;
+	stDisableAllAxes	: ST_DisableAllAxes;
+	stEnableAllAxes		: ST_EnableAllAxes;
+	stGoToProd			: ST_GoToProd;
+	stHomeAxis			: ST_HomeAxis;
+	stMoveAxisAbsolute	: ST_MoveAxisAbsolute;
+	stMoveAxisRelative	: ST_MoveAxisRelative;
+	stOpenShutter		: ST_OpenShutter;
+	stReset				: ST_Reset;
+	stStopMotion		: ST_StopMotion;
+	stTakeExposure		: ST_TakeExposure;
+END_VAR
+VAR_OUTPUT
+	stOutCalibDone		: ST_CalibDone;
+	stOutError			: ST_Error;
+	stOutTimer			: ST_Timer;
+	
+	nSMState			: DINT;
 END_VAR
 VAR
 	//state-machine
@@ -19,15 +43,14 @@ VAR
 
 	//used in homeShutter Action
 	fbHomeDelay : TON;
-	fbTracking	: FB_Tracking;
+
+	
+	test : ST_AxisStatus;
+	
+
 END_VAR]]></Declaration>
     <Implementation>
-      <ST><![CDATA[(* *)
-
-//update Axis_Ref status
-stAxis[GVL.cXP].axisRef.ReadStatus();
-stAxis[GVL.cXM].axisRef.ReadStatus();
-
+      <ST><![CDATA[(* Top state of the shutter state machine *)
 IF eCurrentState <> eNextState THEN
 	bLowerEntry := TRUE;
 END_IF
@@ -41,20 +64,44 @@ CASE eCurrentState OF
 		END_IF
 			
 	E_StatesTop.Enabled:
-		fbEnabled(stAxis := stAxis, stInCommand	:= stInCommand, bTopEntry := bLowerEntry);
+		fbEnabled(
+			//inputs
+			stAxis 				:= stAxis, 
+			bTopEntry 			:= bLowerEntry,
+			eCommand			:= eCommand,
+			stCalibrate			:= stCalibrate,
+			stChangeAxisEnable	:= stChangeAxisEnable,
+			stChangeBrakeState	:= stChangeBrakeState,
+			stClearAllFaults	:= stClearAllFaults,
+			stClearAxisFaults	:= stClearAxisFaults,
+			stCloseShutter		:= stCloseShutter,
+			stDisableAllAxes	:= stDisableAllAxes,
+			stEnableAllAxes		:= stEnableAllAxes,
+			stGoToProd			:= stGoToProd,
+			stHomeAxis			:= stHomeAxis,
+			stMoveAxisAbsolute	:= stMoveAxisAbsolute,
+			stMoveAxisRelative	:= stMoveAxisRelative,
+			stOpenShutter		:= stOpenShutter,
+			stReset				:= stReset,
+			stStopMotion		:= stStopMotion,
+			stTakeExposure		:= stTakeExposure,
+			//outputs
+			stOutCalibDone		=> stOutCalibDone,
+			stOutError			=> stOutError,
+			stOutTimer			=> stOutTimer,
+			nSMState			=> nSMState);
 		IF bAuxElxPermit = 0 THEN
 			eNextState := E_StatesTop.Disabled;
 		END_IF
 			
 END_CASE
 
-//track motion of both blades
-fbTracking(stAxis:=stAxis);]]></ST>
+
+]]></ST>
     </Implementation>
     <LineIds Name="FB_ShutterSM">
       <LineId Id="60" Count="0" />
-      <LineId Id="65" Count="3" />
-      <LineId Id="1184" Count="2" />
+      <LineId Id="1185" Count="1" />
       <LineId Id="378" Count="0" />
       <LineId Id="318" Count="0" />
       <LineId Id="1048" Count="1" />
@@ -62,12 +109,21 @@ fbTracking(stAxis:=stAxis);]]></ST>
       <LineId Id="1108" Count="0" />
       <LineId Id="1115" Count="2" />
       <LineId Id="1110" Count="2" />
+      <LineId Id="1274" Count="0" />
+      <LineId Id="1261" Count="2" />
+      <LineId Id="1245" Count="14" />
+      <LineId Id="1244" Count="0" />
+      <LineId Id="1275" Count="0" />
+      <LineId Id="1277" Count="0" />
+      <LineId Id="1280" Count="0" />
+      <LineId Id="1276" Count="0" />
+      <LineId Id="1305" Count="0" />
       <LineId Id="1118" Count="0" />
       <LineId Id="1120" Count="2" />
       <LineId Id="1105" Count="0" />
-      <LineId Id="1188" Count="0" />
-      <LineId Id="224" Count="0" />
       <LineId Id="9" Count="0" />
+      <LineId Id="1296" Count="0" />
+      <LineId Id="1295" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

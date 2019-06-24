@@ -4,9 +4,9 @@
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
 TYPE ST_MoveAxisRelative EXTENDS ST_MsgToPLC:
 STRUCT
-    nAxisIndex: DINT;
-    fDistance: LREAL;
-    fSpeed: LREAL;
+    axisIndex	: DINT;
+    distance	: LREAL;
+    moveTime	: TIME;
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

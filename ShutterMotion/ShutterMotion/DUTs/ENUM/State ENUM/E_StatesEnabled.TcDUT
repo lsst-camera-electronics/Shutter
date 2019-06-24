@@ -7,7 +7,7 @@ TYPE E_StatesEnabled :
 (
 	Maint 	:=	21000,
 	Prod 	:=	22000 
-);
+) DINT;
 END_TYPE
 ]]></Declaration>
   </DUT>

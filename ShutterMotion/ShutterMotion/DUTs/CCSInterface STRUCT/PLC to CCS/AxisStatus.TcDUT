@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="AxisStatus" Id="{d3960a1d-410e-4213-835a-7744e6881da9}">
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+(*already a built in struct called ST_AxisStatus so leaving this as AxisStatus instead*)
+TYPE AxisStatus:
+STRUCT
+    actPos		: LREAL;	(* Actual position in mm. *)
+    actVel		: LREAL;	(* Actual velocity in mm/sec. *)
+    setAcc		: LREAL;	(* Set acceleration in mm/sec^2.*)
+    brakeSet	: BOOL;		(* Is the brake engaged? *)
+	enabled		: BOOL;		(* Is the axis enabled? *)
+	errorID		: UDINT; 	(* Axis error code. *)
+	highLimit	: BOOL; 	(* High limit switch tripped? *)
+	isHomed		: BOOL; 	(* Has the axis been homed? *)
+    lowLimit	: BOOL;		(* Low limit switch tripped? *)
+    motorTemp	: LREAL; 	(* Motor temperature, Celsius. *)
+END_STRUCT
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

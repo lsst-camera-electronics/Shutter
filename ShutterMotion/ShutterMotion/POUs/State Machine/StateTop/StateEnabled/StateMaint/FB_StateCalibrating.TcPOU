@@ -6,11 +6,9 @@ VAR_IN_OUT
 	stAxis  : ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;	
 	bTopEntry	: BOOL;
 END_VAR
-VAR_INPUT
-	stInCommand	: ST_Commands;
-END_VAR
 VAR_OUTPUT
-	bCalibDone	: BOOL;
+	stOutCalibDone	: ST_CalibDone;
+	bCalibDone		: BOOL;
 END_VAR
 VAR
 	nCurrentState	: INT;
@@ -27,7 +25,7 @@ END_VAR
 
 IF bTopEntry = TRUE THEN
 	bTopEntry := FALSE;
-	nNextState :=9010;
+	nNextState :=8010;
 END_IF	
 nCurrentState := nNextState;
 
@@ -132,14 +130,14 @@ CASE nCurrentState OF
 			nNextState := 8050;
 		END_IF
 	
-	8050: 
+	8050: //move blade off switch to start tracking
 		stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXP].axisRef, Mode := MC_JOGMODE_CONTINOUS, Velocity := GVL.cScanVel, JogForward := stAxis[GVL.cXP].bLimitHome);
 		IF NOT stAxis[GVL.cXP].bLimitHome THEN
 			stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXM].axisRef, Mode := MC_JOGMODE_CONTINOUS, JogForward := FALSE);
 			nNextState := 8060;
 		END_IF
 
-	8060: //slowly homed back to switch
+	8060: //slowly home back to limit switch
 		stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXP].axisRef, Mode := MC_JOGMODE_CONTINOUS, Velocity := GVL.cHomeVel, JogBackwards := NOT stAxis[GVL.cXP].bLimitHome);
 		IF stAxis[GVL.cXP].bLimitHome THEN
 			stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXP].axisRef, Mode := MC_JOGMODE_CONTINOUS, JogBackwards := FALSE);
@@ -249,7 +247,7 @@ CASE nCurrentState OF
 			nNextState := 9050;
 		END_IF
 		
-	9050: 
+	9050: //move blade off switch to start tracking 
 		stAxis[GVL.cXM].mcJog(Axis:=stAxis[GVL.cXM].axisRef, Mode:=MC_JOGMODE_CONTINOUS, Velocity:=GVL.cScanVel, JogBackwards:=stAxis[GVL.cXM].bLimitHome);
 		IF NOT stAxis[GVL.cXM].bLimitHome THEN
 			stAxis[GVL.cXM].mcJog(Axis:=stAxis[GVL.cXM].axisRef, Mode:=MC_JOGMODE_CONTINOUS, JogBackwards:=FALSE);
@@ -264,7 +262,13 @@ CASE nCurrentState OF
 			nNextState := 9070;
 		END_IF			
 		
-	9070: //End action
+	9070: //save calibration data to stOutCalibDone to be sent to CCS
+		FOR i:=0 TO GVL.cTripCount BY 1 DO
+			stOutCalibDone.hallPosCal[GVL.cXP, GVL.cDirPos, i] := stAxis[GVL.cXP].fHallPosCal[GVL.cDirPos, i];
+			stOutCalibDone.hallPosCal[GVL.cXP, GVL.cDirNeg, i] := stAxis[GVL.cXP].fHallPosCal[GVL.cDirNeg, i];
+			stOutCalibDone.hallPosCal[GVL.cXM, GVL.cDirPos, i] := stAxis[GVL.cXM].fHallPosCal[GVL.cDirPos, i];
+			stOutCalibDone.hallPosCal[GVL.cXM, GVL.cDirNeg, i] := stAxis[GVL.cXM].fHallPosCal[GVL.cDirNeg, i];
+		END_FOR
 		bCalibDone := TRUE;
 	
 END_CASE
@@ -285,6 +289,11 @@ END_CASE
       <LineId Id="21" Count="111" />
       <LineId Id="839" Count="1" />
       <LineId Id="135" Count="2" />
+      <LineId Id="862" Count="0" />
+      <LineId Id="868" Count="0" />
+      <LineId Id="871" Count="1" />
+      <LineId Id="870" Count="0" />
+      <LineId Id="865" Count="0" />
       <LineId Id="140" Count="0" />
       <LineId Id="579" Count="0" />
       <LineId Id="143" Count="0" />

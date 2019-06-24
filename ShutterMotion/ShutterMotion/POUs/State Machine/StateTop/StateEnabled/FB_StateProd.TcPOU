@@ -7,10 +7,16 @@ VAR_IN_OUT
 	bTopEntry	: BOOL;
 END_VAR
 VAR_INPUT
-	stInCommand	: ST_Commands;
+	eCommand		: E_Commands;
+	stOpenShutter	: ST_OpenShutter;
+	stCloseShutter	: ST_CloseShutter;
+	stTakeExposure	: ST_TakeExposure;
 END_VAR
 VAR_OUTPUT
-	bMotionDone	: BOOL;
+	stOutError		: ST_Error;
+	stOutTimer		: ST_Timer;
+	
+	nSMState		: DINT;
 END_VAR
 VAR
 	//state-machine
@@ -33,6 +39,7 @@ VAR
 	
 	//other var
 	fSpeed	: LREAL;
+	bMotionDone	: BOOL;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -44,24 +51,16 @@ END_IF
 IF eCurrentState <> eNextState THEN
 	bLowerEntry := TRUE;
 END_IF
-IF stInCommand.eCommand = E_Commands.closeShutter THEN
-	fSpeed := stInCommand.stCloseShutter.fSpeed;
-ELSIF stInCommand.eCommand = E_Commands.openShutter THEN
-	fSpeed := stInCommand.stOpenShutter.fSpeed;
-ELSIF stInCommand.eCommand = E_Commands.takeExposure THEN
-	fSpeed := stInCommand.stTakeExposure.fSpeed;
-END_IF
-	
 
 eCurrentState := eNextState;
-fbExpoTimer(IN:=bTakingExposure, PT:=stInCommand.stTakeExposure.tExposureTime);
+fbExpoTimer(IN:=bTakingExposure, PT:=stTakeExposure.exposureTime);
 
 CASE eCurrentState OF
 	
 	E_StatesProd.Closed:
 		fbClosed(stAxis:=stAxis, bTopEntry:=bLowerEntry, nRet=>nRet, nExt=>nExt, bTakingExposure=>bTakingExposure);
-		IF stInCommand.eCommand = E_Commands.openShutter OR stInCommand.eCommand = E_Commands.takeExposure THEN
-			IF stInCommand.eCommand = E_Commands.takeExposure THEN
+		IF eCommand = E_Commands.openShutter OR eCommand = E_Commands.takeExposure THEN
+			IF eCommand = E_Commands.takeExposure THEN
 				bTakingExposure := TRUE;
 			END_IF
 			eNextState := E_StatesProd.Opening;
@@ -78,8 +77,9 @@ CASE eCurrentState OF
 	
 	E_StatesProd.Opened:
 		fbOpened(stAxis:=stAxis, bTopEntry:=bLowerEntry);
-		IF stInCommand.eCommand = E_Commands.closeShutter OR fbExpoTimer.Q THEN
+		IF eCommand = E_Commands.closeShutter OR fbExpoTimer.Q THEN
 			eNextState := E_StatesProd.Closing;
+			(*add error code or warning if timer is active and closeShutter command is issued*)
 		END_IF
 		
 	E_StatesProd.Closing:
@@ -101,8 +101,6 @@ END_CASE]]></ST>
       <LineId Id="58" Count="2" />
       <LineId Id="57" Count="0" />
       <LineId Id="53" Count="2" />
-      <LineId Id="225" Count="2" />
-      <LineId Id="229" Count="4" />
       <LineId Id="224" Count="0" />
       <LineId Id="13" Count="0" />
       <LineId Id="215" Count="0" />
@@ -118,7 +116,9 @@ END_CASE]]></ST>
       <LineId Id="218" Count="0" />
       <LineId Id="168" Count="1" />
       <LineId Id="26" Count="2" />
-      <LineId Id="119" Count="2" />
+      <LineId Id="119" Count="1" />
+      <LineId Id="267" Count="0" />
+      <LineId Id="121" Count="0" />
       <LineId Id="127" Count="0" />
       <LineId Id="30" Count="1" />
       <LineId Id="123" Count="2" />

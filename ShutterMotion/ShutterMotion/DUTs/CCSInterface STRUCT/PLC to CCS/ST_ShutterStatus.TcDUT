@@ -4,10 +4,10 @@
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
 TYPE ST_ShutterStatus EXTENDS ST_PLCMsg:
 STRUCT
-    nMotionProfile: DINT; (* Motion profile index. *)
-    bIsCalibrated: BOOL;
-    nSmState: DINT;
-    stAxis: ARRAY [0..1] OF ST_AxisStatus;
+    motionProfile: DINT; (* Motion profile index. *)
+    isCalibrated: BOOL;
+    smState: DINT;
+    axis: ARRAY [0..1] OF AxisStatus;
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

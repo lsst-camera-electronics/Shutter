@@ -1025,18 +1025,18 @@ External Setpoint Generation:
 					<Type GUID="{59CB7A65-AEAB-E588-EB2A-AFE112B8A9C4}">ARRAY [0..5] OF DINT</Type>
 				</Var>
 				<Var>
-					<Name>GVL.bHallSwitch</Name>
-					<Comment>
-						<![CDATA[Hall Switches]]>
-					</Comment>
-					<Type GUID="{1F02D6B8-A7D2-F43A-E709-30725419E942}">ARRAY [0..14] OF BOOL</Type>
-				</Var>
-				<Var>
 					<Name>GVL.testInput</Name>
 					<Comment>
 						<![CDATA[testing timing module]]>
 					</Comment>
 					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>GVL.bHallSwitch</Name>
+					<Comment>
+						<![CDATA[Hall Switches]]>
+					</Comment>
+					<Type GUID="{1F02D6B8-A7D2-F43A-E709-30725419E942}">ARRAY [0..14] OF BOOL</Type>
 				</Var>
 				<Var>
 					<Name>GVL.testTime</Name>
@@ -1185,7 +1185,7 @@ External Setpoint Generation:
 				</OwnerA>
 			</UnrestoredVarLinks>
 			<TaskPouOids>
-				<TaskPouOid Prio="7" OTCID="#x08502001"/>
+				<TaskPouOid Prio="18" OTCID="#x08502001"/>
 			</TaskPouOids>
 		</Instance>
 	</Project>

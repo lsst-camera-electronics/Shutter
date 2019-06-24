@@ -8,7 +8,7 @@ VAR_GLOBAL CONSTANT
 			============================GENERAL SHUTTER LAYOUT===============================
 			  ________________________________________________________________________________
 	        ||                                  HALL SWITCH                                   \
-	X-side  ||       ----14---13--12---11---10---9---8---7---6---5---4---3---2--1---0----      \    X+ side
+	X- side ||       ----14---13--12---11---10---9---8---7---6---5---4---3---2--1---0----      \    X+ side
 			||_________________________________________________________________________         \	
 			| | 				 |                 **  **  **                 |        \ MotorXP \
 			| |					 |            *                  *            |         \ MotorXM \   
@@ -45,9 +45,9 @@ VAR_GLOBAL CONSTANT
 	cCalibrateVel	: LREAL	:= 100;
 	cPositionVel	: LREAL := 300;
 	cPosStart		: LREAL := 0;
-	cPosEnd			: LREAL := 751;
-	cHomeOffSetXP	: LREAL	:= (cPosStart+35);
-	cHomeOffSetXM	: LREAL	:= (cPosEnd-84);
+	cPosEnd			: LREAL := 751; //this will need to change for production once keyance snesors are in
+	cHomeOffSetXP	: LREAL	:= (cPosStart+35); //this will need to change for production once keyance snesors are in
+	cHomeOffSetXM	: LREAL	:= (cPosEnd-84);//this will need to change for production once keyance snesors are in
 	
 	//SIZE_HALL_SW_C 	: LREAL := SIZEOF(GVL.hallPosCalXP);
 	
@@ -60,7 +60,7 @@ END_VAR
 VAR_GLOBAL
 
 	//Hall Switches
-	bHallSwitch AT %I*	:ARRAY[0..14] OF BOOL;
+	bHallSwitch AT %I*	:ARRAY[cHallLower .. cHallUpper] OF BOOL;
 	nHallSequence 		: WORD;
 
 	//Timer

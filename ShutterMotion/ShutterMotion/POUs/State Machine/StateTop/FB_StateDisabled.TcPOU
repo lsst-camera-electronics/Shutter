@@ -7,7 +7,7 @@ VAR_IN_OUT
 	bTopentry : BOOL;
 END_VAR
 VAR_INPUT
-	stInCommand	: ST_Commands;
+
 END_VAR
 ]]></Declaration>
     <Implementation>
