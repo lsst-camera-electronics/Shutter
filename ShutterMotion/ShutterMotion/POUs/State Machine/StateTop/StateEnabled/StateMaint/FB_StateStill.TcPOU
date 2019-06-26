@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <POU Name="FB_StateStill" Id="{fac21632-7010-4c07-91b9-f12f78686b07}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_StateStill
 VAR_IN_OUT
@@ -43,10 +43,6 @@ ELSIF eCommand = E_Commands.disableAllAxes THEN
 	nNextState := 1040;
 ELSIF eCommand = E_Commands.changeBrakeState THEN
 	nNextState := 1050;
-ELSIF eCommand = E_Commands.releaseAllBrakes THEN
-	nNextState := 1060;
-ELSIF eCommand = E_Commands.engageAllBrakes THEN
-	nNextState := 1070;
 END_IF
 
 nCurrentState := nNextState;
@@ -64,7 +60,7 @@ CASE nCurrentState OF
 		
 	1010:	
 		stAxis[stChangeAxisEnable.axisIndex].mcPower(Axis:=stAxis[stChangeAxisEnable.axisIndex].axisRef,
-			 Enable:=stChangeAxisEnable.enabled);
+			 Enable:=stChangeAxisEnable.enabled, Enable_Positive:=stChangeAxisEnable.enabled, Enable_Negative:=stChangeAxisEnable.enabled);
 		nNextState := 2000; 
 
 	1020:	
@@ -75,27 +71,17 @@ CASE nCurrentState OF
 		END_IF
 
 	1030:
-		stAxis[GVL.cXP].mcPower(Axis:=stAxis[GVL.cXP].axisRef, Enable:=TRUE);
-		stAxis[GVL.cXM].mcPower(Axis:=stAxis[GVL.cXM].axisRef, Enable:=TRUE);
+		stAxis[GVL.cXP].mcPower(Axis:=stAxis[GVL.cXP].axisRef, Enable:=TRUE, Enable_Positive:=TRUE, Enable_Negative:=TRUE);
+		stAxis[GVL.cXM].mcPower(Axis:=stAxis[GVL.cXM].axisRef, Enable:=TRUE, Enable_Positive:=TRUE, Enable_Negative:=TRUE);
 		nNextState := 2000; 
 
 	1040:	
-		stAxis[GVL.cXP].mcPower(Axis:=stAxis[GVL.cXP].axisRef, Enable:=FALSE);
-		stAxis[GVL.cXM].mcPower(Axis:=stAxis[GVL.cXM].axisRef, Enable:=FALSE);
+		stAxis[GVL.cXP].mcPower(Axis:=stAxis[GVL.cXP].axisRef, Enable:=FALSE, Enable_Positive:=FALSE, Enable_Negative:=FALSE);
+		stAxis[GVL.cXM].mcPower(Axis:=stAxis[GVL.cXM].axisRef, Enable:=FALSE, Enable_Positive:=FALSE, Enable_Negative:=FALSE);
 		nNextState := 2000; 
 		
 	1050:
 		stAxis[stChangeBrakeState.axisIndex].bBrake := stChangeBrakeState.state;
-		nNextState := 2000; 
-		
-	1060:	
-		stAxis[GVL.cXP].bBrake := GVL.cBrakeOff;
-		stAxis[GVL.cXP].bBrake := GVL.cBrakeOff;
-		nNextState := 2000; 
-	
-	1070:	
-		stAxis[GVL.cXP].bBrake := GVL.cBrakeOn;
-		stAxis[GVL.cXP].bBrake := GVL.cBrakeOn;
 		nNextState := 2000; 
 
 	2000:
@@ -108,7 +94,8 @@ END_CASE]]></ST>
       <LineId Id="294" Count="0" />
       <LineId Id="24" Count="0" />
       <LineId Id="239" Count="0" />
-      <LineId Id="241" Count="15" />
+      <LineId Id="241" Count="10" />
+      <LineId Id="256" Count="0" />
       <LineId Id="240" Count="0" />
       <LineId Id="238" Count="0" />
       <LineId Id="25" Count="4" />
@@ -138,14 +125,6 @@ END_CASE]]></ST>
       <LineId Id="268" Count="0" />
       <LineId Id="170" Count="1" />
       <LineId Id="63" Count="0" />
-      <LineId Id="269" Count="0" />
-      <LineId Id="168" Count="1" />
-      <LineId Id="67" Count="0" />
-      <LineId Id="74" Count="0" />
-      <LineId Id="270" Count="0" />
-      <LineId Id="166" Count="1" />
-      <LineId Id="70" Count="0" />
-      <LineId Id="75" Count="0" />
       <LineId Id="271" Count="0" />
       <LineId Id="235" Count="0" />
       <LineId Id="33" Count="0" />

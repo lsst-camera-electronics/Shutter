@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <POU Name="FB_StateEnabled" Id="{b94d2bdc-9aa0-4455-a0cd-476d7bce246d}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_StateEnabled
 VAR_IN_OUT
@@ -22,7 +22,6 @@ VAR_INPUT
 	stMoveAxisRelative	: ST_MoveAxisRelative;
 	stOpenShutter		: ST_OpenShutter;
 	stReset				: ST_Reset;
-	stStopMotion		: ST_StopMotion;
 	stTakeExposure		: ST_TakeExposure;
 END_VAR
 VAR_OUTPUT
@@ -38,7 +37,6 @@ VAR
 	eNextState		: E_StatesEnabled;
 	fbMaint			: FB_StateMaint;
 	fbProd			: FB_StateProd;
-	eStateEnabled	: E_StatesEnabled;
 	bLowerEntry		: BOOL;
 	
 	//Event
@@ -50,7 +48,11 @@ VAR
 	//Other var
 	fbReset			: FB_Reset;
 	bResetting		: BOOL;
+	bResetEntry		: BOOL;
 	bStopping		: BOOL;
+	
+	//Test Var
+	a,b : int;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -68,15 +70,17 @@ END_IF
 IF eCurrentState <> eNextState THEN
 	bLowerEntry := TRUE;
 END_IF
+eCurrentState := eNextState;
 
 (* State Machine *)
-CASE eStateEnabled OF
+CASE eCurrentState OF
 	
 	E_StatesEnabled.Maint:
 		fbMaint(
 			//inputs
 			stAxis 				:= stAxis, 
 			bTopEntry 			:= bLowerEntry, 
+			eCommand			:= eCommand,
 			stCalibrate			:= stCalibrate,
 			stChangeAxisEnable	:= stChangeAxisEnable,
 			stChangeBrakeState	:= stChangeBrakeState,
@@ -95,44 +99,49 @@ CASE eStateEnabled OF
 		IF bShutterReady AND eCommand = E_Commands.goToProd THEN
 			eNextState := E_StatesEnabled.Prod;
 		END_IF
+		a:=a+1;
 	
 	E_StatesEnabled.Prod:
 		fbProd(
 			//inputs
 			stAxis			:= stAxis, 
-			bTopEntry 		:= bLowerEntry, 
+			bTopEntry 		:= bLowerEntry,
+			eCommand		:= eCommand,
+			fSpeed			:= stReset.speed,
 			stOpenShutter	:= stOpenShutter,
 			stCloseShutter	:= stCloseShutter,
 			stTakeExposure	:= stTakeExposure,
 			//outputs
 			stOutError		=> stOutError,
-			nSMState		=> nSMState);	
+			nSMState		=> nSMState);
+	b:=b+1;	
 
 END_CASE
 
 //Reset routine
 IF eCommand = E_Commands.reset THEN
-	bResetting := TRUE;
+	bResetting 	:= TRUE;
+	bResetEntry	:= TRUE;
 END_IF
 IF bResetting THEN
-	fbReset(stAxis:=stAxis, bResetting:=bResetting);
+	fbReset(stAxis:=stAxis, bResetEntry:=bResetEntry,bResetting:=bResetting,);
 	eNextState := E_StatesEnabled.Maint;
-	bLowerEntry := TRUE;
+	bLowerEntry := TRUE; //forces states in Maint to go to still state
 END_IF
 
-//Stop routine (similar to reset but without resetting)
-IF eCommand = E_Commands.stopAllMotion THEN
-	bStopping := TRUE;
-END_IF
-IF bStopping THEN
-	stAxis[GVL.cXP].mcHalt(Axis:=stAxis[GVL.cXP].axisRef, Execute:=TRUE);
-	stAxis[GVL.cXM].mcHalt(Axis:=stAxis[GVL.cXM].axisRef, Execute:=TRUE);
-	IF stAxis[GVL.cXP].mcHalt.Done AND stAxis[GVL.cXM].mcHalt.Done THEN
-		stAxis[GVL.cXP].mcHalt(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
-		stAxis[GVL.cXM].mcHalt(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
-		bStopping := FALSE;
-	END_IF
-END_IF]]></ST>
+
+//bShutterReady
+(*
+bShutterReady := (stAxis[GVL.cXP].bBrake AND stAxis[GVL.cXM].bBrake) AND
+	((stAxis[GVL.cXP].bLimitHome AND stAxis[GVL.cXM].bLimitDeployed) OR (stAxis[GVL.cXP].bLimitDeployed AND stAxis[GVL.cXM].bLimitHome)) AND
+	(stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated);
+*)
+//this is the temp bShutterReady. Delete once all keyance switches are installed///////////////////////////////////////////////////////////////////////////////////
+bShutterReady := (stAxis[GVL.cXP].bBrake AND stAxis[GVL.cXM].bBrake) AND (stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated);
+
+
+
+]]></ST>
     </Implementation>
     <LineIds Name="FB_StateEnabled">
       <LineId Id="150" Count="0" />
@@ -145,6 +154,7 @@ END_IF]]></ST>
       <LineId Id="140" Count="0" />
       <LineId Id="133" Count="3" />
       <LineId Id="128" Count="0" />
+      <LineId Id="472" Count="0" />
       <LineId Id="67" Count="0" />
       <LineId Id="30" Count="0" />
       <LineId Id="9" Count="0" />
@@ -152,35 +162,45 @@ END_IF]]></ST>
       <LineId Id="75" Count="0" />
       <LineId Id="37" Count="0" />
       <LineId Id="290" Count="0" />
-      <LineId Id="257" Count="1" />
+      <LineId Id="257" Count="0" />
+      <LineId Id="412" Count="0" />
+      <LineId Id="258" Count="0" />
       <LineId Id="260" Count="4" />
       <LineId Id="266" Count="5" />
       <LineId Id="291" Count="0" />
       <LineId Id="359" Count="0" />
       <LineId Id="294" Count="0" />
       <LineId Id="300" Count="0" />
-      <LineId Id="79" Count="2" />
+      <LineId Id="79" Count="1" />
+      <LineId Id="481" Count="0" />
+      <LineId Id="81" Count="0" />
       <LineId Id="40" Count="0" />
       <LineId Id="38" Count="0" />
       <LineId Id="44" Count="0" />
       <LineId Id="353" Count="0" />
-      <LineId Id="276" Count="4" />
+      <LineId Id="276" Count="0" />
+      <LineId Id="500" Count="0" />
+      <LineId Id="494" Count="0" />
+      <LineId Id="277" Count="3" />
       <LineId Id="354" Count="1" />
+      <LineId Id="482" Count="0" />
       <LineId Id="357" Count="0" />
       <LineId Id="39" Count="0" />
       <LineId Id="36" Count="0" />
-      <LineId Id="184" Count="7" />
+      <LineId Id="184" Count="2" />
+      <LineId Id="498" Count="0" />
+      <LineId Id="187" Count="4" />
       <LineId Id="196" Count="0" />
+      <LineId Id="469" Count="0" />
       <LineId Id="183" Count="0" />
-      <LineId Id="210" Count="0" />
-      <LineId Id="209" Count="0" />
-      <LineId Id="211" Count="2" />
-      <LineId Id="198" Count="0" />
-      <LineId Id="201" Count="2" />
-      <LineId Id="208" Count="0" />
-      <LineId Id="207" Count="0" />
-      <LineId Id="204" Count="0" />
-      <LineId Id="206" Count="0" />
+      <LineId Id="413" Count="0" />
+      <LineId Id="483" Count="0" />
+      <LineId Id="414" Count="1" />
+      <LineId Id="493" Count="0" />
+      <LineId Id="484" Count="0" />
+      <LineId Id="487" Count="0" />
+      <LineId Id="485" Count="0" />
+      <LineId Id="488" Count="3" />
       <LineId Id="200" Count="0" />
     </LineIds>
   </POU>

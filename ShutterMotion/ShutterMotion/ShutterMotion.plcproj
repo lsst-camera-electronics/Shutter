@@ -63,9 +63,6 @@
     <Compile Include="DUTs\CCSInterface STRUCT\CCS to PLC\ST_Reset.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\CCSInterface STRUCT\CCS to PLC\ST_StopMotion.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="DUTs\CCSInterface STRUCT\CCS to PLC\ST_TakeExposure.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -193,7 +190,7 @@
     <Compile Include="Visualization Manager.TcVMO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="VISUs\ShutterGUI.TcVIS">
+    <Compile Include="VISUs\Visualization.TcVIS">
       <SubType>Code</SubType>
       <DependentUpon>Visualization Manager.TcVMO</DependentUpon>
     </Compile>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <POU Name="FB_StateProd" Id="{40a07a3a-fb23-4dc3-b994-cc6c85e7bf0e}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_StateProd
 VAR_IN_OUT
@@ -8,6 +8,7 @@ VAR_IN_OUT
 END_VAR
 VAR_INPUT
 	eCommand		: E_Commands;
+	fSpeed			: LREAL;
 	stOpenShutter	: ST_OpenShutter;
 	stCloseShutter	: ST_CloseShutter;
 	stTakeExposure	: ST_TakeExposure;
@@ -38,8 +39,10 @@ VAR
 	fbExpoTimer		:  TON;
 	
 	//other var
-	fSpeed	: LREAL;
 	bMotionDone	: BOOL;
+	
+	//test Var
+	a,b,c,d,e,f,g,h : INT;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -47,24 +50,43 @@ END_VAR
 IF bTopEntry = TRUE THEN
 	bTopEntry := FALSE;
 	eNextState := E_StatesProd.Closed;
+	(*These values are opposite of what they should be but they are going to be swapped to correct value as the state machine enter "Closed" state*)
+	IF (stAxis[GVL.cXP].axisRef.NcToPlc.ActPos<1) AND (stAxis[GVL.cXM].axisRef.NcToPlc.ActPos<1) THEN
+		nRet := GVL.cXP;
+		nExt := GVL.cXM;
+		a := a+1;
+	END_IF
+	IF (stAxis[GVL.cXP].axisRef.NcToPlc.ActPos>750) AND (stAxis[GVL.cXM].axisRef.NcToPlc.ActPos>750) THEN
+		nRet := GVL.cXM;
+		nExt := GVL.cXP;
+		b := b+1;
+	END_IF
+	bLowerEntry := TRUE;
 END_IF	
 IF eCurrentState <> eNextState THEN
 	bLowerEntry := TRUE;
 END_IF
 
 eCurrentState := eNextState;
+nSMState := eCurrentState;
 fbExpoTimer(IN:=bTakingExposure, PT:=stTakeExposure.exposureTime);
+
+IF eCommand = E_Commands.takeExposure THEN
+	h := h+1;
+END_IF
 
 CASE eCurrentState OF
 	
 	E_StatesProd.Closed:
-		fbClosed(stAxis:=stAxis, bTopEntry:=bLowerEntry, nRet=>nRet, nExt=>nExt, bTakingExposure=>bTakingExposure);
+		fbClosed(stAxis:=stAxis, bTopEntry:=bLowerEntry, nRet:=nRet, nExt:=nExt);
+		bTakingExposure := FALSE;
 		IF eCommand = E_Commands.openShutter OR eCommand = E_Commands.takeExposure THEN
 			IF eCommand = E_Commands.takeExposure THEN
 				bTakingExposure := TRUE;
 			END_IF
 			eNextState := E_StatesProd.Opening;
 		END_IF
+		c := c+1;
 
 	E_StatesProd.Opening:
 		fbOpening(stAxis:=stAxis, bTopEntry:=bLowerEntry, fSpeed:=fSpeed, nRet:=nRet, bMotionDone=>bMotionDone);
@@ -74,6 +96,7 @@ CASE eCurrentState OF
 		IF fbExpoTimer.Q THEN 
 			eNextState := E_StatesProd.Traveling;
 		END_IF
+		d := d+1;
 	
 	E_StatesProd.Opened:
 		fbOpened(stAxis:=stAxis, bTopEntry:=bLowerEntry);
@@ -81,49 +104,76 @@ CASE eCurrentState OF
 			eNextState := E_StatesProd.Closing;
 			(*add error code or warning if timer is active and closeShutter command is issued*)
 		END_IF
+		e := e+1;
 		
 	E_StatesProd.Closing:
 		fbClosing(stAxis:=stAxis, bTopEntry:=bLowerEntry, nExt:=nExt, fSpeed:=fSpeed, bMotionDone=>bMotionDone);
 		IF bMotionDone THEN
 			eNextState := E_StatesProd.Closed;
 		END_IF
+		f := f+1;
 	
 	E_StatesProd.Traveling:
 		fbTravelling(stAxis:=stAxis, bTopEntry:=bLowerEntry, nExt:=nExt, nRet:=nRet, fSpeed:=fspeed, bMotionDone=>bMotionDone);
 		IF bMotionDone THEN
 			eNextState := E_StatesProd.Closing;
 		END_IF
+		g := g+1;
 	
 END_CASE]]></ST>
     </Implementation>
     <LineIds Name="FB_StateProd">
       <LineId Id="56" Count="0" />
-      <LineId Id="58" Count="2" />
+      <LineId Id="58" Count="1" />
+      <LineId Id="324" Count="0" />
+      <LineId Id="312" Count="0" />
+      <LineId Id="317" Count="1" />
+      <LineId Id="328" Count="0" />
+      <LineId Id="319" Count="3" />
+      <LineId Id="329" Count="0" />
+      <LineId Id="323" Count="0" />
+      <LineId Id="313" Count="0" />
+      <LineId Id="60" Count="0" />
       <LineId Id="57" Count="0" />
       <LineId Id="53" Count="2" />
       <LineId Id="224" Count="0" />
+      <LineId Id="308" Count="0" />
       <LineId Id="13" Count="0" />
       <LineId Id="215" Count="0" />
+      <LineId Id="335" Count="0" />
+      <LineId Id="337" Count="1" />
+      <LineId Id="336" Count="0" />
       <LineId Id="19" Count="1" />
       <LineId Id="217" Count="0" />
-      <LineId Id="21" Count="1" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="311" Count="0" />
+      <LineId Id="22" Count="0" />
       <LineId Id="78" Count="0" />
       <LineId Id="117" Count="1" />
       <LineId Id="116" Count="0" />
-      <LineId Id="79" Count="1" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="332" Count="0" />
+      <LineId Id="80" Count="0" />
       <LineId Id="23" Count="2" />
       <LineId Id="83" Count="2" />
       <LineId Id="218" Count="0" />
-      <LineId Id="168" Count="1" />
+      <LineId Id="168" Count="0" />
+      <LineId Id="330" Count="0" />
+      <LineId Id="169" Count="0" />
       <LineId Id="26" Count="2" />
       <LineId Id="119" Count="1" />
       <LineId Id="267" Count="0" />
+      <LineId Id="331" Count="0" />
       <LineId Id="121" Count="0" />
       <LineId Id="127" Count="0" />
       <LineId Id="30" Count="1" />
-      <LineId Id="123" Count="2" />
+      <LineId Id="123" Count="1" />
+      <LineId Id="333" Count="0" />
+      <LineId Id="125" Count="0" />
       <LineId Id="32" Count="1" />
-      <LineId Id="170" Count="3" />
+      <LineId Id="170" Count="2" />
+      <LineId Id="334" Count="0" />
+      <LineId Id="173" Count="0" />
       <LineId Id="34" Count="0" />
       <LineId Id="9" Count="0" />
     </LineIds>

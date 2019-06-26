@@ -1,17 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <POU Name="FB_StateClosed" Id="{c84953d7-64f8-44ca-8f15-641427cb62d6}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_StateClosed
 VAR_IN_OUT
 	stAxis  	: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;	
 	bTopEntry	: BOOL;
-END_VAR
-VAR_OUTPUT
-	//bladesets
 	nRet	: INT;
 	nExt	: INT;
-	bTakingExposure : BOOL;
 END_VAR
+
 VAR
 	nCurrentState	: INT;
 	nNextState		: INT;
@@ -24,7 +21,6 @@ IF bTopEntry = TRUE THEN
 	bTopEntry := FALSE;
 	nRet := 1 - nRet;
 	nExt := 1 - nExt;
-	bTakingExposure := FALSE;
 	nNextState := 1000;
 END_IF	
 nCurrentState := nNextState;
@@ -38,7 +34,7 @@ END_CASE]]></ST>
     </Implementation>
     <LineIds Name="FB_StateClosed">
       <LineId Id="26" Count="3" />
-      <LineId Id="98" Count="1" />
+      <LineId Id="98" Count="0" />
       <LineId Id="97" Count="0" />
       <LineId Id="30" Count="0" />
       <LineId Id="9" Count="0" />

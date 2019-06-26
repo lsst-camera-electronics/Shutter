@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <POU Name="MAIN" Id="{f71d400f-d229-45a7-bebf-e505112d31c1}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
@@ -40,7 +40,6 @@ VAR
 	inMoveAxisRelative, ackMoveAxisRelative	: ST_MoveAxisRelative;
 	inOpenShutter, ackOpenShutter			: ST_OpenShutter;
 	inReset, ackReset						: ST_Reset;
-	inStopMotion, ackStopMotion				: ST_StopMotion;
 	inTakeExposure, ackTakeExposure			: ST_TakeExposure;
 	
 	//communication OUT
@@ -191,15 +190,6 @@ ELSIF F_HaveDifferentIDs(inReset, ackReset) THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 	END_IF
 	
-ELSIF F_HaveDifferentIDs(inStopMotion, ackStopMotion) THEN
-	ackStopMotion := inStopMotion;	
-	eCommand := E_Commands.stopAllMotion;
-	IF ackStopMotion.version <> nVersion THEN
-		outIgnored.reason := 0; (*wrong version*)
-	ELSIF NOT bAuxElxPermit THEN
-		outIgnored.reason := 1; (*ignored by state machine*)
-	END_IF
-	
 ELSIF F_HaveDifferentIDs(inTakeExposure, ackTakeExposure) THEN
 	ackTakeExposure := inTakeExposure;	
 	eCommand := E_Commands.takeExposure;
@@ -231,7 +221,6 @@ fbShutterSM(
 	stMoveAxisRelative	:= inMoveAxisRelative,
 	stOpenShutter		:= inOpenShutter,
 	stReset				:= inReset,
-	stStopMotion		:= inStopMotion,
 	stTakeExposure		:= inTakeExposure,
 	//outputs
 	stOutCalibDone		=> outCalibDone,
@@ -281,8 +270,8 @@ outShutterStatus.axis[GVL.cXM].motorTemp := fMotorTemp;
 fbTracking(stAxis:=stAxis);
 
 (*shutter protection module*)
-fbProtect(stAxis := stAxis);
-
+//fbProtect(stAxis := stAxis, bAuxElxPermit := bAuxElxPermit);
+	
 (*
 //write persistent data to file every second
 IF fbWriteDelay.Q THEN
@@ -391,11 +380,6 @@ END_IF
       <LineId Id="763" Count="0" />
       <LineId Id="777" Count="0" />
       <LineId Id="1187" Count="3" />
-      <LineId Id="1186" Count="0" />
-      <LineId Id="838" Count="0" />
-      <LineId Id="819" Count="1" />
-      <LineId Id="818" Count="0" />
-      <LineId Id="1193" Count="3" />
       <LineId Id="1192" Count="0" />
       <LineId Id="839" Count="0" />
       <LineId Id="766" Count="0" />
@@ -414,7 +398,8 @@ END_IF
       <LineId Id="941" Count="0" />
       <LineId Id="935" Count="0" />
       <LineId Id="937" Count="2" />
-      <LineId Id="942" Count="8" />
+      <LineId Id="942" Count="5" />
+      <LineId Id="949" Count="1" />
       <LineId Id="973" Count="2" />
       <LineId Id="952" Count="0" />
       <LineId Id="1102" Count="0" />
@@ -442,7 +427,7 @@ END_IF
       <LineId Id="1000" Count="1" />
       <LineId Id="1202" Count="0" />
       <LineId Id="1044" Count="0" />
-      <LineId Id="1203" Count="0" />
+      <LineId Id="1319" Count="0" />
       <LineId Id="983" Count="0" />
       <LineId Id="315" Count="0" />
       <LineId Id="314" Count="0" />

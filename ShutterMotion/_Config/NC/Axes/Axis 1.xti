@@ -1327,7 +1327,6 @@ External Setpoint Generation:
 			<Dynamic Acceleration="7407.41" Deceleration="7407.41" Jerk="32921.8"/>
 			<Velo RefSearch="60" SlowManual="150"/>
 			<OtherSettings AllowMotionCmdToSlave="true"/>
-			<ParameterChanged>6</ParameterChanged>
 		</AxisPara>
 		<Encoder Name="Enc" EncType="4">
 			<EncPara ScaleFactorNumerator="0.049777676567" MaxCount="#x0000ffff">

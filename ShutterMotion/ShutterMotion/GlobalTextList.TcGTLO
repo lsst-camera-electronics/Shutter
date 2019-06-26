@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <GlobalTextList Name="GlobalTextList" Id="{8bfaf04f-6206-4060-9e10-5ffa58a3a22b}">
     <XmlArchive>
       <Data>
@@ -23,6 +23,16 @@
             <o>
               <v n="TextID">"8"</v>
               <v n="TextDefault">"%8.1f"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"53"</v>
+              <v n="TextDefault">"%b"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"52"</v>
+              <v n="TextDefault">"%d"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
@@ -61,6 +71,11 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"58"</v>
+              <v n="TextDefault">"Brakes DISENAGAGE"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"10"</v>
               <v n="TextDefault">"Brakes ENGAGE"</v>
               <l n="LanguageTexts" t="ArrayList" />
@@ -86,6 +101,11 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"62"</v>
+              <v n="TextDefault">"CloseShutter"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"33"</v>
               <v n="TextDefault">"Continue"</v>
               <l n="LanguageTexts" t="ArrayList" />
@@ -93,6 +113,21 @@
             <o>
               <v n="TextID">"17"</v>
               <v n="TextDefault">"Cycler Task"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"57"</v>
+              <v n="TextDefault">"EnableAxis"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"59"</v>
+              <v n="TextDefault">"Execute Motion"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"60"</v>
+              <v n="TextDefault">"GoToProd"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
@@ -136,6 +171,11 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"55"</v>
+              <v n="TextDefault">"MoveAxisAbsolute"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"32"</v>
               <v n="TextDefault">"Normal Visit"</v>
               <l n="LanguageTexts" t="ArrayList" />
@@ -143,6 +183,21 @@
             <o>
               <v n="TextID">"27"</v>
               <v n="TextDefault">"Open Position"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"61"</v>
+              <v n="TextDefault">"OpenShutter"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"56"</v>
+              <v n="TextDefault">"Permit"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"65"</v>
+              <v n="TextDefault">"ProdSpeed"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
@@ -161,8 +216,33 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"51"</v>
+              <v n="TextDefault">"Set Axis"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"54"</v>
+              <v n="TextDefault">"Set dtime"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"66"</v>
+              <v n="TextDefault">"Set Exposure"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"7"</v>
               <v n="TextDefault">"Set exposure time"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"50"</v>
+              <v n="TextDefault">"Set Position"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"64"</v>
+              <v n="TextDefault">"Set ProdSpeed"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
@@ -206,6 +286,11 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"49"</v>
+              <v n="TextDefault">"State:"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"24"</v>
               <v n="TextDefault">"State: %s"</v>
               <l n="LanguageTexts" t="ArrayList" />
@@ -221,6 +306,11 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"48"</v>
+              <v n="TextDefault">"StateLVL2: %s"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"3"</v>
               <v n="TextDefault">"Stop"</v>
               <l n="LanguageTexts" t="ArrayList" />
@@ -233,6 +323,11 @@
             <o>
               <v n="TextID">"46"</v>
               <v n="TextDefault">"Take Exposure"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"63"</v>
+              <v n="TextDefault">"TakeExposure"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>

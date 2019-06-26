@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <POU Name="FB_ShutterSM" Id="{bb014c99-9246-4485-a45b-7048ac4294d5}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_ShutterSM
 VAR_IN_OUT
@@ -23,7 +23,6 @@ VAR_INPUT
 	stMoveAxisRelative	: ST_MoveAxisRelative;
 	stOpenShutter		: ST_OpenShutter;
 	stReset				: ST_Reset;
-	stStopMotion		: ST_StopMotion;
 	stTakeExposure		: ST_TakeExposure;
 END_VAR
 VAR_OUTPUT
@@ -44,8 +43,8 @@ VAR
 	//used in homeShutter Action
 	fbHomeDelay : TON;
 
-	
-	test : ST_AxisStatus;
+	//test variables
+	a,b : INT;
 	
 
 END_VAR]]></Declaration>
@@ -54,14 +53,21 @@ END_VAR]]></Declaration>
 IF eCurrentState <> eNextState THEN
 	bLowerEntry := TRUE;
 END_IF
-
+IF bAuxElxPermit = 1 THEN
+	eNextState := E_StatesTop.Enabled;
+ELSIF bAuxElxPermit = 0 THEN
+	eNextState := E_StatesTop.Disabled;
+END_IF
+eCurrentState := eNextState;
 (*Start of state machine*)
 CASE eCurrentState OF
 	E_StatesTop.Disabled: 
-		fbDisabled(stAxis := stAxis, btopEntry:=bLowerEntry);
-		IF bAuxElxPermit = 1 THEN
-			eNextState := E_StatesTop.Enabled;
-		END_IF
+		fbDisabled(
+			stAxis 		:= stAxis, 
+			btopEntry	:=bLowerEntry,
+			nSMState	=> nSMState);
+		a := a+1;
+
 			
 	E_StatesTop.Enabled:
 		fbEnabled(
@@ -83,19 +89,16 @@ CASE eCurrentState OF
 			stMoveAxisRelative	:= stMoveAxisRelative,
 			stOpenShutter		:= stOpenShutter,
 			stReset				:= stReset,
-			stStopMotion		:= stStopMotion,
 			stTakeExposure		:= stTakeExposure,
 			//outputs
 			stOutCalibDone		=> stOutCalibDone,
 			stOutError			=> stOutError,
 			stOutTimer			=> stOutTimer,
 			nSMState			=> nSMState);
-		IF bAuxElxPermit = 0 THEN
-			eNextState := E_StatesTop.Disabled;
-		END_IF
+		b:=b+1;
+
 			
 END_CASE
-
 
 ]]></ST>
     </Implementation>
@@ -103,26 +106,29 @@ END_CASE
       <LineId Id="60" Count="0" />
       <LineId Id="1185" Count="1" />
       <LineId Id="378" Count="0" />
+      <LineId Id="1362" Count="4" />
       <LineId Id="318" Count="0" />
       <LineId Id="1048" Count="1" />
       <LineId Id="1104" Count="0" />
+      <LineId Id="1367" Count="2" />
+      <LineId Id="1416" Count="0" />
       <LineId Id="1108" Count="0" />
-      <LineId Id="1115" Count="2" />
+      <LineId Id="1117" Count="0" />
       <LineId Id="1110" Count="2" />
       <LineId Id="1274" Count="0" />
       <LineId Id="1261" Count="2" />
-      <LineId Id="1245" Count="14" />
+      <LineId Id="1245" Count="12" />
+      <LineId Id="1259" Count="0" />
       <LineId Id="1244" Count="0" />
       <LineId Id="1275" Count="0" />
       <LineId Id="1277" Count="0" />
       <LineId Id="1280" Count="0" />
       <LineId Id="1276" Count="0" />
+      <LineId Id="1417" Count="0" />
       <LineId Id="1305" Count="0" />
-      <LineId Id="1118" Count="0" />
-      <LineId Id="1120" Count="2" />
+      <LineId Id="1121" Count="1" />
       <LineId Id="1105" Count="0" />
       <LineId Id="9" Count="0" />
-      <LineId Id="1296" Count="0" />
       <LineId Id="1295" Count="0" />
     </LineIds>
   </POU>

@@ -1,10 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <POU Name="FB_StateDisabled" Id="{d1cd4ba5-bb4f-4099-a180-cb41c9ee3f71}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_StateDisabled
 VAR_IN_OUT
 	stAxis  : ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;
 	bTopentry : BOOL;
+END_VAR
+VAR_OUTPUT
+	nSMState	: DINT;
 END_VAR
 VAR_INPUT
 
@@ -23,13 +26,16 @@ stAxis[GVL.cXP].mcReset(Axis := stAxis[GVL.cXP].axisRef, Execute := FALSE);
 stAxis[GVL.cXM].mcReset(Axis := stAxis[GVL.cXM].axisRef, Execute := FALSE);
 stAxis[GVL.cXP].bBrake 	:= GVL.cBrakeOn;
 stAxis[GVL.cXM].bBrake 	:= GVL.cBrakeOn;
-GVL.fbWaitTimer(IN:=FALSE);]]></ST>
+GVL.fbWaitTimer(IN:=FALSE);
+
+nSMState := 10000;]]></ST>
     </Implementation>
     <LineIds Name="FB_StateDisabled">
       <LineId Id="51" Count="1" />
       <LineId Id="26" Count="1" />
       <LineId Id="50" Count="0" />
       <LineId Id="28" Count="6" />
+      <LineId Id="64" Count="1" />
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>

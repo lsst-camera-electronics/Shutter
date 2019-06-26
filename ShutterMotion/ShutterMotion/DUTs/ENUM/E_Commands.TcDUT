@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <DUT Name="E_Commands" Id="{696d3bc0-2295-45ca-96b5-e8fed0b3fbe0}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 {attribute 'strict'}
@@ -7,7 +7,7 @@ TYPE E_Commands :
 (
 	noCommand,
 	
-	//Maint Mode
+	//Maint
 	calibrate,
 	changeAxisEnable,
 	changeBrakeState,
@@ -15,14 +15,10 @@ TYPE E_Commands :
 	clearAxisFaults,
 	disableAllAxes,
 	enableAllAxes,
-	engageAllBrakes,
-	goToCenter,
 	goToProd,
 	homeAxis,
-	jog,
 	moveAxisAbsolute,
 	moveAxisRelative,
-	releaseAllBrakes,
 	
 	//Prod
 	openShutter,
@@ -30,8 +26,7 @@ TYPE E_Commands :
 	takeExposure,
 	
 	//Other
-	reset,
-	stopAllMotion
+	reset
 );
 END_TYPE
 ]]></Declaration>

@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <POU Name="FB_Homing" Id="{67eb6d7f-00ee-47b8-9057-855207043b52}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_Homing
 VAR_IN_OUT
 	stAxis  	: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;
 	bTopEntry	: BOOL;
+	bMotionDone	: BOOL;
 END_VAR
 VAR_OUTPUT
-	bMotionDone		: BOOL;
+	
 END_VAR
 VAR
 	//state-machine
@@ -28,21 +29,21 @@ IF bTopEntry = TRUE THEN
 	nNextState := 410;
 END_IF	
 nCurrentState := nNextState;
-
 CASE nCurrentState OF
 	
 	410: //Clear Homed flag and calibrated flag
+		fbHomeDelay(IN:=FALSE);
 		stAxis[GVL.cXP].mcHome(Axis := stAxis[GVL.cXP].axisRef, HomingMode := MC_ResetCalibration, bCalibrationCam := TRUE, Execute := TRUE);
 		stAxis[GVL.cXM].mcHome(Axis := stAxis[GVL.cXM].axisRef, HomingMode := MC_ResetCalibration, bCalibrationCam := TRUE, Execute := TRUE);
 		stAxis[GVL.cXP].bIsCalibrated := FALSE;
 		stAxis[GVL.cXM].bIsCalibrated := FALSE;
 		IF stAxis[GVL.cXP].mcHome.Done AND stAxis[GVL.cXM].mcHome.Done THEN
+			stAxis[GVL.cXP].mcHome(Axis := stAxis[GVL.cXP].axisRef, Execute := FALSE);
+			stAxis[GVL.cXM].mcHome(Axis := stAxis[GVL.cXM].axisRef, Execute := FALSE);
 			nNextState := 420;
 		END_IF
 		
 	420: //Scan for home switch
-		stAxis[GVL.cXP].mcHome(Axis := stAxis[GVL.cXP].axisRef, Execute := FALSE);
-		stAxis[GVL.cXM].mcHome(Axis := stAxis[GVL.cXM].axisRef, Execute := FALSE);
 		stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXP].axisRef, Mode := MC_JOGMODE_CONTINOUS, Velocity := GVL.cScanVel, JogBackwards := NOT stAxis[GVL.cXP].bLimitHome);
 		stAxis[GVL.cXM].mcJog(Axis := stAxis[GVL.cXM].axisRef, Mode := MC_JOGMODE_CONTINOUS, Velocity := GVL.cScanVel, JogForward := NOT stAxis[GVL.cXM].bLimitHome);
 		IF stAxis[GVL.cXP].bLimitHome AND stAxis[GVL.cXM].bLimitHome THEN
@@ -92,7 +93,12 @@ END_CASE]]></ST>
     <LineIds Name="FB_Homing">
       <LineId Id="10" Count="3" />
       <LineId Id="134" Count="3" />
-      <LineId Id="18" Count="57" />
+      <LineId Id="19" Count="2" />
+      <LineId Id="160" Count="0" />
+      <LineId Id="22" Count="4" />
+      <LineId Id="154" Count="1" />
+      <LineId Id="27" Count="3" />
+      <LineId Id="33" Count="42" />
       <LineId Id="77" Count="0" />
       <LineId Id="80" Count="0" />
       <LineId Id="9" Count="0" />

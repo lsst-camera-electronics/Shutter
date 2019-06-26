@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <POU Name="FB_StateMaint" Id="{37b42c71-d02c-4f0b-9d4a-8f4651b67341}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_StateMaint
 VAR_IN_OUT
@@ -39,6 +39,9 @@ VAR
 
 	//other var
 	eCopyCommand	: E_Commands;
+	
+	//testVar
+	a, b, c : INT;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -51,7 +54,7 @@ IF eCurrentState <> eNextState THEN
 	bLowerEntry := TRUE;
 END_IF
 eCurrentState := eNextState;
-
+nSMState := eCurrentState;
 //State Machine
 CASE eCurrentState OF
 	
@@ -67,37 +70,39 @@ CASE eCurrentState OF
 			stDisableAllAxes	:= stDisableAllAxes,
 			stEnableAllAxes		:= stEnableAllAxes);
 		IF eCommand <> E_Commands.noCommand THEN (*checks if there is a new command*)
-			IF eCommand = E_Commands.calibrate AND (stAxis[GVL.cXP].bIsHomed AND stAxis[GVL.cXM].bIsHomed) THEN
+			IF eCommand = E_Commands.calibrate AND (stAxis[GVL.cXP].axisRef.Status.Homed AND stAxis[GVL.cXM].axisRef.Status.Homed) THEN
 				eNextState := E_StatesMaint.Calibrating;
 			ELSIF eCommand = E_Commands.closeShutter OR_ELSE
-				eCommand = E_Commands.goToCenter OR_ELSE
 				eCommand = E_Commands.homeAxis OR_ELSE
-				eCommand = E_Commands.jog OR_ELSE
 				eCommand = E_Commands.moveAxisAbsolute OR_ELSE
 				eCommand = E_Commands.moveAxisRelative THEN
 					eNextState := E_StatesMaint.Moving;
 					eCopyCommand := eCommand; (*need to copy since eCommand is only valid for 1 cycle. Resets to noCommand next cycle.*)
 			END_IF
 		END_IF
+		a := a+1;
 	
 	E_StatesMaint.Calibrating:
 		fbCalibrating(stAxis:=stAxis, bTopEntry:=bLowerEntry, stOutCalibDone=>stOutCalibDone);
 		IF fbCalibrating.bCalibDone THEN
 			eNextState := E_StatesMaint.Still;
 		END_IF
+		b:=b+1;
 		
 	E_StatesMaint.Moving:
 		fbMoving(
-			stAxis			:= stAxis, 
-			bTopEntry		:= bLowerEntry, 
-			eCommand		:= eCopyCommand,
-			bMotionDone		=>bMotionDone);
+			stAxis				:= stAxis, 
+			bTopEntry			:= bLowerEntry, 
+			eCommand			:= eCopyCommand,
+			stMoveAxisAbsolute 	:= stMoveAxisAbsolute,
+			stMoveAxisRelative	:= stMoveAxisRelative,
+			bMotionDone			=>bMotionDone);
 		IF bMotionDone THEN
 			eNextState := E_StatesMaint.Still;
 		END_IF
+		c:=c+1;
 END_CASE
-
-nSMState := eCurrentState;]]></ST>
+]]></ST>
     </Implementation>
     <LineIds Name="FB_StateMaint">
       <LineId Id="111" Count="2" />
@@ -117,23 +122,30 @@ nSMState := eCurrentState;]]></ST>
       <LineId Id="279" Count="0" />
       <LineId Id="281" Count="4" />
       <LineId Id="347" Count="0" />
-      <LineId Id="62" Count="2" />
-      <LineId Id="142" Count="5" />
+      <LineId Id="62" Count="1" />
+      <LineId Id="142" Count="0" />
+      <LineId Id="144" Count="3" />
       <LineId Id="151" Count="0" />
       <LineId Id="80" Count="0" />
+      <LineId Id="395" Count="0" />
       <LineId Id="350" Count="0" />
       <LineId Id="76" Count="0" />
       <LineId Id="34" Count="0" />
       <LineId Id="38" Count="0" />
-      <LineId Id="59" Count="2" />
+      <LineId Id="59" Count="1" />
+      <LineId Id="399" Count="0" />
+      <LineId Id="61" Count="0" />
       <LineId Id="35" Count="1" />
       <LineId Id="39" Count="0" />
-      <LineId Id="286" Count="2" />
+      <LineId Id="286" Count="1" />
+      <LineId Id="390" Count="1" />
+      <LineId Id="288" Count="0" />
       <LineId Id="290" Count="0" />
       <LineId Id="74" Count="0" />
-      <LineId Id="157" Count="1" />
+      <LineId Id="157" Count="0" />
+      <LineId Id="400" Count="0" />
+      <LineId Id="158" Count="0" />
       <LineId Id="32" Count="0" />
-      <LineId Id="305" Count="0" />
       <LineId Id="215" Count="0" />
     </LineIds>
   </POU>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <POU Name="FB_Protection" Id="{2dceb2c7-c1a1-4d57-b0b3-835d45fe31c4}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_Protection
 VAR_IN_OUT
@@ -20,6 +20,8 @@ VAR
 	eotDistStart	: ARRAY [GVL.cXP .. GVL.cXM, lmHome .. lmDeploy] OF LREAL;
 	eotRtrig		: ARRAY [GVL.cXP .. GVL.cXM, lmHome .. lmDeploy] OF R_Trig;
 	
+	//test int
+	a,b,c,d,e,f,g,h,i,j : INT;
 END_VAR
 
 VAR CONSTANT
@@ -40,15 +42,18 @@ IF NOT bAuxElxPermit THEN
 	stAxis[GVL.cXM].mcStop(Axis:=stAxis[GVL.cXM].axisRef, Execute:=TRUE);
 	stAxis[GVL.cXP].bBrake := GVL.cBrakeOn;
 	stAxis[GVL.cXM].bBrake := GVL.cBrakeOn;
+	a := a+1;
 END_IF	
 
 (*Check brake status - prevents motion if motion is commanded while brake is engaged*)
 IF stAxis[GVL.cXP].bBrake = GVL.cBrakeOn OR stAxis[GVL.cXM].bBrake = GVL.cBrakeOn THEN
-	IF NOT stAxis[GVL.cXP].axisRef.Status.StandStill OR NOT stAxis[GVL.cXM].axisRef.Status.StandStill THEN
+	IF stAxis[GVL.cXP].axisRef.Status.Moving OR stAxis[GVL.cXM].axisRef.Status.Moving THEN
 		stAxis[GVL.cXP].mcPower(Axis := stAxis[GVL.cXP].axisRef, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE);
 		stAxis[GVL.cXM].mcPower(Axis := stAxis[GVL.cXM].axisRef, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE); 
 		//////// --set error here-- //////////////////////////////////////////////////////////////////////////////////////////
+		b:=b+1;
 	END_IF
+	c:=c+1;
 END_IF
 
 (*Check position differences - Compare hall switch and motor encoder position. Stop motion if greater than diffLimit.*)
@@ -57,7 +62,9 @@ IF stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated THEN
 		stAxis[GVL.cXP].mcStop(Axis := stAxis[GVL.cXP].axisRef, Execute := TRUE);
 		stAxis[GVL.cXM].mcStop(Axis := stAxis[GVL.cXM].axisRef, Execute := TRUE);
 		//////// --set error here-- //////////////////////////////////////////////////////////////////////////////////////////
+		d:=d+1;
 	END_IF
+	e:=e+1;
 END_IF
 
 (*Check exposure time - If less than 100 ms, prevent exposure command from running*)
@@ -76,11 +83,13 @@ END_IF
 
 (*Check home status - Prevents all other motion if not homed*)
 IF NOT stAxis[GVL.cXP].axisRef.Status.Homed OR NOT stAxis[GVL.cXM].axisRef.Status.Homed THEN
-	IF NOT stAxis[GVL.cXP].axisRef.Status.StandStill OR NOT stAxis[GVL.cXM].axisRef.Status.StandStill THEN
+	IF stAxis[GVL.cXP].axisRef.Status.Moving OR stAxis[GVL.cXM].axisRef.Status.Moving THEN
 		 stAxis[GVL.cXP].mcStop(Axis:=stAxis[GVL.cXP].axisRef, Execute:=TRUE);
 		 stAxis[GVL.cXM].mcStop(Axis:=stAxis[GVL.cXM].axisRef, Execute:=TRUE);
 		 //////// --set error here-- //////////////////////////////////////////////////////////////////////////////////////////
+		 f:=f+1;
 	 END_IF
+	 g:=g+1;
 END_IF
 
 
@@ -166,16 +175,22 @@ END_IF
       <LineId Id="326" Count="0" />
       <LineId Id="388" Count="0" />
       <LineId Id="390" Count="0" />
-      <LineId Id="394" Count="2" />
+      <LineId Id="394" Count="1" />
+      <LineId Id="460" Count="0" />
+      <LineId Id="396" Count="0" />
       <LineId Id="389" Count="0" />
       <LineId Id="65" Count="2" />
       <LineId Id="398" Count="0" />
       <LineId Id="71" Count="1" />
+      <LineId Id="461" Count="0" />
       <LineId Id="410" Count="0" />
+      <LineId Id="462" Count="0" />
       <LineId Id="399" Count="0" />
       <LineId Id="146" Count="0" />
       <LineId Id="401" Count="5" />
+      <LineId Id="463" Count="0" />
       <LineId Id="409" Count="0" />
+      <LineId Id="464" Count="0" />
       <LineId Id="407" Count="1" />
       <LineId Id="411" Count="0" />
       <LineId Id="400" Count="0" />
@@ -194,7 +209,9 @@ END_IF
       <LineId Id="212" Count="0" />
       <LineId Id="428" Count="0" />
       <LineId Id="213" Count="1" />
+      <LineId Id="465" Count="0" />
       <LineId Id="430" Count="0" />
+      <LineId Id="466" Count="0" />
       <LineId Id="429" Count="0" />
       <LineId Id="216" Count="0" />
       <LineId Id="324" Count="1" />

@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <DUT Name="ST_Reset" Id="{efa8829f-ca25-4f8f-a463-e51d983e7fb3}">
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
 TYPE ST_Reset EXTENDS ST_MsgToPLC:
 STRUCT
     (* TBD - Shutter config info. *)
+	speed 			: LREAL;
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

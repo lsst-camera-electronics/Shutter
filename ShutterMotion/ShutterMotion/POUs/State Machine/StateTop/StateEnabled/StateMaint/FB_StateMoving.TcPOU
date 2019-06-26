@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <POU Name="FB_StateMoving" Id="{fb05c940-3975-4fce-84e7-a3eb8bb470da}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_StateMoving
 VAR_IN_OUT
@@ -30,9 +30,6 @@ END_VAR
     <Implementation>
       <ST><![CDATA[IF bTopEntry = TRUE THEN
 	bTopEntry := FALSE;
-	stAxis[GVL.cXP].bBrake := GVL.cBrakeOff;
-	stAxis[GVL.cXM].bBrake := GVL.cBrakeOff;
-
 	IF eCommand = E_Commands.homeAxis THEN
 		nNextState := 1000;
 	ELSIF eCommand = E_Commands.moveAxisAbsolute THEN
@@ -52,15 +49,16 @@ END_VAR
 	END_IF
 	eCommand := E_Commands.noCommand;	
 END_IF	
+
 IF nCurrentState <> nNextState THEN
 	bLowerEntry := TRUE;
 END_IF
 nCurrentState := nNextState;
-
+bMotionDone := FALSE;
 CASE nCurrentState OF
 		
 	1000://Homing routine
-		fbHoming(stAxis:=stAxis, bTopEntry:=bLowerEntry, bMotionDone=>bMotionDone);
+		fbHoming(stAxis:=stAxis, bTopEntry:=bLowerEntry, bMotionDone:=bMotionDone);
 		IF bMotionDone THEN
 			nNextState := 2000;
 		END_IF
@@ -82,7 +80,6 @@ CASE nCurrentState OF
 			bMotionDone := TRUE;
 			nNextState := 2000;
 		END_IF
-		
 			
 	2000:
 
@@ -91,8 +88,7 @@ END_CASE]]></ST>
     </Implementation>
     <LineIds Name="FB_StateMoving">
       <LineId Id="31" Count="1" />
-      <LineId Id="153" Count="1" />
-      <LineId Id="81" Count="1" />
+      <LineId Id="82" Count="0" />
       <LineId Id="233" Count="0" />
       <LineId Id="86" Count="2" />
       <LineId Id="248" Count="4" />
@@ -102,6 +98,7 @@ END_CASE]]></ST>
       <LineId Id="253" Count="1" />
       <LineId Id="89" Count="0" />
       <LineId Id="92" Count="1" />
+      <LineId Id="281" Count="0" />
       <LineId Id="34" Count="0" />
       <LineId Id="143" Count="1" />
       <LineId Id="140" Count="0" />
@@ -118,7 +115,6 @@ END_CASE]]></ST>
       <LineId Id="176" Count="5" />
       <LineId Id="183" Count="0" />
       <LineId Id="232" Count="0" />
-      <LineId Id="182" Count="0" />
       <LineId Id="184" Count="0" />
       <LineId Id="166" Count="0" />
       <LineId Id="152" Count="0" />
