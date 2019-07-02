@@ -64,59 +64,59 @@
 			</Hides>
 		</DataType>
 	</DataTypes>
-	<Project ProjectGUID="{02C0499F-514F-4877-BFF2-0E76EA357A75}" TargetNetId="5.48.66.18.1.1" ShowHideConfigurations="#x106">
+	<Project ProjectGUID="{02C0499F-514F-4877-BFF2-0E76EA357A75}" TargetNetId="5.54.106.120.1.1" ShowHideConfigurations="#x106">
 		<System>
-			<Settings RouterMemory="32505856">
-				<Cpu BaseTime="3333"/>
-				<IoIdleTask CycleTime="3333"/>
+			<Settings MaxCpus="2" NonWinCpus="1" RouterMemory="32505856">
+				<Cpu CpuId="1" BaseTime="2500"/>
+				<IoIdleTask Priority="3" CycleTime="5000"/>
 			</Settings>
 			<Tasks>
-				<Task Id="2" Priority="20" CycleTime="3333" AmsPort="350">
+				<Task Id="2" Priority="36" CycleTime="5000" AmsPort="350" ExceedWarning="1">
 					<Name>PlcTask</Name>
 				</Task>
-				<Task Id="6" Priority="1" CycleTime="3333" AmsPort="351">
+				<Task Id="6" Priority="4" CycleTime="5000" AmsPort="351" ExceedWarning="1">
 					<Name>PlcTask1</Name>
 				</Task>
-				<Task Id="7" Priority="2" CycleTime="3333" AmsPort="352">
+				<Task Id="7" Priority="6" CycleTime="5000" AmsPort="352" ExceedWarning="1">
 					<Name>PlcTask2</Name>
 				</Task>
-				<Task Id="8" Priority="3" CycleTime="3333" AmsPort="353">
+				<Task Id="8" Priority="8" CycleTime="5000" AmsPort="353" ExceedWarning="1">
 					<Name>PlcTask3</Name>
 				</Task>
-				<Task Id="9" Priority="5" CycleTime="3333" AmsPort="354">
+				<Task Id="9" Priority="12" CycleTime="5000" AmsPort="354" ExceedWarning="1">
 					<Name>PlcTask4</Name>
 				</Task>
-				<Task Id="10" Priority="6" CycleTime="3333" AmsPort="355">
+				<Task Id="10" Priority="14" CycleTime="5000" AmsPort="355" ExceedWarning="1">
 					<Name>PlcTask5</Name>
 				</Task>
-				<Task Id="11" Priority="7" CycleTime="3333" AmsPort="356">
+				<Task Id="11" Priority="16" CycleTime="5000" AmsPort="356" ExceedWarning="1">
 					<Name>PlcTask6</Name>
 				</Task>
-				<Task Id="12" Priority="9" CycleTime="3333" AmsPort="357">
+				<Task Id="12" Priority="18" CycleTime="5000" AmsPort="357" ExceedWarning="1">
 					<Name>PlcTask7</Name>
 				</Task>
-				<Task Id="13" Priority="10" CycleTime="3333" AmsPort="358">
+				<Task Id="13" Priority="20" CycleTime="5000" AmsPort="358" ExceedWarning="1">
 					<Name>PlcTask8</Name>
 				</Task>
-				<Task Id="14" Priority="12" CycleTime="3333" AmsPort="359">
+				<Task Id="14" Priority="22" CycleTime="5000" AmsPort="359" ExceedWarning="1">
 					<Name>PlcTask9</Name>
 				</Task>
-				<Task Id="15" Priority="13" CycleTime="3333" AmsPort="360">
+				<Task Id="15" Priority="24" CycleTime="5000" AmsPort="360" ExceedWarning="1">
 					<Name>PlcTask10</Name>
 				</Task>
-				<Task Id="16" Priority="14" CycleTime="3333" AmsPort="361">
+				<Task Id="16" Priority="26" CycleTime="5000" AmsPort="361" ExceedWarning="1">
 					<Name>PlcTask11</Name>
 				</Task>
-				<Task Id="17" Priority="15" CycleTime="3333" AmsPort="362">
+				<Task Id="17" Priority="28" CycleTime="5000" AmsPort="362" ExceedWarning="1">
 					<Name>PlcTask12</Name>
 				</Task>
-				<Task Id="18" Priority="16" CycleTime="3333" AmsPort="363">
+				<Task Id="18" Priority="30" CycleTime="5000" AmsPort="363" ExceedWarning="1">
 					<Name>PlcTask13</Name>
 				</Task>
-				<Task Id="19" Priority="17" CycleTime="3333" AmsPort="364">
+				<Task Id="19" Priority="32" CycleTime="5000" AmsPort="364" ExceedWarning="1">
 					<Name>PlcTask14</Name>
 				</Task>
-				<Task Id="20" Priority="18" CycleTime="3333" AmsPort="365">
+				<Task Id="20" Priority="34" CycleTime="5000" AmsPort="365" ExceedWarning="1">
 					<Name>PlcTask15</Name>
 				</Task>
 			</Tasks>

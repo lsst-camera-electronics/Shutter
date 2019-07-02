@@ -15,6 +15,9 @@
 
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+#license
+TrialLicense.tclrs
+
 # User-specific files
 *.suo
 *.user

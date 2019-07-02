@@ -16,6 +16,8 @@ VAR
 	
 	//counter
 	i	: INT;
+	nTripCountXP	: INT;
+	nTripCountXM	: INT;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -38,6 +40,7 @@ CASE nCurrentState OF
 			stAxis[GVL.cXP].fHallPosCal[1,i]:=0;
 		END_FOR
 		stAxis[GVL.cXP].nTripCount := 0;	
+		nTripCountXP := 0;	
 		stAxis[GVL.cXP].bIsCalibrated := FALSE;
 		nNextState:=8020;
 		
@@ -50,44 +53,17 @@ CASE nCurrentState OF
 			nNextState:=8030;
 		END_IF
 		
-		//This section is required to get rid of false trigger when system starts up
-		FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
-			stAxis[GVL.cXP].fbHallSigCal_rtrig[i](CLK:=GVL.bHallSwitch[i]);
-			stAxis[GVL.cXP].fbHallSigCal_ftrig[i](CLK:=GVL.bHallSwitch[i]);
-			IF stAxis[GVL.cXP].fbHallSigCal_rtrig[i].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[i].Q THEN
-				; //do nothing
-			END_IF
-		END_FOR
 
 	8030: //Calibrate AxisXP towards X- side.
 		//record position and sequence of hall trips at rising and falling edge.
 		FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
-			stAxis[GVL.cXP].fbHallSigCal_rtrig[i](CLK:=GVL.bHallSwitch[i]);
-			stAxis[GVL.cXP].fbHallSigCal_ftrig[i](CLK:=GVL.bHallSwitch[i]);
-			IF stAxis[GVL.cXP].fbHallSigCal_rtrig[i].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[i].Q THEN	
-
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].0 := stAxis[GVL.cXP].fbHallSigCal_rtrig[0].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[0].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].1 := stAxis[GVL.cXP].fbHallSigCal_rtrig[1].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[1].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].2 := stAxis[GVL.cXP].fbHallSigCal_rtrig[2].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[2].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].3 := stAxis[GVL.cXP].fbHallSigCal_rtrig[3].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[3].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].4 := stAxis[GVL.cXP].fbHallSigCal_rtrig[4].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[4].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].5 := stAxis[GVL.cXP].fbHallSigCal_rtrig[5].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[5].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].6 := stAxis[GVL.cXP].fbHallSigCal_rtrig[6].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[6].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].7 := stAxis[GVL.cXP].fbHallSigCal_rtrig[7].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[7].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].8 := stAxis[GVL.cXP].fbHallSigCal_rtrig[8].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[8].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].9 := stAxis[GVL.cXP].fbHallSigCal_rtrig[9].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[9].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].10 := stAxis[GVL.cXP].fbHallSigCal_rtrig[10].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[10].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].11 := stAxis[GVL.cXP].fbHallSigCal_rtrig[11].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[11].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].12 := stAxis[GVL.cXP].fbHallSigCal_rtrig[12].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[12].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].13 := stAxis[GVL.cXP].fbHallSigCal_rtrig[13].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[13].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].14 := stAxis[GVL.cXP].fbHallSigCal_rtrig[14].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[14].Q;
-
-				stAxis[GVL.cXP].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXP].nTripCount] := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
-				stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount + 1;		
-
+			IF GVL.nNumOfInputs[i].0 THEN
+				//identifies which hall switch tripped
+				stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, nTripCountXP] := INT_TO_WORD((i*10)+5);
+				stAxis[GVL.cXP].fHallPosCal[GVL.cDirPos, nTripCountXP] := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
+				nTripCountXP := nTripCountXP + 1;	
 			END_IF
 		END_FOR
-	
 		//start moving axisXP towards x- side
 		stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosEnd, Velocity:=GVL.cCalibrateVel, Execute:=TRUE);
 		IF stAxis[GVL.cXP].mcMoveAbs.Done THEN
@@ -98,31 +74,14 @@ CASE nCurrentState OF
 	8040: //Calibrate AxisXP towards X+ side.
 		//record position and sequence of hall trips at rising and falling edge
 		FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
-			stAxis[GVL.cXP].fbHallSigCal_rtrig[i](CLK:=GVL.bHallSwitch[i]);
-			stAxis[GVL.cXP].fbHallSigCal_ftrig[i](CLK:=GVL.bHallSwitch[i]);
-			IF stAxis[GVL.cXP].fbHallSigCal_rtrig[i].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[i].Q THEN
-				
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].0 := stAxis[GVL.cXP].fbHallSigCal_rtrig[0].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[0].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].1 := stAxis[GVL.cXP].fbHallSigCal_rtrig[1].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[1].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].2 := stAxis[GVL.cXP].fbHallSigCal_rtrig[2].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[2].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].3 := stAxis[GVL.cXP].fbHallSigCal_rtrig[3].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[3].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].4 := stAxis[GVL.cXP].fbHallSigCal_rtrig[4].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[4].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].5 := stAxis[GVL.cXP].fbHallSigCal_rtrig[5].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[5].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].6 := stAxis[GVL.cXP].fbHallSigCal_rtrig[6].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[6].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].7 := stAxis[GVL.cXP].fbHallSigCal_rtrig[7].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[7].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].8 := stAxis[GVL.cXP].fbHallSigCal_rtrig[8].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[8].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].9 := stAxis[GVL.cXP].fbHallSigCal_rtrig[9].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[9].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].10 := stAxis[GVL.cXP].fbHallSigCal_rtrig[10].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[10].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].11 := stAxis[GVL.cXP].fbHallSigCal_rtrig[11].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[11].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].12 := stAxis[GVL.cXP].fbHallSigCal_rtrig[12].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[12].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].13 := stAxis[GVL.cXP].fbHallSigCal_rtrig[13].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[13].Q;
-				stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].14 := stAxis[GVL.cXP].fbHallSigCal_rtrig[14].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[14].Q;
+			IF GVL.nNumOfInputs[i].0 THEN
+				//identifies which hall switch tripped
+				stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, nTripCountXP] := INT_TO_WORD((i*10)+5);
+				stAxis[GVL.cXP].fHallPosCal[GVL.cDirNeg, nTripCountXP] := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
+				nTripCountXP := nTripCountXP - 1;	
 			
-				stAxis[GVL.cXP].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount] := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
-				stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount - 1;	
 			END_IF
 		END_FOR
-	
 		//start moving axisXP towards x+ side
 		stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosStart, Velocity:=GVL.cCalibrateVel, Execute:=TRUE);
 		IF stAxis[GVL.cXP].mcMoveAbs.Done THEN
@@ -141,7 +100,9 @@ CASE nCurrentState OF
 		stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXP].axisRef, Mode := MC_JOGMODE_CONTINOUS, Velocity := GVL.cHomeVel, JogBackwards := NOT stAxis[GVL.cXP].bLimitHome);
 		IF stAxis[GVL.cXP].bLimitHome THEN
 			stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXP].axisRef, Mode := MC_JOGMODE_CONTINOUS, JogBackwards := FALSE);
-			stAxis[GVL.cXP].bIsCalibrated := TRUE;
+			IF nTripCountXP = 0 THEN	
+				stAxis[GVL.cXP].bIsCalibrated := TRUE; //should signal a warning to indicate bad calibration... Can be added later.
+			END_IF
 			nNextState := 9010;
 		END_IF			
 		
@@ -152,7 +113,8 @@ CASE nCurrentState OF
 			stAxis[GVL.cXM].fHallPosCal[0,i]:=0;
 			stAxis[GVL.cXM].fHallPosCal[1,i]:=0;
 		END_FOR
-		stAxis[GVL.cXM].nTripCount := 0;
+		stAxis[GVL.cXM].nTripCount := 0;	
+		nTripCountXM := 0;
 		stAxis[GVL.cXM].bIsCalibrated := FALSE;
 		nNextState:=9020;
 		
@@ -164,46 +126,17 @@ CASE nCurrentState OF
 			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
 			nNextState:=9030;
 		END_IF
-		
-		//This section is required to get rid of false trigger when system starts up
-		FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
-			stAxis[GVL.cXM].fbHallSigCal_rtrig[i](CLK:=GVL.bHallSwitch[i]);
-			stAxis[GVL.cXM].fbHallSigCal_ftrig[i](CLK:=GVL.bHallSwitch[i]);
-			IF stAxis[GVL.cXM].fbHallSigCal_rtrig[i].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[i].Q THEN
-				; //do nothing
-			END_IF
-		END_FOR	
 	
 	9030: //Calibrate stAxisGVL.cXM twoards X+ side.
 		//record position and sequence of hall trips at rising and falling edge.
 		FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
-			stAxis[GVL.cXM].fbHallSigCal_rtrig[i](CLK:=GVL.bHallSwitch[i]);
-			stAxis[GVL.cXM].fbHallSigCal_ftrig[i](CLK:=GVL.bHallSwitch[i]);
-			IF stAxis[GVL.cXM].fbHallSigCal_rtrig[i].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[i].Q THEN	
-				
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].0 := stAxis[GVL.cXM].fbHallSigCal_rtrig[0].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[0].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].1 := stAxis[GVL.cXM].fbHallSigCal_rtrig[1].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[1].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].2 := stAxis[GVL.cXM].fbHallSigCal_rtrig[2].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[2].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].3 := stAxis[GVL.cXM].fbHallSigCal_rtrig[3].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[3].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].4 := stAxis[GVL.cXM].fbHallSigCal_rtrig[4].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[4].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].5 := stAxis[GVL.cXM].fbHallSigCal_rtrig[5].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[5].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].6 := stAxis[GVL.cXM].fbHallSigCal_rtrig[6].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[6].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].7 := stAxis[GVL.cXM].fbHallSigCal_rtrig[7].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[7].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].8 := stAxis[GVL.cXM].fbHallSigCal_rtrig[8].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[8].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].9 := stAxis[GVL.cXM].fbHallSigCal_rtrig[9].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[9].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].10 := stAxis[GVL.cXM].fbHallSigCal_rtrig[10].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[10].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].11 := stAxis[GVL.cXM].fbHallSigCal_rtrig[11].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[11].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].12 := stAxis[GVL.cXM].fbHallSigCal_rtrig[12].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[12].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].13 := stAxis[GVL.cXM].fbHallSigCal_rtrig[13].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[13].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].14 := stAxis[GVL.cXM].fbHallSigCal_rtrig[14].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[14].Q;
-				
-				stAxis[GVL.cXM].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount] := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
-				
-				stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount + 1;		
-
+			IF GVL.nNumOfInputs[i].0 THEN
+				//identifies which hall switch tripped
+				stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, nTripCountXM] := INT_TO_WORD((i*10)+5);
+				stAxis[GVL.cXM].fHallPosCal[GVL.cDirNeg, nTripCountXM] := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
+				nTripCountXM := nTripCountXM + 1;	
 			END_IF
 		END_FOR
-
 		//start moving stAxisGVL.cXP towards x+ side
 		stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosStart, Velocity:=GVL.cCalibrateVel, Execute:=TRUE);
 		IF stAxis[GVL.cXM].mcMoveAbs.Done THEN
@@ -215,31 +148,13 @@ CASE nCurrentState OF
 	9040: //Calibrate stAxisGVL.cXM twoards X- side.
 		//record position and sequence of hall trips at rising and falling edge.
 		FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
-			stAxis[GVL.cXM].fbHallSigCal_rtrig[i](CLK:=GVL.bHallSwitch[i]);
-			stAxis[GVL.cXM].fbHallSigCal_ftrig[i](CLK:=GVL.bHallSwitch[i]);
-			IF stAxis[GVL.cXM].fbHallSigCal_rtrig[i].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[i].Q THEN	
-				
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].0 := stAxis[GVL.cXM].fbHallSigCal_rtrig[0].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[0].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].1 := stAxis[GVL.cXM].fbHallSigCal_rtrig[1].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[1].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].2 := stAxis[GVL.cXM].fbHallSigCal_rtrig[2].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[2].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].3 := stAxis[GVL.cXM].fbHallSigCal_rtrig[3].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[3].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].4 := stAxis[GVL.cXM].fbHallSigCal_rtrig[4].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[4].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].5 := stAxis[GVL.cXM].fbHallSigCal_rtrig[5].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[5].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].6 := stAxis[GVL.cXM].fbHallSigCal_rtrig[6].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[6].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].7 := stAxis[GVL.cXM].fbHallSigCal_rtrig[7].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[7].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].8 := stAxis[GVL.cXM].fbHallSigCal_rtrig[8].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[8].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].9 := stAxis[GVL.cXM].fbHallSigCal_rtrig[9].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[9].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].10 := stAxis[GVL.cXM].fbHallSigCal_rtrig[10].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[10].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].11 := stAxis[GVL.cXM].fbHallSigCal_rtrig[11].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[11].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].12 := stAxis[GVL.cXM].fbHallSigCal_rtrig[12].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[12].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].13 := stAxis[GVL.cXM].fbHallSigCal_rtrig[13].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[13].Q;
-				stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].14 := stAxis[GVL.cXM].fbHallSigCal_rtrig[14].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[14].Q;
-			
-				stAxis[GVL.cXM].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXM].nTripCount] := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
-				stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount - 1;	
+			IF GVL.nNumOfInputs[i].0 THEN
+				//identifies which hall switch tripped
+				stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, nTripCountXM] := INT_TO_WORD((i*10)+5);
+				stAxis[GVL.cXM].fHallPosCal[GVL.cDirPos, nTripCountXM] := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
+				nTripCountXM := nTripCountXM - 1;	
 			END_IF
 		END_FOR
-	
 		//start moving stAxisGVL.cXP towards x- side
 		stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosEnd, Velocity:=GVL.cCalibrateVel, Execute:=TRUE);
 		IF stAxis[GVL.cXM].mcMoveAbs.Done THEN
@@ -258,7 +173,9 @@ CASE nCurrentState OF
 		stAxis[GVL.cXM].mcJog(Axis:=stAxis[GVL.cXM].axisRef, Mode:=MC_JOGMODE_CONTINOUS, Velocity:=GVL.cHomeVel, JogForward := NOT stAxis[GVL.cXM].bLimitHome);
 		IF stAxis[GVL.cXM].bLimitHome THEN
 			stAxis[GVL.cXM].mcJog(Axis := stAxis[GVL.cXM].axisRef, Mode := MC_JOGMODE_CONTINOUS, JogForward := FALSE);
-			stAxis[GVL.cXM].bIsCalibrated := TRUE;
+				IF nTripCountXM=0 THEN
+					stAxis[GVL.cXM].bIsCalibrated := TRUE;  //should signal a warning to indicate bad calibration... Can be added later.
+				END_IF
 			nNextState := 9070;
 		END_IF			
 		
@@ -272,31 +189,21 @@ CASE nCurrentState OF
 		bCalibDone := TRUE;
 	
 END_CASE
+
 ]]></ST>
     </Implementation>
     <LineIds Name="FB_StateCalibrating">
-      <LineId Id="10" Count="6" />
-      <LineId Id="18" Count="0" />
-      <LineId Id="162" Count="0" />
-      <LineId Id="19" Count="1" />
-      <LineId Id="707" Count="86" />
-      <LineId Id="827" Count="0" />
-      <LineId Id="795" Count="22" />
-      <LineId Id="819" Count="0" />
-      <LineId Id="828" Count="0" />
-      <LineId Id="820" Count="1" />
-      <LineId Id="702" Count="0" />
-      <LineId Id="21" Count="111" />
-      <LineId Id="839" Count="1" />
-      <LineId Id="135" Count="2" />
-      <LineId Id="862" Count="0" />
-      <LineId Id="868" Count="0" />
-      <LineId Id="871" Count="1" />
-      <LineId Id="870" Count="0" />
-      <LineId Id="865" Count="0" />
-      <LineId Id="140" Count="0" />
-      <LineId Id="579" Count="0" />
-      <LineId Id="143" Count="0" />
+      <LineId Id="1940" Count="16" />
+      <LineId Id="2131" Count="0" />
+      <LineId Id="1957" Count="21" />
+      <LineId Id="1980" Count="38" />
+      <LineId Id="2151" Count="1" />
+      <LineId Id="2019" Count="9" />
+      <LineId Id="2132" Count="0" />
+      <LineId Id="2029" Count="11" />
+      <LineId Id="2050" Count="47" />
+      <LineId Id="2153" Count="1" />
+      <LineId Id="2098" Count="14" />
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>

@@ -676,7 +676,7 @@
 					<SyncMan>001000012600010001000000400000010001001026010000</SyncMan>
 					<SyncMan>001100012200010002000000400000010001001122010000</SyncMan>
 					<SyncMan>001220002400010003000000000000002000001224010000</SyncMan>
-					<SyncMan>001960002000010004000000000000008001001920010000</SyncMan>
+					<SyncMan>001980002000010004000000000000008001001920010000</SyncMan>
 					<Fmmu>0000000000000000001200020100000001000000000000000000000000000000</Fmmu>
 					<Fmmu>0000000000000000001900010100000002000000000000000000000000000000</Fmmu>
 					<Fmmu>00000000000000000d0800010100000003000000000000000000000000000000</Fmmu>
@@ -825,7 +825,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 2x Channel 1" Index="#x1a02" Flags="#x0010">
+					<Pdo Name="MTI Inputs 2x Channel 1" Index="#x1a02" Flags="#x0010" SyncMan="3">
 						<Entry Name="Status__No of input events" Index="#x6001" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
@@ -863,7 +863,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 1x Channel 1" Index="#x1a03" Flags="#x0010" SyncMan="3">
+					<Pdo Name="MTI Inputs 1x Channel 1" Index="#x1a03" Flags="#x0010">
 						<Entry Name="Status__No of input events" Index="#x6001" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
@@ -1037,7 +1037,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 2x Channel 2" Index="#x1a06" Flags="#x0010">
+					<Pdo Name="MTI Inputs 2x Channel 2" Index="#x1a06" Flags="#x0010" SyncMan="3">
 						<Entry Name="Status__No of input events" Index="#x6011" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -1075,7 +1075,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 1x Channel 2" Index="#x1a07" Flags="#x0010" SyncMan="3">
+					<Pdo Name="MTI Inputs 1x Channel 2" Index="#x1a07" Flags="#x0010">
 						<Entry Name="Status__No of input events" Index="#x6011" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -1249,7 +1249,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 2x Channel 3" Index="#x1a0a" Flags="#x0010">
+					<Pdo Name="MTI Inputs 2x Channel 3" Index="#x1a0a" Flags="#x0010" SyncMan="3">
 						<Entry Name="Status__No of input events" Index="#x6021" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -1287,7 +1287,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 1x Channel 3" Index="#x1a0b" Flags="#x0010" SyncMan="3">
+					<Pdo Name="MTI Inputs 1x Channel 3" Index="#x1a0b" Flags="#x0010">
 						<Entry Name="Status__No of input events" Index="#x6021" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -1461,7 +1461,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 2x Channel 4" Index="#x1a0e" Flags="#x0010">
+					<Pdo Name="MTI Inputs 2x Channel 4" Index="#x1a0e" Flags="#x0010" SyncMan="3">
 						<Entry Name="Status__No of input events" Index="#x6031" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -1499,7 +1499,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 1x Channel 4" Index="#x1a0f" Flags="#x0010" SyncMan="3">
+					<Pdo Name="MTI Inputs 1x Channel 4" Index="#x1a0f" Flags="#x0010">
 						<Entry Name="Status__No of input events" Index="#x6031" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -1673,7 +1673,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 2x Channel 5" Index="#x1a12" Flags="#x0010">
+					<Pdo Name="MTI Inputs 2x Channel 5" Index="#x1a12" Flags="#x0010" SyncMan="3">
 						<Entry Name="Status__No of input events" Index="#x6041" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -1711,7 +1711,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 1x Channel 5" Index="#x1a13" Flags="#x0010" SyncMan="3">
+					<Pdo Name="MTI Inputs 1x Channel 5" Index="#x1a13" Flags="#x0010">
 						<Entry Name="Status__No of input events" Index="#x6041" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -1885,7 +1885,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 2x Channel 6" Index="#x1a16" Flags="#x0010">
+					<Pdo Name="MTI Inputs 2x Channel 6" Index="#x1a16" Flags="#x0010" SyncMan="3">
 						<Entry Name="Status__No of input events" Index="#x6051" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -1923,7 +1923,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 1x Channel 6" Index="#x1a17" Flags="#x0010" SyncMan="3">
+					<Pdo Name="MTI Inputs 1x Channel 6" Index="#x1a17" Flags="#x0010">
 						<Entry Name="Status__No of input events" Index="#x6051" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -2097,7 +2097,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 2x Channel 7" Index="#x1a1a" Flags="#x0010">
+					<Pdo Name="MTI Inputs 2x Channel 7" Index="#x1a1a" Flags="#x0010" SyncMan="3">
 						<Entry Name="Status__No of input events" Index="#x6061" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -2135,7 +2135,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 1x Channel 7" Index="#x1a1b" Flags="#x0010" SyncMan="3">
+					<Pdo Name="MTI Inputs 1x Channel 7" Index="#x1a1b" Flags="#x0010">
 						<Entry Name="Status__No of input events" Index="#x6061" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -2309,7 +2309,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 2x Channel 8" Index="#x1a1e" Flags="#x0010">
+					<Pdo Name="MTI Inputs 2x Channel 8" Index="#x1a1e" Flags="#x0010" SyncMan="3">
 						<Entry Name="Status__No of input events" Index="#x6071" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -2347,7 +2347,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 1x Channel 8" Index="#x1a1f" Flags="#x0010" SyncMan="3">
+					<Pdo Name="MTI Inputs 1x Channel 8" Index="#x1a1f" Flags="#x0010">
 						<Entry Name="Status__No of input events" Index="#x6071" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -2695,8 +2695,8 @@
 				<EtherCAT SlaveType="2" PdiType="#x0405" MboxDataLinkLayer="true" StateMBoxPolling="true" CfgModeSafeOp="true" CycleMBoxPollingTime="0" CoeType="39" FoeType="1" VendorId="#x00000002" ProductCode="#x04eb3052" RevisionNo="#x00110000" InfoDataAddr="true" InfoDataDcTimes="true" TimeoutMailbox2="2000" CheckRevisionNoType="3" PortPhys="51" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EL1259 8Ch. Dig Input 24V/8Ch. Dig. Output 24V with Multi-Time-Stamp" Desc="EL1259" PortABoxInfo="#x0100000b">
 					<SyncMan>001000012600010001000000400000010001001026010000</SyncMan>
 					<SyncMan>001100012200010002000000400000010001001122010000</SyncMan>
-					<SyncMan>00128000240001000300000000000000a001001224010000</SyncMan>
-					<SyncMan>00198000200001000400000000000000a001001920010000</SyncMan>
+					<SyncMan>0012a000240001000300000000000000a001001224010000</SyncMan>
+					<SyncMan>0019a000200001000400000000000000a001001920010000</SyncMan>
 					<Fmmu>0000000000000000001200020100000001000000000000000000000000000000</Fmmu>
 					<Fmmu>0000000000000000001900010100000002000000000000000000000000000000</Fmmu>
 					<Fmmu>00000000000000000d0800010100000003000000000000000000000000000000</Fmmu>
@@ -2710,7 +2710,7 @@
 						<Entry Name="Status__Output buffer overflow" Index="#x6000" Sub="#x02" Flags="#x00000020">
 							<Type>BIT</Type>
 						</Entry>
-						<Entry Name="Status__Output state" Index="#x6000" Sub="#x03">
+						<Entry Name="Status__Output state" Index="#x6000" Sub="#x03" Flags="#x00000020">
 							<Type>BIT</Type>
 						</Entry>
 						<Entry>
@@ -3029,7 +3029,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 2x Channel 1" Index="#x1a0a" Flags="#x0010">
+					<Pdo Name="MTI Inputs 2x Channel 1" Index="#x1a0a" Flags="#x0010" SyncMan="3">
 						<Entry Name="Status__No of input events" Index="#x6081" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -3051,7 +3051,7 @@
 						<Entry Name="Status__Input order feedback" Index="#x6081" Sub="#x12">
 							<Type>USINT</Type>
 						</Entry>
-						<Entry Name="Inputs__Input event state 1" Index="#x6081" Sub="#x21">
+						<Entry Name="Inputs__Input event state 1" Index="#x6081" Sub="#x21" Flags="#x00000020">
 							<Type>BIT</Type>
 						</Entry>
 						<Entry Name="Inputs__Input event state 2" Index="#x6081" Sub="#x22">
@@ -3067,7 +3067,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 1x Channel 1" Index="#x1a0b" Flags="#x0010" SyncMan="3">
+					<Pdo Name="MTI Inputs 1x Channel 1" Index="#x1a0b" Flags="#x0010">
 						<Entry Name="Status__No of input events" Index="#x6081" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -3241,7 +3241,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 2x Channel 2" Index="#x1a0e" Flags="#x0010">
+					<Pdo Name="MTI Inputs 2x Channel 2" Index="#x1a0e" Flags="#x0010" SyncMan="3">
 						<Entry Name="Status__No of input events" Index="#x6091" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -3279,7 +3279,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 1x Channel 2" Index="#x1a0f" Flags="#x0010" SyncMan="3">
+					<Pdo Name="MTI Inputs 1x Channel 2" Index="#x1a0f" Flags="#x0010">
 						<Entry Name="Status__No of input events" Index="#x6091" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -3453,7 +3453,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 2x Channel 3" Index="#x1a12" Flags="#x0010">
+					<Pdo Name="MTI Inputs 2x Channel 3" Index="#x1a12" Flags="#x0010" SyncMan="3">
 						<Entry Name="Status__No of input events" Index="#x60a1" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -3491,7 +3491,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 1x Channel 3" Index="#x1a13" Flags="#x0010" SyncMan="3">
+					<Pdo Name="MTI Inputs 1x Channel 3" Index="#x1a13" Flags="#x0010">
 						<Entry Name="Status__No of input events" Index="#x60a1" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -3665,7 +3665,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 2x Channel 4" Index="#x1a16" Flags="#x0010">
+					<Pdo Name="MTI Inputs 2x Channel 4" Index="#x1a16" Flags="#x0010" SyncMan="3">
 						<Entry Name="Status__No of input events" Index="#x60b1" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -3703,7 +3703,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 1x Channel 4" Index="#x1a17" Flags="#x0010" SyncMan="3">
+					<Pdo Name="MTI Inputs 1x Channel 4" Index="#x1a17" Flags="#x0010">
 						<Entry Name="Status__No of input events" Index="#x60b1" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -3877,7 +3877,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 2x Channel 5" Index="#x1a1a" Flags="#x0010">
+					<Pdo Name="MTI Inputs 2x Channel 5" Index="#x1a1a" Flags="#x0010" SyncMan="3">
 						<Entry Name="Status__No of input events" Index="#x60c1" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -3915,7 +3915,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 1x Channel 5" Index="#x1a1b" Flags="#x0010" SyncMan="3">
+					<Pdo Name="MTI Inputs 1x Channel 5" Index="#x1a1b" Flags="#x0010">
 						<Entry Name="Status__No of input events" Index="#x60c1" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -4089,7 +4089,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 2x Channel 6" Index="#x1a1e" Flags="#x0010">
+					<Pdo Name="MTI Inputs 2x Channel 6" Index="#x1a1e" Flags="#x0010" SyncMan="3">
 						<Entry Name="Status__No of input events" Index="#x60d1" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -4127,7 +4127,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 1x Channel 6" Index="#x1a1f" Flags="#x0010" SyncMan="3">
+					<Pdo Name="MTI Inputs 1x Channel 6" Index="#x1a1f" Flags="#x0010">
 						<Entry Name="Status__No of input events" Index="#x60d1" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -4301,7 +4301,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 2x Channel 7" Index="#x1a22" Flags="#x0010">
+					<Pdo Name="MTI Inputs 2x Channel 7" Index="#x1a22" Flags="#x0010" SyncMan="3">
 						<Entry Name="Status__No of input events" Index="#x60e1" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -4339,7 +4339,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 1x Channel 7" Index="#x1a23" Flags="#x0010" SyncMan="3">
+					<Pdo Name="MTI Inputs 1x Channel 7" Index="#x1a23" Flags="#x0010">
 						<Entry Name="Status__No of input events" Index="#x60e1" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -4513,7 +4513,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 2x Channel 8" Index="#x1a26" Flags="#x0010">
+					<Pdo Name="MTI Inputs 2x Channel 8" Index="#x1a26" Flags="#x0010" SyncMan="3">
 						<Entry Name="Status__No of input events" Index="#x60f1" Sub="#x01">
 							<Type>USINT</Type>
 						</Entry>
@@ -4551,7 +4551,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTI Inputs 1x Channel 8" Index="#x1a27" Flags="#x0010" SyncMan="3">
+					<Pdo Name="MTI Inputs 1x Channel 8" Index="#x1a27" Flags="#x0010">
 						<Entry Name="Status__No of input events" Index="#x60f1" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
@@ -4975,7 +4975,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTO Outputs 2x Channel 1" Index="#x1602" InOut="1" Flags="#x0010">
+					<Pdo Name="MTO Outputs 2x Channel 1" Index="#x1602" InOut="1" Flags="#x0010" SyncMan="2">
 						<Entry Name="Ctrl__Output buffer reset" Index="#x7001" Sub="#x01">
 							<Type>BIT</Type>
 						</Entry>
@@ -5016,7 +5016,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTO Outputs 1x Channel 1" Index="#x1603" InOut="1" Flags="#x0010" SyncMan="2">
+					<Pdo Name="MTO Outputs 1x Channel 1" Index="#x1603" InOut="1" Flags="#x0010">
 						<Entry Name="Ctrl__Output buffer reset" Index="#x7001" Sub="#x01" Flags="#x00000020">
 							<Type>BIT</Type>
 						</Entry>
@@ -5199,7 +5199,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTO Outputs 2x Channel 2" Index="#x1606" InOut="1" Flags="#x0010">
+					<Pdo Name="MTO Outputs 2x Channel 2" Index="#x1606" InOut="1" Flags="#x0010" SyncMan="2">
 						<Entry Name="Ctrl__Output buffer reset" Index="#x7011" Sub="#x01">
 							<Type>BIT</Type>
 						</Entry>
@@ -5240,7 +5240,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTO Outputs 1x Channel 2" Index="#x1607" InOut="1" Flags="#x0010" SyncMan="2">
+					<Pdo Name="MTO Outputs 1x Channel 2" Index="#x1607" InOut="1" Flags="#x0010">
 						<Entry Name="Ctrl__Output buffer reset" Index="#x7011" Sub="#x01">
 							<Type>BIT</Type>
 						</Entry>
@@ -5423,7 +5423,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTO Outputs 2x Channel 3" Index="#x160a" InOut="1" Flags="#x0010">
+					<Pdo Name="MTO Outputs 2x Channel 3" Index="#x160a" InOut="1" Flags="#x0010" SyncMan="2">
 						<Entry Name="Ctrl__Output buffer reset" Index="#x7021" Sub="#x01">
 							<Type>BIT</Type>
 						</Entry>
@@ -5464,7 +5464,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTO Outputs 1x Channel 3" Index="#x160b" InOut="1" Flags="#x0010" SyncMan="2">
+					<Pdo Name="MTO Outputs 1x Channel 3" Index="#x160b" InOut="1" Flags="#x0010">
 						<Entry Name="Ctrl__Output buffer reset" Index="#x7021" Sub="#x01">
 							<Type>BIT</Type>
 						</Entry>
@@ -5647,7 +5647,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTO Outputs 2x Channel 4" Index="#x160e" InOut="1" Flags="#x0010">
+					<Pdo Name="MTO Outputs 2x Channel 4" Index="#x160e" InOut="1" Flags="#x0010" SyncMan="2">
 						<Entry Name="Ctrl__Output buffer reset" Index="#x7031" Sub="#x01">
 							<Type>BIT</Type>
 						</Entry>
@@ -5688,7 +5688,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTO Outputs 1x Channel 4" Index="#x160f" InOut="1" Flags="#x0010" SyncMan="2">
+					<Pdo Name="MTO Outputs 1x Channel 4" Index="#x160f" InOut="1" Flags="#x0010">
 						<Entry Name="Ctrl__Output buffer reset" Index="#x7031" Sub="#x01">
 							<Type>BIT</Type>
 						</Entry>
@@ -5871,7 +5871,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTO Outputs 2x Channel 5" Index="#x1612" InOut="1" Flags="#x0010">
+					<Pdo Name="MTO Outputs 2x Channel 5" Index="#x1612" InOut="1" Flags="#x0010" SyncMan="2">
 						<Entry Name="Ctrl__Output buffer reset" Index="#x7041" Sub="#x01">
 							<Type>BIT</Type>
 						</Entry>
@@ -5912,7 +5912,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTO Outputs 1x Channel 5" Index="#x1613" InOut="1" Flags="#x0010" SyncMan="2">
+					<Pdo Name="MTO Outputs 1x Channel 5" Index="#x1613" InOut="1" Flags="#x0010">
 						<Entry Name="Ctrl__Output buffer reset" Index="#x7041" Sub="#x01">
 							<Type>BIT</Type>
 						</Entry>
@@ -6095,7 +6095,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTO Outputs 2x Channel 6" Index="#x1616" InOut="1" Flags="#x0010">
+					<Pdo Name="MTO Outputs 2x Channel 6" Index="#x1616" InOut="1" Flags="#x0010" SyncMan="2">
 						<Entry Name="Ctrl__Output buffer reset" Index="#x7051" Sub="#x01">
 							<Type>BIT</Type>
 						</Entry>
@@ -6136,7 +6136,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTO Outputs 1x Channel 6" Index="#x1617" InOut="1" Flags="#x0010" SyncMan="2">
+					<Pdo Name="MTO Outputs 1x Channel 6" Index="#x1617" InOut="1" Flags="#x0010">
 						<Entry Name="Ctrl__Output buffer reset" Index="#x7051" Sub="#x01">
 							<Type>BIT</Type>
 						</Entry>
@@ -6319,7 +6319,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTO Outputs 2x Channel 7" Index="#x161a" InOut="1" Flags="#x0010">
+					<Pdo Name="MTO Outputs 2x Channel 7" Index="#x161a" InOut="1" Flags="#x0010" SyncMan="2">
 						<Entry Name="Ctrl__Output buffer reset" Index="#x7061" Sub="#x01">
 							<Type>BIT</Type>
 						</Entry>
@@ -6360,7 +6360,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTO Outputs 1x Channel 7" Index="#x161b" InOut="1" Flags="#x0010" SyncMan="2">
+					<Pdo Name="MTO Outputs 1x Channel 7" Index="#x161b" InOut="1" Flags="#x0010">
 						<Entry Name="Ctrl__Output buffer reset" Index="#x7061" Sub="#x01">
 							<Type>BIT</Type>
 						</Entry>
@@ -6543,7 +6543,7 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTO Outputs 2x Channel 8" Index="#x161e" InOut="1" Flags="#x0010">
+					<Pdo Name="MTO Outputs 2x Channel 8" Index="#x161e" InOut="1" Flags="#x0010" SyncMan="2">
 						<Entry Name="Ctrl__Output buffer reset" Index="#x7071" Sub="#x01">
 							<Type>BIT</Type>
 						</Entry>
@@ -6584,17 +6584,17 @@
 							<Type>UDINT</Type>
 						</Entry>
 					</Pdo>
-					<Pdo Name="MTO Outputs 1x Channel 8" Index="#x161f" InOut="1" Flags="#x0010" SyncMan="2">
-						<Entry Name="Ctrl__Output buffer reset" Index="#x7071" Sub="#x01">
+					<Pdo Name="MTO Outputs 1x Channel 8" Index="#x161f" InOut="1" Flags="#x0010">
+						<Entry Name="Ctrl__Output buffer reset" Index="#x7071" Sub="#x01" Flags="#x00000020">
 							<Type>BIT</Type>
 						</Entry>
-						<Entry Name="Ctrl__Manual output state" Index="#x7071" Sub="#x02">
+						<Entry Name="Ctrl__Manual output state" Index="#x7071" Sub="#x02" Flags="#x00000020">
 							<Type>BIT</Type>
 						</Entry>
-						<Entry Name="Ctrl__Force order" Index="#x7071" Sub="#x03">
+						<Entry Name="Ctrl__Force order" Index="#x7071" Sub="#x03" Flags="#x00000020">
 							<Type>BIT</Type>
 						</Entry>
-						<Entry Name="Ctrl__Enable manual operation" Index="#x7071" Sub="#x04">
+						<Entry Name="Ctrl__Enable manual operation" Index="#x7071" Sub="#x04" Flags="#x00000020">
 							<Type>BIT</Type>
 						</Entry>
 						<Entry>

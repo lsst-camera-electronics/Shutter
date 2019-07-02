@@ -51,6 +51,12 @@ VAR
 	outShutterStatus	: ST_ShutterStatus;
 	outTimer			: ST_Timer;
 	
+	//TestVar
+	a,b,c,d,e,f,g: INT;
+	num : ARRAY [0..14] OF INT;
+	i : int;
+	fbEL1259Read : FB_EcCoESdoRead;
+	testInt : INT;
 END_VAR
 VAR CONSTANT
 	//Will change later once motionProfile and version are decided
@@ -227,7 +233,7 @@ fbShutterSM(
 	stOutError			=> outError,
 	stOutTimer			=> outTimer,
 	nSMState			=> outShutterStatus.smState);
-	
+
 (*Shutter permit update*)	///////////////////////////////// need to define what outenable and outdisable sends
 //outEnable 		:= bAuxElxPermit;
 //outDisable		:= NOT bAuxElxPermit;
@@ -280,20 +286,71 @@ IF fbWriteDelay.Q THEN
 ELSE
 	fbWriteDelay(IN:=TRUE, PT:=T#2S);
 END_IF
-
-
-//testing timing module
-fbInputRtrig(CLK:= GVL.testInput);
-fbInputFtrig(CLK:= GVL.testInput);
-IF fbInputRtrig.Q THEN
-	GVL.testINT := GVL.testINT + 1;
-	GVL.testTime2 := GVL.testTime;
-END_IF
-IF fbInputFtrig.Q THEN
-	GVL.testINT2 := GVL.testINT2 + 1;
-END_IF
-
 *)
+
+
+
+IF GVL.nNumOfInputs[0].0 THEN
+	num[0]:=num[0]+1;
+	a:=a+1;
+END_IF
+IF GVL.nNumOfInputs[1].0 THEN
+	num[1]:=num[1]+1;
+	a:=a+1;
+END_IF
+IF GVL.nNumOfInputs[2].0 THEN
+	num[2]:=num[2]+1;
+	a:=a+1;
+END_IF
+IF GVL.nNumOfInputs[3].0 THEN
+	num[3]:=num[3]+1;
+	a:=a+1;
+END_IF
+IF GVL.nNumOfInputs[4].0 THEN
+	num[4]:=num[4]+1;
+	a:=a+1;
+END_IF
+IF GVL.nNumOfInputs[5].0 THEN
+	num[5]:=num[5]+1;
+	a:=a+1;
+END_IF
+IF GVL.nNumOfInputs[6].0 THEN
+	num[6]:=num[6]+1;
+	a:=a+1;
+END_IF
+IF GVL.nNumOfInputs[7].0 THEN
+	num[7]:=num[7]+1;
+	a:=a+1;
+END_IF
+IF GVL.nNumOfInputs[8].0 THEN
+	num[8]:=num[8]+1;
+	a:=a+1;
+END_IF
+IF GVL.nNumOfInputs[9].0 THEN
+	num[9]:=num[9]+1;
+	a:=a+1;
+END_IF
+IF GVL.nNumOfInputs[10].0 THEN
+	num[10]:=num[10]+1;
+	a:=a+1;
+END_IF
+IF GVL.nNumOfInputs[11].0 THEN
+	num[11]:=num[11]+1;
+	a:=a+1;
+END_IF
+IF GVL.nNumOfInputs[12].0 THEN
+	num[12]:=num[12]+1;
+	a:=a+1;
+END_IF
+IF GVL.nNumOfInputs[13].0 THEN
+	num[13]:=num[13]+1;
+	a:=a+1;
+END_IF
+IF GVL.nNumOfInputs[14].0 THEN
+	num[14]:=num[14]+1;
+	a:=a+1;
+END_IF
+
 ]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
@@ -435,16 +492,42 @@ END_IF
       <LineId Id="318" Count="0" />
       <LineId Id="324" Count="2" />
       <LineId Id="167" Count="0" />
-      <LineId Id="484" Count="1" />
-      <LineId Id="493" Count="1" />
-      <LineId Id="486" Count="0" />
-      <LineId Id="489" Count="0" />
-      <LineId Id="498" Count="0" />
-      <LineId Id="490" Count="0" />
-      <LineId Id="495" Count="2" />
-      <LineId Id="172" Count="0" />
-      <LineId Id="168" Count="0" />
-      <LineId Id="21" Count="1" />
+      <LineId Id="484" Count="0" />
+      <LineId Id="1409" Count="0" />
+      <LineId Id="1555" Count="2" />
+      <LineId Id="1615" Count="0" />
+      <LineId Id="1558" Count="0" />
+      <LineId Id="1564" Count="1" />
+      <LineId Id="1616" Count="0" />
+      <LineId Id="1566" Count="2" />
+      <LineId Id="1617" Count="0" />
+      <LineId Id="1569" Count="2" />
+      <LineId Id="1618" Count="0" />
+      <LineId Id="1572" Count="2" />
+      <LineId Id="1619" Count="0" />
+      <LineId Id="1575" Count="2" />
+      <LineId Id="1620" Count="0" />
+      <LineId Id="1578" Count="2" />
+      <LineId Id="1621" Count="0" />
+      <LineId Id="1581" Count="2" />
+      <LineId Id="1607" Count="0" />
+      <LineId Id="1584" Count="2" />
+      <LineId Id="1608" Count="0" />
+      <LineId Id="1587" Count="2" />
+      <LineId Id="1609" Count="0" />
+      <LineId Id="1590" Count="2" />
+      <LineId Id="1610" Count="0" />
+      <LineId Id="1593" Count="2" />
+      <LineId Id="1611" Count="0" />
+      <LineId Id="1596" Count="2" />
+      <LineId Id="1612" Count="0" />
+      <LineId Id="1599" Count="2" />
+      <LineId Id="1613" Count="0" />
+      <LineId Id="1602" Count="2" />
+      <LineId Id="1614" Count="0" />
+      <LineId Id="1605" Count="1" />
+      <LineId Id="1559" Count="0" />
+      <LineId Id="22" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

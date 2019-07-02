@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <POU Name="FB_Tracking" Id="{462a5933-fe60-42d4-a574-27170521c4c5}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_Tracking
 VAR_IN_OUT
@@ -7,159 +7,333 @@ VAR_IN_OUT
 END_VAR
 VAR
 	//used in tracking Action
-	bXorResult : BOOL;
+	nSeqToCompare : ARRAY [0 ..  1] OF WORD;
+	bXorResult 	: BOOL;
+	nSeqTime	: ARRAY [0 .. 1] OF UDINT;
+	bValidInput	: BOOL;
+	bDoubleTrip	: BOOL;
+	nGoNextSeq	: BOOL;
+	
+	fbRtrig		: ARRAY[GVL.cHallLower..GVL.cHallUpper] OF R_Trig;
 	
 	//counter
-	i 	: INT :=0;
+	i, j	: INT :=0;
+	
+	//TestVar
+	testInt: INT;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[//////////////////////////////////////////////////////////////
+      <ST><![CDATA[(*
+//////////////////////////////////////////////////////////////
 //Algorithm for tracking blade position using hall switches	//
 //////////////////////////////////////////////////////////////
-
 //Only one hall will ever trip for 1 set of blades. This flag is used to make sure the trip increment only once per cycle.
-stAxis[GVL.cXP].bTrackedFlag := FALSE;
-stAxis[GVL.cXM].bTrackedFlag := FALSE;
-
-//Hall sensors position tracking for axis XP
+bValidInput:=FALSE;
+bDoubleTrip:=FALSE;
+nGoNextSeq := FALSE;
+stAxis[GVL.cXP].bTrackedFlag:=FALSE;
+stAxis[GVL.cXM].bTrackedFlag:=FALSE;
+j:=0;
+//Detect hall switch transitions
 FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
-	stAxis[GVL.cXP].fbHallSigCal_rtrig[i](CLK:=GVL.bHallSwitch[i]);
-	stAxis[GVL.cXP].fbHallSigCal_ftrig[i](CLK:=GVL.bHallSwitch[i]);
-	IF (stAxis[GVL.cXP].fbHallSigCal_rtrig[i].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[i].Q) AND stAxis[GVL.cXP].axisRef.Status.Moving THEN
-		stAxis[GVL.cXP].bTrackedFlag := TRUE;
+	IF GVL.nNumOfInputs[i]=1 THEN
+		//identifies which hall switch tripped
+		nSeqToCompare[j] := INT_TO_WORD((i*10)+5);
+		//along with the trip time
+		stAxis[GVL.cXP].nHallTime := GVL.nInputEventTime[i];
+		//increment the index
+		j:=j+1;
+		bValidInput:=TRUE;
+		IF j=2 THEN
+			bDoubleTrip:=TRUE;
+		END_IF
 	END_IF
+	
+	IF GVL.nNumOfInputs[i]=2 THEN
+		testInt:=testint+1;
+	END_IF
+	
 END_FOR
 	
-IF stAxis[GVL.cXP].bTrackedFlag THEN
-	//record trigger status of each hall sensor into hallSequence for comparing;
-	GVL.nHallSequence.0 := stAxis[GVL.cXP].fbHallSigCal_rtrig[0].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[0].Q;
-	GVL.nHallSequence.1 := stAxis[GVL.cXP].fbHallSigCal_rtrig[1].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[1].Q;
-	GVL.nHallSequence.2 := stAxis[GVL.cXP].fbHallSigCal_rtrig[2].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[2].Q;
-	GVL.nHallSequence.3 := stAxis[GVL.cXP].fbHallSigCal_rtrig[3].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[3].Q;
-	GVL.nHallSequence.4 := stAxis[GVL.cXP].fbHallSigCal_rtrig[4].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[4].Q;
-	GVL.nHallSequence.5 := stAxis[GVL.cXP].fbHallSigCal_rtrig[5].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[5].Q;
-	GVL.nHallSequence.6 := stAxis[GVL.cXP].fbHallSigCal_rtrig[6].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[6].Q;
-	GVL.nHallSequence.7 := stAxis[GVL.cXP].fbHallSigCal_rtrig[7].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[7].Q;
-	GVL.nHallSequence.8 := stAxis[GVL.cXP].fbHallSigCal_rtrig[8].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[8].Q;
-	GVL.nHallSequence.9 := stAxis[GVL.cXP].fbHallSigCal_rtrig[9].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[9].Q;
-	GVL.nHallSequence.10 := stAxis[GVL.cXP].fbHallSigCal_rtrig[10].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[10].Q;
-	GVL.nHallSequence.11 := stAxis[GVL.cXP].fbHallSigCal_rtrig[11].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[11].Q;
-	GVL.nHallSequence.12 := stAxis[GVL.cXP].fbHallSigCal_rtrig[12].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[12].Q;
-	GVL.nHallSequence.13 := stAxis[GVL.cXP].fbHallSigCal_rtrig[13].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[13].Q;
-	GVL.nHallSequence.14 := stAxis[GVL.cXP].fbHallSigCal_rtrig[14].Q OR stAxis[GVL.cXP].fbHallSigCal_ftrig[14].Q;	
-
-	(* Unary XOR of hallSequence. With one blade running, 1 bit should be HIGH at a time .
-		Result of 1 indicates presence of one blade sequence. Result of 0 indicates presence of two blade sequence *)
-	bXorResult := (GVL.nHallSequence.0 XOR GVL.nHallSequence.1 XOR GVL.nHallSequence.2 XOR GVL.nHallSequence.3 XOR GVL.nHallSequence.4 XOR
-		GVL.nHallSequence.5 XOR GVL.nHallSequence.6 XOR GVL.nHallSequence.7 XOR GVL.nHallSequence.8 XOR GVL.nHallSequence.9 XOR
-		GVL.nHallSequence.10 XOR GVL.nHallSequence.11 XOR GVL.nHallSequence.12 XOR GVL.nHallSequence.13 XOR GVL.nHallSequence.14);
-	IF bXorResult THEN
-		stAxis[GVL.cXP].nSeqToCompare := GVL.nHallSequence;
-	ELSIF stAxis[GVL.cXM].axisRef.status.PositiveDirection THEN
-		stAxis[GVL.cXP].nSeqToCompare := (GVL.nHallSequence XOR stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount]);
-	ELSIF stAxis[GVL.cXM].axisRef.status.NegativeDirection THEN
-		stAxis[GVL.cXP].nSeqToCompare := (GVL.nHallSequence XOR stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount]);	
-	ELSE
-		; //Should generate error code here
-	END_IF	
-
-	//Compare current sequence with recorded sequence. Update position if match.
-	IF stAxis[GVL.cXP].axisRef.status.PositiveDirection AND stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount] = stAxis[GVL.cXP].nSeqToCompare THEN
-		stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXP].nTripCount];
-		stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount + 1;
-
-		//testing purposes only. Will delete later.
-		FOR i:= 1000 TO 1 BY -1 DO
-			stAxis[GVL.cXP].fRecordedPosition[i] := stAxis[GVL.cXP].fRecordedPosition[i-1];
-		END_FOR
-		stAxis[GVL.cXP].fRecordedPosition[1] := stAxis[GVL.cXP].fHallPosAct;
+//Single blade motion tracking
+IF bValidInput THEN
 	
-		
-		//track difference between hall sensor and encoder data at trip point
-		stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
+	//Hall sensors position tracking for axis XP
+	IF stAxis[GVL.cXP].axisRef.Status.Moving AND NOT nGoNextSeq THEN
+		//Compare current sequence with recorded sequence. Update position if match. Positive direction.
+		IF stAxis[GVL.cXP].axisRef.status.PositiveDirection AND stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount] = nSeqToCompare[0] THEN
+			stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXP].nTripCount];
+			stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount + 1;
+			//track difference between hall sensor and encoder data at trip point
+			stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
+			stAxis[GVL.cXP].bTrackedFlag:=TRUE;
+			nGoNextSeq := TRUE;
+		END_IF
+		//Compare current sequence with recorded sequence. Update position if match. Negative direction.
+		IF stAxis[GVL.cXP].axisRef.status.NegativeDirection AND stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount] = nSeqToCompare[0] THEN
+			stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount];
+			stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount - 1;		
+			//track difference between hall sensor and encoder data at trip point
+			stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
+			stAxis[GVL.cXP].bTrackedFlag:=TRUE;
+			nGoNextSeq := TRUE;
+		END_IF
 	END_IF
-	IF stAxis[GVL.cXP].axisRef.status.NegativeDirection AND stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount] = stAxis[GVL.cXP].nSeqToCompare THEN
-		stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount];
-		stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount - 1;	
-		
-		//testing purposes only. Will delete later.
-		FOR i:= 1000 TO 1 BY -1 DO
-			stAxis[GVL.cXP].fRecordedPosition[i] := stAxis[GVL.cXP].fRecordedPosition[i-1];
-		END_FOR
-		stAxis[GVL.cXP].fRecordedPosition[1] := stAxis[GVL.cXP].fHallPosAct;		
-		
-		
-		//track difference between hall sensor and encoder data at trip point
-		stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
+	
+	//Hall sensors position tracking for axis XM
+	IF stAxis[GVL.cXM].axisRef.Status.Moving AND NOT nGoNextSeq THEN
+		//Compare current sequence with recorded sequence. Update position if match. Positive direction.
+		IF stAxis[GVL.cXM].axisRef.status.PositiveDirection AND stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount] = nSeqToCompare[0] THEN
+			stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXM].nTripCount];
+			stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount - 1;	
+			//track difference between hall sensor and encoder data at trip point
+			stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
+			stAxis[GVL.cXM].bTrackedFlag:=TRUE;
+		END_IF
+		//Compare current sequence with recorded sequence. Update position if match. Negative direction.
+		IF stAxis[GVL.cXM].axisRef.status.NegativeDirection AND stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount] = nSeqToCompare[0] THEN
+			stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount];
+			stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount + 1;	
+			//track difference between hall sensor and encoder data at trip point
+			stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
+			stAxis[GVL.cXM].bTrackedFlag:=TRUE;
+		END_IF
 	END_IF
+	
 END_IF
 
+//Double blade motion tracking. If not already tracked in the first sequence then second sequence MUST be for the untracked blade
+IF bDoubleTrip THEN
+	IF NOT stAxis[GVL.cXP].bTrackedFlag THEN
+		//Compare current sequence with recorded sequence. Update position if match. Positive direction.
+		IF stAxis[GVL.cXP].axisRef.status.PositiveDirection THEN
+			stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXP].nTripCount];
+			stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount + 1;
+			//track difference between hall sensor and encoder data at trip point
+			stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
+			stAxis[GVL.cXP].bTrackedFlag:=TRUE;
+		END_IF
+		//Compare current sequence with recorded sequence. Update position if match. Negative direction.
+		IF stAxis[GVL.cXP].axisRef.status.NegativeDirection THEN
+			stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount];
+			stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount - 1;		
+			//track difference between hall sensor and encoder data at trip point
+			stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
+			stAxis[GVL.cXP].bTrackedFlag:=TRUE;
+		END_IF
+	END_IF
+	
+	IF NOT stAxis[GVL.cXM].bTrackedFlag THEN
+		//Compare current sequence with recorded sequence. Update position if match. Positive direction.
+		IF stAxis[GVL.cXM].axisRef.status.PositiveDirection THEN
+			stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXM].nTripCount];
+			stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount - 1;	
+			//track difference between hall sensor and encoder data at trip point
+			stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
+			stAxis[GVL.cXM].bTrackedFlag:=TRUE;
+		END_IF
+		//Compare current sequence with recorded sequence. Update position if match. Negative direction.
+		IF stAxis[GVL.cXM].axisRef.status.NegativeDirection THEN
+			stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount];
+			stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount + 1;	
+			//track difference between hall sensor and encoder data at trip point
+			stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
+			stAxis[GVL.cXM].bTrackedFlag:=TRUE;
+		END_IF
+	END_IF
+END_IF
+*)
 
-//Hall sensors position tracking for axis XM
+
+//////////////////////////////////////////////////////////////
+//Algorithm for tracking blade position using hall switches	//
+//////////////////////////////////////////////////////////////
+//Only one hall will ever trip for 1 set of blades. This flag is used to make sure the trip increment only once per cycle.
+bValidInput:=FALSE;
+bDoubleTrip:=FALSE;
+nGoNextSeq := FALSE;
+stAxis[GVL.cXP].bTrackedFlag:=FALSE;
+stAxis[GVL.cXM].bTrackedFlag:=FALSE;
+j:=0;
+//Detect hall switch transitions
 FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
-	stAxis[GVL.cXM].fbHallSigCal_rtrig[i](CLK:=GVL.bHallSwitch[i]);
-	stAxis[GVL.cXM].fbHallSigCal_ftrig[i](CLK:=GVL.bHallSwitch[i]);
-	IF (stAxis[GVL.cXM].fbHallSigCal_rtrig[i].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[i].Q) AND stAxis[GVL.cXM].axisRef.Status.Moving AND NOT stAxis[GVL.cXM].bTrackedFlag THEN
-		stAxis[GVL.cXM].bTrackedFlag := TRUE;
+	fbRtrig[i](CLK:=GVL.nNumOfInputs[i].0);
+	IF fbRtrig[i].Q THEN
+		//identifies which hall switch tripped
+		nSeqToCompare[j] := INT_TO_WORD((i*10)+5);
+		//along with the trip time
+		stAxis[GVL.cXP].nHallTime := GVL.nInputEventTime[i];
+		//increment the index
+		j:=j+1;
+		bValidInput:=TRUE;
+		IF j=2 THEN
+			bDoubleTrip:=TRUE;
+		END_IF
 	END_IF
+	
+	IF GVL.nNumOfInputs[i]=2 THEN
+		testInt:=testint+1;
+	END_IF
+	
 END_FOR
-
-IF stAxis[GVL.cXM].bTrackedFlag THEN
 	
-	//record trigger status of each hall sensor into hallSequence for comparing;
-	GVL.nHallSequence.0 := stAxis[GVL.cXM].fbHallSigCal_rtrig[0].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[0].Q;
-	GVL.nHallSequence.1 := stAxis[GVL.cXM].fbHallSigCal_rtrig[1].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[1].Q;
-	GVL.nHallSequence.2 := stAxis[GVL.cXM].fbHallSigCal_rtrig[2].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[2].Q;
-	GVL.nHallSequence.3 := stAxis[GVL.cXM].fbHallSigCal_rtrig[3].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[3].Q;
-	GVL.nHallSequence.4 := stAxis[GVL.cXM].fbHallSigCal_rtrig[4].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[4].Q;
-	GVL.nHallSequence.5 := stAxis[GVL.cXM].fbHallSigCal_rtrig[5].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[5].Q;
-	GVL.nHallSequence.6 := stAxis[GVL.cXM].fbHallSigCal_rtrig[6].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[6].Q;
-	GVL.nHallSequence.7 := stAxis[GVL.cXM].fbHallSigCal_rtrig[7].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[7].Q;
-	GVL.nHallSequence.8 := stAxis[GVL.cXM].fbHallSigCal_rtrig[8].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[8].Q;
-	GVL.nHallSequence.9 := stAxis[GVL.cXM].fbHallSigCal_rtrig[9].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[9].Q;
-	GVL.nHallSequence.10 := stAxis[GVL.cXM].fbHallSigCal_rtrig[10].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[10].Q;
-	GVL.nHallSequence.11 := stAxis[GVL.cXM].fbHallSigCal_rtrig[11].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[11].Q;
-	GVL.nHallSequence.12 := stAxis[GVL.cXM].fbHallSigCal_rtrig[12].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[12].Q;
-	GVL.nHallSequence.13 := stAxis[GVL.cXM].fbHallSigCal_rtrig[13].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[13].Q;
-	GVL.nHallSequence.14 := stAxis[GVL.cXM].fbHallSigCal_rtrig[14].Q OR stAxis[GVL.cXM].fbHallSigCal_ftrig[14].Q;			
+//Single blade motion tracking
+IF bValidInput THEN
 	
-	(* Unary XOR of hallSequence. With one blade running, 1 bit should be HIGH at a time .
-		Result of 1 indicates presence of one blade sequence. Result of 0 indicates presence of two blade sequence *)
-	bXorResult := GVL.nHallSequence.0 XOR GVL.nHallSequence.1 XOR GVL.nHallSequence.2 XOR GVL.nHallSequence.3 XOR GVL.nHallSequence.4 XOR
-		GVL.nHallSequence.5 XOR GVL.nHallSequence.6 XOR GVL.nHallSequence.7 XOR GVL.nHallSequence.8 XOR GVL.nHallSequence.9 XOR
-		GVL.nHallSequence.10 XOR GVL.nHallSequence.11 XOR GVL.nHallSequence.12 XOR GVL.nHallSequence.13 XOR GVL.nHallSequence.14;
-	IF bXorResult THEN
-		stAxis[GVL.cXM].nSeqToCompare := GVL.nHallSequence;
-	ELSIF stAxis[GVL.cXP].axisRef.status.PositiveDirection THEN
-		stAxis[GVL.cXM].nSeqToCompare := (GVL.nHallSequence XOR stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount-1]); //requires -1 since XP tripcount has already decremented
-	ELSIF stAxis[GVL.cXP].axisRef.status.NegativeDirection THEN
-		stAxis[GVL.cXM].nSeqToCompare := (GVL.nHallSequence XOR stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount+1]); //requires +1 since XP tripcount has already incremented
-	ELSE
-		; //Should generate error code here
-	END_IF		
-
-	//Compare current sequence with recorded sequence. Update position if match.	
-	IF stAxis[GVL.cXM].axisRef.status.PositiveDirection AND stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount] = stAxis[GVL.cXM].nSeqToCompare THEN
-		stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXM].nTripCount];
-		stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount - 1;	
-		//track difference between hall sensor and encoder data at trip point
-		stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
+	//Hall sensors position tracking for axis XP
+	IF stAxis[GVL.cXP].axisRef.Status.Moving AND NOT nGoNextSeq THEN
+		//Compare current sequence with recorded sequence. Update position if match. Positive direction.
+		IF stAxis[GVL.cXP].axisRef.status.PositiveDirection AND stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, stAxis[GVL.cXP].nTripCount] = nSeqToCompare[0] THEN
+			stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXP].nTripCount];
+			stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount + 1;
+			//track difference between hall sensor and encoder data at trip point
+			stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
+			stAxis[GVL.cXP].bTrackedFlag:=TRUE;
+			nGoNextSeq := TRUE;
+		END_IF
+		//Compare current sequence with recorded sequence. Update position if match. Negative direction.
+		IF stAxis[GVL.cXP].axisRef.status.NegativeDirection AND stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount] = nSeqToCompare[0] THEN
+			stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount];
+			stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount - 1;		
+			//track difference between hall sensor and encoder data at trip point
+			stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
+			stAxis[GVL.cXP].bTrackedFlag:=TRUE;
+			nGoNextSeq := TRUE;
+		END_IF
 	END_IF
-	IF stAxis[GVL.cXM].axisRef.status.NegativeDirection AND stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount] = stAxis[GVL.cXM].nSeqToCompare THEN
-		stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount];
-		stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount + 1;	
-		//track difference between hall sensor and encoder data at trip point
-		stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
+	
+	//Hall sensors position tracking for axis XM
+	IF stAxis[GVL.cXM].axisRef.Status.Moving AND NOT nGoNextSeq THEN
+		//Compare current sequence with recorded sequence. Update position if match. Positive direction.
+		IF stAxis[GVL.cXM].axisRef.status.PositiveDirection AND stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, stAxis[GVL.cXM].nTripCount] = nSeqToCompare[0] THEN
+			stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXM].nTripCount];
+			stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount - 1;	
+			//track difference between hall sensor and encoder data at trip point
+			stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
+			stAxis[GVL.cXM].bTrackedFlag:=TRUE;
+			nGoNextSeq := TRUE;
+		END_IF
+		//Compare current sequence with recorded sequence. Update position if match. Negative direction.
+		IF stAxis[GVL.cXM].axisRef.status.NegativeDirection AND stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount] = nSeqToCompare[0] THEN
+			stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount];
+			stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount + 1;	
+			//track difference between hall sensor and encoder data at trip point
+			stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
+			stAxis[GVL.cXM].bTrackedFlag:=TRUE;
+			nGoNextSeq := TRUE;
+		END_IF
 	END_IF
+	
 END_IF
 
-
-
+//Double blade motion tracking. If not already tracked in the first sequence then second sequence MUST be for the untracked blade
+IF bDoubleTrip THEN
+	IF NOT stAxis[GVL.cXP].bTrackedFlag THEN
+		//Compare current sequence with recorded sequence. Update position if match. Positive direction.
+		IF stAxis[GVL.cXP].axisRef.status.PositiveDirection THEN
+			stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXP].nTripCount];
+			stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount + 1;
+			//track difference between hall sensor and encoder data at trip point
+			stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
+			stAxis[GVL.cXP].bTrackedFlag:=TRUE;
+		END_IF
+		//Compare current sequence with recorded sequence. Update position if match. Negative direction.
+		IF stAxis[GVL.cXP].axisRef.status.NegativeDirection THEN
+			stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount];
+			stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount - 1;		
+			//track difference between hall sensor and encoder data at trip point
+			stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
+			stAxis[GVL.cXP].bTrackedFlag:=TRUE;
+		END_IF
+	END_IF
+	
+	IF NOT stAxis[GVL.cXM].bTrackedFlag THEN
+		//Compare current sequence with recorded sequence. Update position if match. Positive direction.
+		IF stAxis[GVL.cXM].axisRef.status.PositiveDirection THEN
+			stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXM].nTripCount];
+			stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount - 1;	
+			//track difference between hall sensor and encoder data at trip point
+			stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
+			stAxis[GVL.cXM].bTrackedFlag:=TRUE;
+		END_IF
+		//Compare current sequence with recorded sequence. Update position if match. Negative direction.
+		IF stAxis[GVL.cXM].axisRef.status.NegativeDirection THEN
+			stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount];
+			stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount + 1;	
+			//track difference between hall sensor and encoder data at trip point
+			stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
+			stAxis[GVL.cXM].bTrackedFlag:=TRUE;
+		END_IF
+	END_IF
+END_IF
 ]]></ST>
     </Implementation>
     <LineIds Name="FB_Tracking">
-      <LineId Id="10" Count="141" />
+      <LineId Id="1017" Count="0" />
+      <LineId Id="475" Count="2" />
+      <LineId Id="480" Count="0" />
+      <LineId Id="936" Count="0" />
+      <LineId Id="990" Count="0" />
+      <LineId Id="695" Count="0" />
+      <LineId Id="816" Count="0" />
+      <LineId Id="606" Count="0" />
+      <LineId Id="481" Count="1" />
+      <LineId Id="485" Count="0" />
+      <LineId Id="652" Count="0" />
+      <LineId Id="651" Count="0" />
+      <LineId Id="653" Count="0" />
+      <LineId Id="673" Count="0" />
+      <LineId Id="654" Count="0" />
+      <LineId Id="609" Count="0" />
+      <LineId Id="661" Count="0" />
+      <LineId Id="933" Count="2" />
+      <LineId Id="490" Count="0" />
+      <LineId Id="1003" Count="1" />
+      <LineId Id="1006" Count="0" />
+      <LineId Id="1016" Count="0" />
+      <LineId Id="1005" Count="0" />
+      <LineId Id="491" Count="1" />
+      <LineId Id="940" Count="0" />
+      <LineId Id="931" Count="0" />
+      <LineId Id="938" Count="0" />
+      <LineId Id="656" Count="0" />
+      <LineId Id="493" Count="0" />
+      <LineId Id="526" Count="5" />
+      <LineId Id="670" Count="0" />
+      <LineId Id="987" Count="0" />
+      <LineId Id="532" Count="0" />
+      <LineId Id="818" Count="0" />
+      <LineId Id="533" Count="4" />
+      <LineId Id="669" Count="0" />
+      <LineId Id="988" Count="0" />
+      <LineId Id="538" Count="1" />
+      <LineId Id="696" Count="0" />
+      <LineId Id="553" Count="1" />
+      <LineId Id="588" Count="5" />
+      <LineId Id="668" Count="0" />
+      <LineId Id="594" Count="0" />
+      <LineId Id="817" Count="0" />
+      <LineId Id="595" Count="4" />
+      <LineId Id="667" Count="0" />
+      <LineId Id="600" Count="1" />
+      <LineId Id="937" Count="0" />
+      <LineId Id="602" Count="0" />
+      <LineId Id="941" Count="2" />
+      <LineId Id="949" Count="0" />
+      <LineId Id="985" Count="0" />
+      <LineId Id="950" Count="15" />
+      <LineId Id="967" Count="17" />
+      <LineId Id="966" Count="0" />
+      <LineId Id="945" Count="0" />
+      <LineId Id="716" Count="0" />
+      <LineId Id="1018" Count="13" />
+      <LineId Id="1141" Count="0" />
+      <LineId Id="1032" Count="52" />
+      <LineId Id="1142" Count="0" />
+      <LineId Id="1085" Count="7" />
+      <LineId Id="1143" Count="0" />
+      <LineId Id="1093" Count="45" />
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>

@@ -10,20 +10,37 @@ END_VAR
 VAR
 	nCurrentState 	: INT;
 	nNextState		: INT := 100;
-	a,b,c,d : INT;
+	a,b,c,d,e : INT;
+	fbResetTimer	: TON ;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[IF bResetEntry THEN
-	nNextState := 100;
+	nNextState := 50;
 	bResetEntry := FALSE;
 END_IF
 
 nCurrentState := nNextState;
 CASE nCurrentstate OF
+	
+	50:
+		stAxis[GVL.cXP].mcReset(axis:=stAxis[GVL.cXP].axisRef, Execute:=TRUE);
+		stAxis[GVL.cXM].mcReset(axis:=stAxis[GVL.cXM].axisRef, Execute:=TRUE);
+		IF stAxis[GVL.cXP].mcReset.Done AND stAxis[GVL.cXM].mcReset.Done THEN
+			stAxis[GVL.cXP].mcReset(axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
+			stAxis[GVL.cXM].mcReset(axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
+			nNextState := 100;
+		END_IF
+		e := e+1;
+		
 	100:
 		stAxis[GVL.cXP].mcStop(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
 		stAxis[GVL.cXM].mcStop(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
-		nNextState := 200;
+		fbResetTimer(IN:=TRUE, PT:=T#100MS);
+		IF FBResetTimer.Q THEN
+			fbResetTimer(IN:=FALSE);
+			nNextState:=200;
+		END_IF
+		//nNextState := 200;
 		a := a+1;
 		
 	200:
@@ -69,8 +86,13 @@ END_CASE
       <LineId Id="115" Count="0" />
       <LineId Id="146" Count="0" />
       <LineId Id="36" Count="0" />
+      <LineId Id="197" Count="6" />
+      <LineId Id="205" Count="3" />
       <LineId Id="82" Count="0" />
       <LineId Id="169" Count="1" />
+      <LineId Id="192" Count="2" />
+      <LineId Id="196" Count="0" />
+      <LineId Id="195" Count="0" />
       <LineId Id="172" Count="1" />
       <LineId Id="171" Count="0" />
       <LineId Id="85" Count="0" />

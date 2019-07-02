@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <Task Name="PlcTask" Id="{0179d743-6563-4eae-baf3-d9e560ea9e88}">
     <!--CycleTime in micro seconds.-->
-    <CycleTime>333.3</CycleTime>
-    <Priority>18</Priority>
+    <CycleTime>500</CycleTime>
+    <Priority>34</Priority>
     <PouCall>
       <Name>MAIN</Name>
     </PouCall>

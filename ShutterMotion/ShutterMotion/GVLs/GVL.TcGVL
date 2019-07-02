@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <GVL Name="GVL" Id="{543590d2-21dc-426c-bb1c-cff8b9e02654}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 VAR_GLOBAL CONSTANT
@@ -60,24 +60,16 @@ END_VAR
 VAR_GLOBAL
 
 	//Hall Switches
-	bHallSwitch AT %I*	:ARRAY[cHallLower .. cHallUpper] OF BOOL;
-	nHallSequence 		: WORD;
+	nHallSequence 			: WORD;
+	nInputEventTime	AT %I*	: ARRAY [cHallLower .. cHallUpper] OF UDINT; //unit in nanosecond 
+	nNumOfInputs AT %I*		: ARRAY [cHallLower .. cHallUpper] OF USINT;
 
 	//Timer
 	fbWaitTimer	: TON;
 	
 	//TestVariable
-	testINT : INT;
-	testINT2 : INT;
-	testTime AT %I* : UDINT;
-	testTime2 : UDINT;
-	//testLREAL : LREAL;
-	//testWord : WORD;
-	
 	fbWritePersistentData	: WritePersistentData;
-	
-	//testing timing module
-	testInput AT %I*	: BOOL;
+
 END_VAR
 
 VAR_GLOBAL PERSISTENT // For million cycle test

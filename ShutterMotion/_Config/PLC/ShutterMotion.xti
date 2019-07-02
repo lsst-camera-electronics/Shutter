@@ -2,24 +2,6 @@
 <TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmItem" TcSmVersion="1.0" TcVersion="3.1.4020.32" ClassName="CNestedPlcProjDef">
 	<DataTypes>
 		<DataType>
-			<Name GUID="{18071995-0000-0000-0000-000C00000006}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..5] OF DINT</Name>
-			<BitSize>192</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000009}">DINT</BaseType>
-			<ArrayInfo>
-				<LBound>0</LBound>
-				<Elements>6</Elements>
-			</ArrayInfo>
-		</DataType>
-		<DataType>
-			<Name GUID="{18071995-0000-0000-0000-00210000000F}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..14] OF BOOL</Name>
-			<BitSize>120</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000030}">BOOL</BaseType>
-			<ArrayInfo>
-				<LBound>0</LBound>
-				<Elements>15</Elements>
-			</ArrayInfo>
-		</DataType>
-		<DataType>
 			<Name GUID="{4C3FC5AC-D5AA-44C6-AC5A-159774BA0F6D}" Namespace="MC" TcBaseType="true" HideType="true" IecDeclaration="DWORD;">NCTOPLC_AXIS_REF_STATE</Name>
 			<BitSize>32</BitSize>
 			<SubItem>
@@ -719,6 +701,33 @@ External Setpoint Generation:
 			</Relations>
 		</DataType>
 		<DataType>
+			<Name GUID="{18071995-0000-0000-0000-000C00000006}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..5] OF DINT</Name>
+			<BitSize>192</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000009}">DINT</BaseType>
+			<ArrayInfo>
+				<LBound>0</LBound>
+				<Elements>6</Elements>
+			</ArrayInfo>
+		</DataType>
+		<DataType>
+			<Name GUID="{18071995-0000-0000-0000-000D0000000F}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..14] OF UDINT</Name>
+			<BitSize>480</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000008}">UDINT</BaseType>
+			<ArrayInfo>
+				<LBound>0</LBound>
+				<Elements>15</Elements>
+			</ArrayInfo>
+		</DataType>
+		<DataType>
+			<Name GUID="{18071995-0000-0000-0000-00090000000F}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..14] OF USINT</Name>
+			<BitSize>120</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000002}">USINT</BaseType>
+			<ArrayInfo>
+				<LBound>0</LBound>
+				<Elements>15</Elements>
+			</ArrayInfo>
+		</DataType>
+		<DataType>
 			<Name GUID="{875D2B22-B7EB-497E-B933-0C004593CCF3}" Namespace="MC" TcBaseType="true" HideType="true" IecDeclaration="DWORD;">PLCTONC_AXIS_REF_CTRL</Name>
 			<BitSize>32</BitSize>
 			<SubItem>
@@ -904,31 +913,6 @@ External Setpoint Generation:
 			<Vars VarGrpType="1">
 				<Name>PlcTask Inputs</Name>
 				<Var>
-					<Name>MAIN.fbPower.Vraw</Name>
-					<Comment>
-						<![CDATA[Power variable]]>
-					</Comment>
-					<Type GUID="{18071995-0000-0000-0000-000C00000006}">ARRAY [0..5] OF DINT</Type>
-				</Var>
-				<Var>
-					<Name>GVL.bHallSwitch</Name>
-					<Comment>
-						<![CDATA[Hall Switches]]>
-					</Comment>
-					<Type GUID="{18071995-0000-0000-0000-00210000000F}">ARRAY [0..14] OF BOOL</Type>
-				</Var>
-				<Var>
-					<Name>GVL.testInput</Name>
-					<Comment>
-						<![CDATA[testing timing module]]>
-					</Comment>
-					<Type>BOOL</Type>
-				</Var>
-				<Var>
-					<Name>GVL.testTime</Name>
-					<Type>UDINT</Type>
-				</Var>
-				<Var>
 					<Name>MAIN.stAxis[0].axisRef.NcToPlc</Name>
 					<Type GUID="{6A65C767-34E5-42BF-AD87-E1A503EAC7BE}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
 					<SubVar>
@@ -1041,6 +1025,24 @@ External Setpoint Generation:
 				<Var>
 					<Name>MAIN.stAxis[1].bLimitDeployed</Name>
 					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbPower.Vraw</Name>
+					<Comment>
+						<![CDATA[Power variable]]>
+					</Comment>
+					<Type GUID="{18071995-0000-0000-0000-000C00000006}">ARRAY [0..5] OF DINT</Type>
+				</Var>
+				<Var>
+					<Name>GVL.nInputEventTime</Name>
+					<Comment>
+						<![CDATA[unit in nanosecond ]]>
+					</Comment>
+					<Type GUID="{18071995-0000-0000-0000-000D0000000F}">ARRAY [0..14] OF UDINT</Type>
+				</Var>
+				<Var>
+					<Name>GVL.nNumOfInputs</Name>
+					<Type GUID="{18071995-0000-0000-0000-00090000000F}">ARRAY [0..14] OF USINT</Type>
 				</Var>
 			</Vars>
 			<Vars VarGrpType="2">
@@ -1184,33 +1186,45 @@ External Setpoint Generation:
 					</OwnerB>
 				</OwnerA>
 			</UnrestoredVarLinks>
+			<UnrestoredVarLinks ImportTime="2019-06-26T21:05:24">
+				<OwnerA Name="InputDst" Prefix="TIPC^ShutterMotion^ShutterMotion Instance" Type="1">
+					<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EL1258)">
+						<Link VarA="MAIN.stAxis[0].nInputEventTime[0]" TypeA="UDINT" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000008}" VarB="MTI Inputs 1x Channel 1^Input event time 1" RestoreInfo="ANotFound"/>
+						<Link VarA="MAIN.stAxis[0].nInputEventTime[1]" TypeA="UDINT" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000008}" VarB="MTI Inputs 1x Channel 2^Input event time 1" RestoreInfo="ANotFound"/>
+						<Link VarA="MAIN.stAxis[0].nInputEventTime[2]" TypeA="UDINT" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000008}" VarB="MTI Inputs 1x Channel 3^Input event time 1" RestoreInfo="ANotFound"/>
+						<Link VarA="MAIN.stAxis[0].nInputEventTime[3]" TypeA="UDINT" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000008}" VarB="MTI Inputs 1x Channel 4^Input event time 1" RestoreInfo="ANotFound"/>
+						<Link VarA="MAIN.stAxis[0].nInputEventTime[4]" TypeA="UDINT" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000008}" VarB="MTI Inputs 1x Channel 5^Input event time 1" RestoreInfo="ANotFound"/>
+						<Link VarA="MAIN.stAxis[0].nInputEventTime[5]" TypeA="UDINT" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000008}" VarB="MTI Inputs 1x Channel 6^Input event time 1" RestoreInfo="ANotFound"/>
+						<Link VarA="MAIN.stAxis[0].nInputEventTime[6]" TypeA="UDINT" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000008}" VarB="MTI Inputs 1x Channel 7^Input event time 1" RestoreInfo="ANotFound"/>
+						<Link VarA="MAIN.stAxis[0].nInputEventTime[7]" TypeA="UDINT" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000008}" VarB="MTI Inputs 1x Channel 8^Input event time 1" RestoreInfo="ANotFound"/>
+					</OwnerB>
+				</OwnerA>
+			</UnrestoredVarLinks>
 			<TaskPouOids>
-				<TaskPouOid Prio="18" OTCID="#x08502001"/>
+				<TaskPouOid Prio="34" OTCID="#x08502001"/>
 			</TaskPouOids>
 		</Instance>
 	</Project>
 	<Mappings>
 		<OwnerA Name="ShutterMotion Instance">
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EL1258)">
-				<Link VarA="PlcTask Inputs^GVL.bHallSwitch[0]" VarB="MTI Inputs 1x Channel 1^Status^Input state"/>
-				<Link VarA="PlcTask Inputs^GVL.bHallSwitch[1]" VarB="MTI Inputs 1x Channel 2^Status^Input state"/>
-				<Link VarA="PlcTask Inputs^GVL.bHallSwitch[2]" VarB="MTI Inputs 1x Channel 3^Status^Input state"/>
-				<Link VarA="PlcTask Inputs^GVL.bHallSwitch[3]" VarB="MTI Inputs 1x Channel 4^Status^Input state"/>
-				<Link VarA="PlcTask Inputs^GVL.bHallSwitch[4]" VarB="MTI Inputs 1x Channel 5^Status^Input state"/>
-				<Link VarA="PlcTask Inputs^GVL.bHallSwitch[5]" VarB="MTI Inputs 1x Channel 6^Status^Input state"/>
-				<Link VarA="PlcTask Inputs^GVL.bHallSwitch[6]" VarB="MTI Inputs 1x Channel 7^Status^Input state"/>
-				<Link VarA="PlcTask Inputs^GVL.bHallSwitch[7]" VarB="MTI Inputs 1x Channel 8^Status^Input state"/>
+				<Link VarA="PlcTask Inputs^GVL.nNumOfInputs[0]" VarB="MTI Inputs 2x Channel 1^Status^No of input events"/>
+				<Link VarA="PlcTask Inputs^GVL.nNumOfInputs[1]" VarB="MTI Inputs 2x Channel 2^Status^No of input events"/>
+				<Link VarA="PlcTask Inputs^GVL.nNumOfInputs[2]" VarB="MTI Inputs 2x Channel 3^Status^No of input events"/>
+				<Link VarA="PlcTask Inputs^GVL.nNumOfInputs[3]" VarB="MTI Inputs 2x Channel 4^Status^No of input events"/>
+				<Link VarA="PlcTask Inputs^GVL.nNumOfInputs[4]" VarB="MTI Inputs 2x Channel 5^Status^No of input events"/>
+				<Link VarA="PlcTask Inputs^GVL.nNumOfInputs[5]" VarB="MTI Inputs 2x Channel 6^Status^No of input events"/>
+				<Link VarA="PlcTask Inputs^GVL.nNumOfInputs[6]" VarB="MTI Inputs 2x Channel 7^Status^No of input events"/>
+				<Link VarA="PlcTask Inputs^GVL.nNumOfInputs[7]" VarB="MTI Inputs 2x Channel 8^Status^No of input events"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 12 (EL1259)">
-				<Link VarA="PlcTask Inputs^GVL.bHallSwitch[10]" VarB="MTI Inputs 1x Channel 3^Status^Input state"/>
-				<Link VarA="PlcTask Inputs^GVL.bHallSwitch[11]" VarB="MTI Inputs 1x Channel 4^Status^Input state"/>
-				<Link VarA="PlcTask Inputs^GVL.bHallSwitch[12]" VarB="MTI Inputs 1x Channel 5^Status^Input state"/>
-				<Link VarA="PlcTask Inputs^GVL.bHallSwitch[13]" VarB="MTI Inputs 1x Channel 6^Status^Input state"/>
-				<Link VarA="PlcTask Inputs^GVL.bHallSwitch[14]" VarB="MTI Inputs 1x Channel 7^Status^Input state"/>
-				<Link VarA="PlcTask Inputs^GVL.bHallSwitch[8]" VarB="MTI Inputs 1x Channel 1^Status^Input state"/>
-				<Link VarA="PlcTask Inputs^GVL.bHallSwitch[9]" VarB="MTI Inputs 1x Channel 2^Status^Input state"/>
-				<Link VarA="PlcTask Inputs^GVL.testInput" VarB="MTI Inputs 1x Channel 8^Status^Input state"/>
-				<Link VarA="PlcTask Inputs^GVL.testTime" VarB="MTI Inputs 1x Channel 8^Input event time 1"/>
+				<Link VarA="PlcTask Inputs^GVL.nNumOfInputs[10]" VarB="MTI Inputs 2x Channel 3^Status^No of input events"/>
+				<Link VarA="PlcTask Inputs^GVL.nNumOfInputs[11]" VarB="MTI Inputs 2x Channel 4^Status^No of input events"/>
+				<Link VarA="PlcTask Inputs^GVL.nNumOfInputs[12]" VarB="MTI Inputs 2x Channel 5^Status^No of input events"/>
+				<Link VarA="PlcTask Inputs^GVL.nNumOfInputs[13]" VarB="MTI Inputs 2x Channel 6^Status^No of input events"/>
+				<Link VarA="PlcTask Inputs^GVL.nNumOfInputs[14]" VarB="MTI Inputs 2x Channel 7^Status^No of input events"/>
+				<Link VarA="PlcTask Inputs^GVL.nNumOfInputs[8]" VarB="MTI Inputs 2x Channel 1^Status^No of input events"/>
+				<Link VarA="PlcTask Inputs^GVL.nNumOfInputs[9]" VarB="MTI Inputs 2x Channel 2^Status^No of input events"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 2 (EL7047)">
 				<Link VarA="PlcTask Inputs^MAIN.stAxis[0].bLimitDeployed" VarB="STM Status^Status^Digital input 2"/>

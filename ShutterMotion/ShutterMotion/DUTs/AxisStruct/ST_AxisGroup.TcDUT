@@ -22,12 +22,11 @@ STRUCT
 	bLimitDeployed AT %I*	: BOOL;
 
 	//used for tracking linear motion using hall sensors
-	fbHallSigCal_rtrig	: ARRAY [GVL.cHallLower .. GVL.cHallUpper] OF R_TRIG;
-	fbHallSigCal_ftrig 	: ARRAY [GVL.cHallLower .. GVL.cHallUpper] OF F_TRIG;
+	fbHallSig_rtrig		: ARRAY [GVL.cHallLower .. GVL.cHallUpper] OF R_TRIG;
+	fbHallSig_ftrig 	: ARRAY [GVL.cHallLower .. GVL.cHallUpper] OF F_TRIG;
 	fHallPosCal			: ARRAY [GVL.cDirPos .. GVL.cDirNeg, 0 .. GVL.cTripCount] OF LREAL;
 	fHallPosAct			: LREAL;
-	fRecordedPosition	: ARRAY [0 .. 1000] OF LREAL;
-	tRecordedTime		: ARRAY [0 .. 1000] OF T_DCTIME64;
+	nHallTime			: UDINT; //unit in nanosecond
 	nTripCount 			: INT;
 	nHallSequence		: ARRAY [GVL.cDirPos .. GVL.cDirNeg, 0 .. GVL.cTripCount] OF WORD;
 	nSeqToCompare		: WORD;

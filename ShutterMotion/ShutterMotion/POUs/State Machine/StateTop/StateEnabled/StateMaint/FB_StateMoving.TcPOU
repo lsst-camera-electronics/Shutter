@@ -58,8 +58,8 @@ bMotionDone := FALSE;
 CASE nCurrentState OF
 		
 	1000://Homing routine
-		fbHoming(stAxis:=stAxis, bTopEntry:=bLowerEntry, bMotionDone:=bMotionDone);
-		IF bMotionDone THEN
+		fbHoming(stAxis:=stAxis, bTopEntry:=bLowerEntry);
+		IF NOT fbHoming.bBusy THEN
 			nNextState := 2000;
 		END_IF
 		
@@ -68,7 +68,6 @@ CASE nCurrentState OF
 			Position:=stMoveAxisAbsolute.position, Velocity:=stMoveAxisAbsolute.speed, Execute:=TRUE);
 		IF stAxis[stMoveAxisAbsolute.axisIndex].mcMoveAbs.Done THEN
 			stAxis[stMoveAxisAbsolute.axisIndex].mcMoveAbs(Axis:=stAxis[stMoveAxisAbsolute.axisIndex].axisRef, Execute:=FALSE);
-			bMotionDone := TRUE;
 			nNextState := 2000;
 		END_IF
 		
@@ -77,12 +76,11 @@ CASE nCurrentState OF
 			Distance:=stMoveAxisRelative.distance, Velocity:=fSpeed, Acceleration:=fAccel, Jerk:=fJerk, Execute:=TRUE);
 		IF stAxis[stMoveAxisRelative.axisIndex].mcMoveRel.Done THEN
 			stAxis[stMoveAxisRelative.axisIndex].mcMoveRel(Axis:=stAxis[stMoveAxisRelative.axisIndex].axisRef, Execute:=FALSE);
-			bMotionDone := TRUE;
 			nNextState := 2000;
 		END_IF
 			
 	2000:
-
+		bMotionDone := TRUE;
 	
 END_CASE]]></ST>
     </Implementation>
@@ -109,10 +107,10 @@ END_CASE]]></ST>
       <LineId Id="157" Count="0" />
       <LineId Id="151" Count="0" />
       <LineId Id="168" Count="0" />
-      <LineId Id="170" Count="2" />
+      <LineId Id="170" Count="1" />
       <LineId Id="174" Count="1" />
       <LineId Id="173" Count="0" />
-      <LineId Id="176" Count="5" />
+      <LineId Id="176" Count="4" />
       <LineId Id="183" Count="0" />
       <LineId Id="232" Count="0" />
       <LineId Id="184" Count="0" />

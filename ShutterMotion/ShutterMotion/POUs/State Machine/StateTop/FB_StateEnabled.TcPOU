@@ -137,9 +137,11 @@ bShutterReady := (stAxis[GVL.cXP].bBrake AND stAxis[GVL.cXM].bBrake) AND
 	(stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated);
 *)
 //this is the temp bShutterReady. Delete once all keyance switches are installed///////////////////////////////////////////////////////////////////////////////////
-bShutterReady := (stAxis[GVL.cXP].bBrake AND stAxis[GVL.cXM].bBrake) AND (stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated);
-
-
+bShutterReady := (stAxis[GVL.cXP].bBrake AND stAxis[GVL.cXM].bBrake) AND (stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated) AND
+	(
+		((stAxis[GVL.cXP].axisRef.NcToPlc.ActPos<1) AND (stAxis[GVL.cXM].axisRef.NcToPlc.ActPos<1)) OR 
+		((stAxis[GVL.cXP].axisRef.NcToPlc.ActPos>750) AND (stAxis[GVL.cXM].axisRef.NcToPlc.ActPos>750))
+	);
 
 ]]></ST>
     </Implementation>
@@ -200,7 +202,11 @@ bShutterReady := (stAxis[GVL.cXP].bBrake AND stAxis[GVL.cXM].bBrake) AND (stAxis
       <LineId Id="484" Count="0" />
       <LineId Id="487" Count="0" />
       <LineId Id="485" Count="0" />
-      <LineId Id="488" Count="3" />
+      <LineId Id="501" Count="0" />
+      <LineId Id="512" Count="0" />
+      <LineId Id="514" Count="0" />
+      <LineId Id="513" Count="0" />
+      <LineId Id="490" Count="1" />
       <LineId Id="200" Count="0" />
     </LineIds>
   </POU>

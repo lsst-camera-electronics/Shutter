@@ -5,10 +5,9 @@
 VAR_IN_OUT
 	stAxis  	: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;
 	bTopEntry	: BOOL;
-	bMotionDone	: BOOL;
 END_VAR
 VAR_OUTPUT
-	
+	bBusy : BOOL;
 END_VAR
 VAR
 	//state-machine
@@ -17,6 +16,9 @@ VAR
 
 	//other var
 	fbHomeDelay		: TON;
+	
+	//testVar
+	a,b,c :INT;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -27,6 +29,7 @@ END_VAR
 IF bTopEntry = TRUE THEN
 	bTopEntry := FALSE;
 	nNextState := 410;
+	bBusy := TRUE;
 END_IF	
 nCurrentState := nNextState;
 CASE nCurrentState OF
@@ -41,7 +44,9 @@ CASE nCurrentState OF
 			stAxis[GVL.cXP].mcHome(Axis := stAxis[GVL.cXP].axisRef, Execute := FALSE);
 			stAxis[GVL.cXM].mcHome(Axis := stAxis[GVL.cXM].axisRef, Execute := FALSE);
 			nNextState := 420;
+			a:=a+1;
 		END_IF
+		b:=b+1;
 		
 	420: //Scan for home switch
 		stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXP].axisRef, Mode := MC_JOGMODE_CONTINOUS, Velocity := GVL.cScanVel, JogBackwards := NOT stAxis[GVL.cXP].bLimitHome);
@@ -87,17 +92,23 @@ CASE nCurrentState OF
 		END_IF	
 		
 	470: //End Action
-		bMotionDone := TRUE;
+		bBusy := FALSE;
 END_CASE]]></ST>
     </Implementation>
     <LineIds Name="FB_Homing">
       <LineId Id="10" Count="3" />
-      <LineId Id="134" Count="3" />
+      <LineId Id="134" Count="1" />
+      <LineId Id="161" Count="0" />
+      <LineId Id="136" Count="1" />
       <LineId Id="19" Count="2" />
       <LineId Id="160" Count="0" />
       <LineId Id="22" Count="4" />
       <LineId Id="154" Count="1" />
-      <LineId Id="27" Count="3" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="165" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="166" Count="0" />
+      <LineId Id="29" Count="1" />
       <LineId Id="33" Count="42" />
       <LineId Id="77" Count="0" />
       <LineId Id="80" Count="0" />
