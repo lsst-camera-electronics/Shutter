@@ -75,16 +75,28 @@
     <Compile Include="DUTs\CCSInterface STRUCT\PLC to CCS\ST_Enable.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\CCSInterface STRUCT\PLC to CCS\ST_EncoderSample.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\CCSInterface STRUCT\PLC to CCS\ST_Error.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\CCSInterface STRUCT\PLC to CCS\ST_HallTransition.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\CCSInterface STRUCT\PLC to CCS\ST_Ignored.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\CCSInterface STRUCT\PLC to CCS\ST_MotionDone.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\CCSInterface STRUCT\PLC to CCS\ST_ShutterStatus.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\CCSInterface STRUCT\PLC to CCS\ST_Timer.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\CCSInterface STRUCT\ST_MsgToCCS.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\CCSInterface STRUCT\ST_MsgToPLC.TcDUT">

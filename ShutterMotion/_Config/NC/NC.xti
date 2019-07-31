@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmItem" TcSmVersion="1.0" TcVersion="3.1.4020.32" ClassName="CNcSafTaskDef" SubType="0">
 	<NC>
-		<SafTask Priority="1" CycleTime="4000" AmsPort="501" IoAtBegin="true">
+		<SafTask Priority="1" CycleTime="2500" AmsPort="501" IoAtBegin="true">
 			<Name>NC-Task 1 SAF</Name>
 			<Vars VarGrpType="1" InsertType="1">
 				<Name>Inputs</Name>

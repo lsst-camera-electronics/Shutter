@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <DUT Name="ST_CalibDone" Id="{ec263d66-2e57-4d76-8ae5-dc79b75b3e1c}">
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
-TYPE ST_CalibDone EXTENDS ST_PLCMsg:
+TYPE ST_CalibDone EXTENDS ST_MsgToCCS:
 STRUCT
     (* hallPosCal[a, d, t] is coordinate of
        the (t+1)st transition that occurred

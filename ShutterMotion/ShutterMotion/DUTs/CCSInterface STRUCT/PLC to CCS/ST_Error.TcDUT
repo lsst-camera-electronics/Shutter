@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <DUT Name="ST_Error" Id="{cd8a347a-3362-4f35-b32c-8197d8809a60}">
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
-TYPE ST_Error EXTENDS ST_PLCMsg:
+TYPE ST_Error EXTENDS ST_MsgToCCS:
 STRUCT
 END_STRUCT
 END_TYPE]]></Declaration>

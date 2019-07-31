@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <POU Name="FB_StateTravelling" Id="{f3ba0f82-9934-451f-bef4-1d94ed0cc61c}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_StateTravelling
 VAR_IN_OUT
@@ -12,7 +12,7 @@ VAR_INPUT
 	fSpeed	: LREAL;
 END_VAR
 VAR_OUTPUT
-	bMotionDone	: BOOL;
+	bBusy	: BOOL;
 END_VAR
 VAR
 	//state-machine
@@ -27,7 +27,7 @@ IF bTopEntry = TRUE THEN
 	nNextState := 1400;
 END_IF
 
-bMotionDone := FALSE;
+bBusy := TRUE;
 nCurrentState := nNextState;
 
 CASE nCurrentState OF
@@ -56,7 +56,7 @@ CASE nCurrentState OF
 		END_IF	
 		
 	1410: //End action
-		bMotionDone := TRUE;
+		bBusy := FALSE;
 
 END_CASE
 ]]></ST>

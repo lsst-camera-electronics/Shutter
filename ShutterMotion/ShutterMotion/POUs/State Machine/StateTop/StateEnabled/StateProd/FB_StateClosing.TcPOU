@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
   <POU Name="FB_StateClosing" Id="{5bb1c0c5-a4f5-402a-a529-8672ede7a771}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_StateClosing
 VAR_IN_OUT
@@ -11,7 +11,7 @@ VAR_INPUT
 	fSpeed	: LREAL;
 END_VAR
 VAR_OUTPUT
-	bMotionDone	: BOOL;
+	bBusy	: BOOL;
 END_VAR
 VAR
 	//state-machine
@@ -27,7 +27,7 @@ IF bTopEntry = TRUE THEN
 	nNextState := 1300;
 END_IF
 
-bMotionDone := FALSE;
+bBusy := TRUE;
 nCurrentState := nNextState;
 
 CASE nCurrentState OF
@@ -46,7 +46,7 @@ CASE nCurrentState OF
 		END_IF	
 		
 	1310: //End action
-		bMotionDone := TRUE;
+		bBusy := FALSE;
 
 END_CASE
 ]]></ST>

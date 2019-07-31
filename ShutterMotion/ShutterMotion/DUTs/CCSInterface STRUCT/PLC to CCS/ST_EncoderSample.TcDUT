@@ -1,9 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
-  <DUT Name="ST_Disable" Id="{567212ce-5c5d-413f-abe9-b28a571d8615}">
+  <DUT Name="ST_EncoderSample" Id="{9977e928-4a64-437c-9c03-77e732264d83}">
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
-TYPE ST_Disable EXTENDS ST_MsgToCCS:
+TYPE ST_EncoderSample:
 STRUCT
+    dcTime	: T_DCTIME64; (* The time of the sample. *)
+    pos		: LREAL; (* Axis position in mm. *)
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

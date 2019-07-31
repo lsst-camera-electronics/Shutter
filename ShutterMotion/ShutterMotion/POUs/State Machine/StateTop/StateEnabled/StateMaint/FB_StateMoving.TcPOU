@@ -3,7 +3,7 @@
   <POU Name="FB_StateMoving" Id="{fb05c940-3975-4fce-84e7-a3eb8bb470da}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_StateMoving
 VAR_IN_OUT
-	stAxis  : ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;
+	stAxis  	: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;
 	bTopEntry	: BOOL;
 	eCommand	: E_Commands;
 END_VAR
@@ -13,7 +13,7 @@ VAR_INPUT
 	stMoveAxisRelative	: ST_MoveAxisRelative;
 END_VAR
 VAR_OUTPUT
-	bMotionDone : BOOL;
+	bBusy		: BOOL;
 END_VAR
 VAR
 	//state-machine
@@ -47,14 +47,13 @@ END_VAR
 		fJerk	:= (32*stMoveAxisRelative.distance)/(fTime*fTime*fTime);
 		nNextState := 1020;
 	END_IF
-	eCommand := E_Commands.noCommand;	
 END_IF	
 
 IF nCurrentState <> nNextState THEN
 	bLowerEntry := TRUE;
 END_IF
 nCurrentState := nNextState;
-bMotionDone := FALSE;
+bBusy := TRUE;
 CASE nCurrentState OF
 		
 	1000://Homing routine
@@ -80,7 +79,7 @@ CASE nCurrentState OF
 		END_IF
 			
 	2000:
-		bMotionDone := TRUE;
+		bBusy := FALSE;
 	
 END_CASE]]></ST>
     </Implementation>
@@ -95,7 +94,7 @@ END_CASE]]></ST>
       <LineId Id="246" Count="0" />
       <LineId Id="253" Count="1" />
       <LineId Id="89" Count="0" />
-      <LineId Id="92" Count="1" />
+      <LineId Id="93" Count="0" />
       <LineId Id="281" Count="0" />
       <LineId Id="34" Count="0" />
       <LineId Id="143" Count="1" />

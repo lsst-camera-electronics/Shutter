@@ -149,7 +149,6 @@ END_IF
 //////////////////////////////////////////////////////////////
 //Algorithm for tracking blade position using hall switches	//
 //////////////////////////////////////////////////////////////
-//Only one hall will ever trip for 1 set of blades. This flag is used to make sure the trip increment only once per cycle.
 bValidInput:=FALSE;
 bDoubleTrip:=FALSE;
 nGoNextSeq := FALSE;
@@ -327,7 +326,8 @@ END_IF
       <LineId Id="966" Count="0" />
       <LineId Id="945" Count="0" />
       <LineId Id="716" Count="0" />
-      <LineId Id="1018" Count="13" />
+      <LineId Id="1018" Count="4" />
+      <LineId Id="1024" Count="7" />
       <LineId Id="1141" Count="0" />
       <LineId Id="1032" Count="52" />
       <LineId Id="1142" Count="0" />

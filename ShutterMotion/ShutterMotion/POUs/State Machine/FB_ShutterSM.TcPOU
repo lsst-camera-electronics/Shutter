@@ -26,10 +26,11 @@ VAR_INPUT
 	stTakeExposure		: ST_TakeExposure;
 END_VAR
 VAR_OUTPUT
+	bCalibDone			: BOOL;
+	bMotionDone			: BOOL;
 	stOutCalibDone		: ST_CalibDone;
 	stOutError			: ST_Error;
 	stOutTimer			: ST_Timer;
-	
 	nSMState			: DINT;
 END_VAR
 VAR
@@ -91,8 +92,9 @@ CASE eCurrentState OF
 			stReset				:= stReset,
 			stTakeExposure		:= stTakeExposure,
 			//outputs
+			bCalibDone			=> bCalibDone,
+			bMotionDone			=> bMotionDone,
 			stOutCalibDone		=> stOutCalibDone,
-			stOutError			=> stOutError,
 			stOutTimer			=> stOutTimer,
 			nSMState			=> nSMState);
 		b:=b+1;
@@ -120,8 +122,9 @@ END_CASE
       <LineId Id="1245" Count="12" />
       <LineId Id="1259" Count="0" />
       <LineId Id="1244" Count="0" />
+      <LineId Id="1464" Count="0" />
+      <LineId Id="1466" Count="0" />
       <LineId Id="1275" Count="0" />
-      <LineId Id="1277" Count="0" />
       <LineId Id="1280" Count="0" />
       <LineId Id="1276" Count="0" />
       <LineId Id="1417" Count="0" />

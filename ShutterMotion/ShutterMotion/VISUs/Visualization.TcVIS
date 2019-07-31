@@ -985,7 +985,7 @@
                     <v n="VisualElementIdentifier">"GenElemInst_45"</v>
                     <n n="VisualElementOfflinePaintCommands" />
                     <n n="VisualElementFrameInformation" />
-                    <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
+                    <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
                       <v>OnMouseUp</v>
                       <a cet="STSnippetInputAction">
                         <o>
@@ -1153,7 +1153,7 @@
                     <v n="VisualElementIdentifier">"GenElemInst_109"</v>
                     <n n="VisualElementOfflinePaintCommands" />
                     <n n="VisualElementFrameInformation" />
-                    <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
+                    <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
                       <v>OnMouseUp</v>
                       <a cet="STSnippetInputAction">
                         <o>
@@ -1335,7 +1335,7 @@ MAIN.a:=0;"</v>
                     <v n="VisualElementIdentifier">"GenElemInst_111"</v>
                     <n n="VisualElementOfflinePaintCommands" />
                     <n n="VisualElementFrameInformation" />
-                    <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
+                    <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
                       <v>OnMouseUp</v>
                       <a cet="STSnippetInputAction">
                         <o>
@@ -4705,7 +4705,7 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                 <v n="VisualElementIdentifier">"GenElemInst_82"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
                   <v>OnMouseUp</v>
                   <a cet="STSnippetInputAction">
                     <o>
@@ -5484,10 +5484,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
               <d n="FbMethods" t="CaseInsensitiveHashtable" ckt="String" cvt="Guid">
                 <v>FB_Init</v>
                 <v>a34fda68-ea57-451d-84ba-f64a41fb0235</v>
-                <v>FB_Exit</v>
-                <v>1b57cff7-6f15-436e-b02d-adbc5df6fce8</v>
                 <v>FB_Reinit</v>
                 <v>310ce281-f150-4cc8-979e-5925ca8ebdd9</v>
+                <v>FB_Exit</v>
+                <v>1b57cff7-6f15-436e-b02d-adbc5df6fce8</v>
               </d>
               <v n="FbName">"NotImportant"</v>
               <v n="FbGuid">{8b25fc7b-31d2-4d93-aeae-0948edd1ad10}</v>

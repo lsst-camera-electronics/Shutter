@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+  <DUT Name="ST_MotionDone" Id="{2b9ea7f7-0758-4683-a894-9d5c92ba2a18}">
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+TYPE ST_MotionDone EXTENDS ST_MsgToCCS:
+STRUCT
+    axisNum		: DINT;						(* Which axis moved. *)
+    startTime	: T_DCTIME64;				(* When motion started. *)
+    startPos	: LREAL;					(* Starting position. *)
+    targetDur	: LTIME;					(* Expected duration of motion. *)
+    targetPos	: LREAL;					(* Desired final position. *)
+    endPos		: LREAL;					(* Actual final position. *)
+    actualDur	: LTIME;					(* Actual duration. *)
+    ntrans		: DINT;						(* No. of Hall transitions. *)
+    maxtrans	: DINT := GVL.cTripCount+1;	(* Size  N of trans array. *)
+    nsamples	: DINT;						(* No of encoder samples. *)
+    maxsamples	: DINT := GVL.cTripCount+1;	(* Size M of samples array. *)
+    trans		: ARRAY [0 .. GVL.cTripCount] OF ST_HallTransition;
+    samples		: ARRAY	[0 .. GVL.cTripCount] OF ST_EncoderSample;
+END_STRUCT
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

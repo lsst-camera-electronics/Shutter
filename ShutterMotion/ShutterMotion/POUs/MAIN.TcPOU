@@ -43,11 +43,14 @@ VAR
 	inTakeExposure, ackTakeExposure			: ST_TakeExposure;
 	
 	//communication OUT
+	fbOutTimer			: TON;
+	bVersionSet			: BOOL;
 	outCalibDone		: ST_CalibDone;
 	outDisable			: ST_Disable;
 	outEnable			: ST_Enable;
 	outError			: ST_Error;
 	outIgnored			: ST_Ignored;
+	outMotionDone		: ST_MotionDone;
 	outShutterStatus	: ST_ShutterStatus;
 	outTimer			: ST_Timer;
 	
@@ -61,13 +64,16 @@ END_VAR
 VAR CONSTANT
 	//Will change later once motionProfile and version are decided
 	nMotionProfile	: DINT := 0;
-	nVersion		: DINT := 0;
+	nVersion		: DINT := 1;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[(*update Axis_Ref status*)
 stAxis[GVL.cXP].axisRef.ReadStatus();
 stAxis[GVL.cXM].axisRef.ReadStatus();
 
+////////////////////////////////////////////////////////////////////
+//CCS to PLC
+////////////////////////////////////////////////////////////////////
 (* Check for new messages from CCS *)
 eCommand := E_Commands.noCommand;
 IF F_HaveDifferentIDs(inCalibrate, ackCalibrate) THEN
@@ -75,8 +81,10 @@ IF F_HaveDifferentIDs(inCalibrate, ackCalibrate) THEN
 	eCommand := E_Commands.calibrate;
 	IF ackCalibrate.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF outShutterStatus.smState <> E_StatesMaint.Still THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	END_IF
 	
 ELSIF F_HaveDifferentIDs(inChangeAxisEnable, ackChangeAxisEnable) THEN
@@ -84,8 +92,10 @@ ELSIF F_HaveDifferentIDs(inChangeAxisEnable, ackChangeAxisEnable) THEN
 	eCommand := E_Commands.changeAxisEnable;
 	IF ackChangeAxisEnable.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF outShutterStatus.smState <> E_StatesMaint.Still THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	END_IF
 	
 ELSIF F_HaveDifferentIDs(inChangeBrakeState, ackChangeBrakeState) THEN
@@ -93,8 +103,10 @@ ELSIF F_HaveDifferentIDs(inChangeBrakeState, ackChangeBrakeState) THEN
 	eCommand := E_Commands.changeBrakeState;
 	IF ackChangeBrakeState.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF outShutterStatus.smState <> E_StatesMaint.Still THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	END_IF
 	
 ELSIF F_HaveDifferentIDs(inClearAllFaults, ackClearAllFaults) THEN
@@ -102,8 +114,10 @@ ELSIF F_HaveDifferentIDs(inClearAllFaults, ackClearAllFaults) THEN
 	eCommand := E_Commands.clearAllFaults;
 	IF ackClearAllFaults.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF outShutterStatus.smState <> E_StatesMaint.Still THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	END_IF
 	
 ELSIF F_HaveDifferentIDs(inClearAxisFaults, ackClearAxisFaults) THEN
@@ -111,8 +125,10 @@ ELSIF F_HaveDifferentIDs(inClearAxisFaults, ackClearAxisFaults) THEN
 	eCommand := E_Commands.clearAxisFaults;
 	IF ackClearAxisFaults.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF outShutterStatus.smState <> E_StatesMaint.Still THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	END_IF
 	
 ELSIF F_HaveDifferentIDs(inCloseShutter, ackCloseShutter) THEN
@@ -120,8 +136,10 @@ ELSIF F_HaveDifferentIDs(inCloseShutter, ackCloseShutter) THEN
 	eCommand := E_Commands.closeShutter;
 	IF ackCloseShutter.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF outShutterStatus.smState <> E_StatesProd.Opened THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	END_IF
 	
 ELSIF F_HaveDifferentIDs(inDisableAllAxes, ackDisableAllAxes) THEN
@@ -129,8 +147,10 @@ ELSIF F_HaveDifferentIDs(inDisableAllAxes, ackDisableAllAxes) THEN
 	eCommand := E_Commands.disableAllAxes;
 	IF ackDisableAllAxes.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF outShutterStatus.smState <> E_StatesMaint.Still THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	END_IF
 	
 ELSIF F_HaveDifferentIDs( inEnableAllAxes, ackEnableAllAxes) THEN
@@ -138,8 +158,10 @@ ELSIF F_HaveDifferentIDs( inEnableAllAxes, ackEnableAllAxes) THEN
 	eCommand := E_Commands.enableAllAxes;
 	IF ackEnableAllAxes.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF outShutterStatus.smState <> E_StatesMaint.Still THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	END_IF
 	
 ELSIF F_HaveDifferentIDs( inGoToProd, ackGoToProd) THEN
@@ -147,8 +169,10 @@ ELSIF F_HaveDifferentIDs( inGoToProd, ackGoToProd) THEN
 	eCommand := E_Commands.goToProd;
 	IF ackGoToProd.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF outShutterStatus.smState <> E_StatesMaint.Still THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	END_IF	
 	
 ELSIF F_HaveDifferentIDs( inHomeAxis, ackHomeAxis) THEN
@@ -156,8 +180,10 @@ ELSIF F_HaveDifferentIDs( inHomeAxis, ackHomeAxis) THEN
 	eCommand := E_Commands.homeAxis;
 	IF ackHomeAxis.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF outShutterStatus.smState <> E_StatesMaint.Still THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	END_IF
 	
 ELSIF F_HaveDifferentIDs( inMoveAxisAbsolute, ackMoveAxisAbsolute) THEN
@@ -165,8 +191,10 @@ ELSIF F_HaveDifferentIDs( inMoveAxisAbsolute, ackMoveAxisAbsolute) THEN
 	eCommand := E_Commands.moveAxisAbsolute;
 	IF ackMoveAxisAbsolute.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF outShutterStatus.smState <> E_StatesMaint.Still THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	END_IF
 	
 ELSIF F_HaveDifferentIDs( inMoveAxisRelative, ackMoveAxisRelative) THEN
@@ -174,8 +202,10 @@ ELSIF F_HaveDifferentIDs( inMoveAxisRelative, ackMoveAxisRelative) THEN
 	eCommand := E_Commands.moveAxisRelative;
 	IF ackMoveAxisRelative.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF outShutterStatus.smState <> E_StatesMaint.Still THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	END_IF
 	
 ELSIF F_HaveDifferentIDs(inOpenShutter, ackOpenShutter) THEN
@@ -183,8 +213,10 @@ ELSIF F_HaveDifferentIDs(inOpenShutter, ackOpenShutter) THEN
 	eCommand := E_Commands.openShutter;
 	IF ackOpenShutter.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF outShutterStatus.smState <> E_StatesProd.Closed THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	END_IF
 	
 ELSIF F_HaveDifferentIDs(inReset, ackReset) THEN
@@ -192,8 +224,10 @@ ELSIF F_HaveDifferentIDs(inReset, ackReset) THEN
 	eCommand := E_Commands.reset;
 	IF ackClearAxisFaults.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF NOT bAuxElxPermit THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	END_IF
 	
 ELSIF F_HaveDifferentIDs(inTakeExposure, ackTakeExposure) THEN
@@ -201,12 +235,16 @@ ELSIF F_HaveDifferentIDs(inTakeExposure, ackTakeExposure) THEN
 	eCommand := E_Commands.takeExposure;
 	IF ackTakeExposure.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF outShutterStatus.smState <> E_StatesProd.Closed THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
+		outIgnored.sequence := outIgnored.sequence + 1;
 	END_IF
 END_IF
 
-/////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+//Shutter State Machine
+////////////////////////////////////////////////////////////////////
 
 fbShutterSM(
 	//inputs
@@ -227,50 +265,79 @@ fbShutterSM(
 	stMoveAxisRelative	:= inMoveAxisRelative,
 	stOpenShutter		:= inOpenShutter,
 	stReset				:= inReset,
-	stTakeExposure		:= inTakeExposure,
-	//outputs
-	stOutCalibDone		=> outCalibDone,
-	stOutError			=> outError,
-	stOutTimer			=> outTimer,
-	nSMState			=> outShutterStatus.smState);
+	stTakeExposure		:= inTakeExposure);
 
-(*Shutter permit update*)	///////////////////////////////// need to define what outenable and outdisable sends
-//outEnable 		:= bAuxElxPermit;
-//outDisable		:= NOT bAuxElxPermit;
+	
+////////////////////////////////////////////////////////////////////
+//PLC to CCS
+////////////////////////////////////////////////////////////////////
+fbOutTimer(IN:=TRUE, PT:=T#2S);
+IF fbOutTimer.Q THEN
+	fbOutTimer(IN:=FALSE);
+	
+	(*Set version*)
+	IF NOT bVersionSet THEN
+		bVersionSet := TRUE;
+		outShutterStatus.version := nVersion;
+		outDisable.version := nVersion;
+		outEnable.version := nVersion;
+		outError.version := nVersion;
+		outIgnored.version := nVersion;
+		outTimer.version := nVersion;
+	END_IF
+	
+	(*increment sequence*)
+	outShutterStatus.sequence := outShutterStatus.sequence +1;
+	IF fbShutterSM.nSMState = E_StatesTop.Disabled THEN
+		outDisable.sequence := outDisable.sequence + 1;
+	ELSE
+		outEnable.sequence := outEnable.sequence + 1;
+	END_IF
+	//outError.sequence := outError.sequence + 1;
+	//outTimer.sequence := outTimer.sequence + 1;
+	
+	(*shutter status update*)
+	outShutterStatus.motionProfile := nMotionProfile;
+	outShutterStatus.isCalibrated := (stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated);
+	outShutterStatus.smState := fbShutterSM.nSMState;
 
-(*shutter status update*)
-outShutterStatus.version := nVersion;
-outShutterStatus.motionProfile := nMotionProfile;
-outShutterStatus.isCalibrated := (stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated);
+	(*shutter status update, axis XP specific*)
+	outShutterStatus.axis[GVL.cXP].actPos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
+	outShutterStatus.axis[GVL.cXP].actVel := stAxis[GVL.cXP].axisRef.NcToPlc.ActVelo;
+	outShutterStatus.axis[GVL.cXP].setAcc := stAxis[GVL.cXP].axisRef.NcToPlc.SetAcc;
+	outShutterStatus.axis[GVL.cXP].brakeSet := stAxis[GVL.cXP].bBrake;
+	outShutterStatus.axis[GVL.cXP].enabled := (stAxis[GVL.cXP].axisRef.PlcToNc.ControlDWord.0 AND	(*controlDword bit 0, 1, 2 corresponds to*)
+												stAxis[GVL.cXP].axisRef.PlcToNc.ControlDWord.1 AND 	(*MC_Power parameters Enable, Enable_Positive, Enable_Negative*)
+												stAxis[GVL.cXP].axisRef.PlcToNc.ControlDWord.2);
+	outShutterStatus.axis[GVL.cXP].errorID	:= stAxis[GVL.cXP].axisRef.Status.ErrorID;
+	outShutterStatus.axis[GVL.cXP].highLimit := stAxis[GVL.cXP].bLimitDeployed;
+	outShutterStatus.axis[GVL.cXP].lowLimit := stAxis[GVL.cXP].bLimitHome;
+	outShutterStatus.axis[GVL.cXP].isHomed := stAxis[GVL.cXP].axisRef.Status.Homed;
+	outShutterStatus.axis[GVL.cXP].motorTemp := fMotorTemp;
+	
+	(*shutter status update, axis XM specific*)
+	outShutterStatus.axis[GVL.cXM].actPos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
+	outShutterStatus.axis[GVL.cXM].actVel := stAxis[GVL.cXM].axisRef.NcToPlc.ActVelo;
+	outShutterStatus.axis[GVL.cXM].setAcc := stAxis[GVL.cXM].axisRef.NcToPlc.SetAcc;
+	outShutterStatus.axis[GVL.cXM].brakeSet := stAxis[GVL.cXM].bBrake;
+	outShutterStatus.axis[GVL.cXM].enabled := (stAxis[GVL.cXM].axisRef.PlcToNc.ControlDWord.0 AND	(*controlDword bit 0, 1, 2 corresponds to*)
+												stAxis[GVL.cXM].axisRef.PlcToNc.ControlDWord.1 AND 	(*MC_Power parameters Enable, Enable_Positive, Enable_Negative*)
+												stAxis[GVL.cXM].axisRef.PlcToNc.ControlDWord.2);
+	outShutterStatus.axis[GVL.cXM].errorID	:= stAxis[GVL.cXM].axisRef.Status.ErrorID;
+	outShutterStatus.axis[GVL.cXM].highLimit := stAxis[GVL.cXM].bLimitHome;
+	outShutterStatus.axis[GVL.cXM].lowLimit := stAxis[GVL.cXM].bLimitDeployed;
+	outShutterStatus.axis[GVL.cXM].isHomed := stAxis[GVL.cXM].axisRef.Status.Homed;
+	outShutterStatus.axis[GVL.cXM].motorTemp := fMotorTemp;
+	
+	(*calibration status*)
+	outCalibDone.hallPosCal := fbShutterSM.stOutCalibDone.hallPosCal;
 
-(*shutter status update, axis XP specific*)
-outShutterStatus.axis[GVL.cXP].actPos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
-outShutterStatus.axis[GVL.cXP].actVel := stAxis[GVL.cXP].axisRef.NcToPlc.ActVelo;
-outShutterStatus.axis[GVL.cXP].setAcc := stAxis[GVL.cXP].axisRef.NcToPlc.SetAcc;
-outShutterStatus.axis[GVL.cXP].brakeSet := stAxis[GVL.cXP].bBrake;
-outShutterStatus.axis[GVL.cXP].enabled := (stAxis[GVL.cXP].axisRef.PlcToNc.ControlDWord.0 AND	(*controlDword bit 0, 1, 2 corresponds to*)
-											stAxis[GVL.cXP].axisRef.PlcToNc.ControlDWord.1 AND 	(*MC_Power parameters Enable, Enable_Positive, Enable_Negative*)
-											stAxis[GVL.cXP].axisRef.PlcToNc.ControlDWord.2);
-outShutterStatus.axis[GVL.cXP].errorID	:= stAxis[GVL.cXP].axisRef.Status.ErrorID;
-outShutterStatus.axis[GVL.cXP].highLimit := stAxis[GVL.cXP].bLimitDeployed;
-outShutterStatus.axis[GVL.cXP].lowLimit := stAxis[GVL.cXP].bLimitHome;
-outShutterStatus.axis[GVL.cXP].isHomed := stAxis[GVL.cXP].axisRef.Status.Homed;
-outShutterStatus.axis[GVL.cXP].motorTemp := fMotorTemp;
+	
+END_IF
 
-(*shutter status update, axis XM specific*)
-outShutterStatus.axis[GVL.cXM].actPos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
-outShutterStatus.axis[GVL.cXM].actVel := stAxis[GVL.cXM].axisRef.NcToPlc.ActVelo;
-outShutterStatus.axis[GVL.cXM].setAcc := stAxis[GVL.cXM].axisRef.NcToPlc.SetAcc;
-outShutterStatus.axis[GVL.cXM].brakeSet := stAxis[GVL.cXM].bBrake;
-outShutterStatus.axis[GVL.cXM].enabled := (stAxis[GVL.cXM].axisRef.PlcToNc.ControlDWord.0 AND	(*controlDword bit 0, 1, 2 corresponds to*)
-											stAxis[GVL.cXM].axisRef.PlcToNc.ControlDWord.1 AND 	(*MC_Power parameters Enable, Enable_Positive, Enable_Negative*)
-											stAxis[GVL.cXM].axisRef.PlcToNc.ControlDWord.2);
-outShutterStatus.axis[GVL.cXM].errorID	:= stAxis[GVL.cXM].axisRef.Status.ErrorID;
-outShutterStatus.axis[GVL.cXM].highLimit := stAxis[GVL.cXM].bLimitHome;
-outShutterStatus.axis[GVL.cXM].lowLimit := stAxis[GVL.cXM].bLimitDeployed;
-outShutterStatus.axis[GVL.cXM].isHomed := stAxis[GVL.cXM].axisRef.Status.Homed;
-outShutterStatus.axis[GVL.cXM].motorTemp := fMotorTemp;
-
+////////////////////////////////////////////////////////////////////
+//Other (protection, tracking, etc.
+////////////////////////////////////////////////////////////////////
 
 (*track motion of both blades*)
 fbTracking(stAxis:=stAxis);
@@ -288,164 +355,165 @@ ELSE
 END_IF
 *)
 
-
-
-IF GVL.nNumOfInputs[0].0 THEN
-	num[0]:=num[0]+1;
-	a:=a+1;
-END_IF
-IF GVL.nNumOfInputs[1].0 THEN
-	num[1]:=num[1]+1;
-	a:=a+1;
-END_IF
-IF GVL.nNumOfInputs[2].0 THEN
-	num[2]:=num[2]+1;
-	a:=a+1;
-END_IF
-IF GVL.nNumOfInputs[3].0 THEN
-	num[3]:=num[3]+1;
-	a:=a+1;
-END_IF
-IF GVL.nNumOfInputs[4].0 THEN
-	num[4]:=num[4]+1;
-	a:=a+1;
-END_IF
-IF GVL.nNumOfInputs[5].0 THEN
-	num[5]:=num[5]+1;
-	a:=a+1;
-END_IF
-IF GVL.nNumOfInputs[6].0 THEN
-	num[6]:=num[6]+1;
-	a:=a+1;
-END_IF
-IF GVL.nNumOfInputs[7].0 THEN
-	num[7]:=num[7]+1;
-	a:=a+1;
-END_IF
-IF GVL.nNumOfInputs[8].0 THEN
-	num[8]:=num[8]+1;
-	a:=a+1;
-END_IF
-IF GVL.nNumOfInputs[9].0 THEN
-	num[9]:=num[9]+1;
-	a:=a+1;
-END_IF
-IF GVL.nNumOfInputs[10].0 THEN
-	num[10]:=num[10]+1;
-	a:=a+1;
-END_IF
-IF GVL.nNumOfInputs[11].0 THEN
-	num[11]:=num[11]+1;
-	a:=a+1;
-END_IF
-IF GVL.nNumOfInputs[12].0 THEN
-	num[12]:=num[12]+1;
-	a:=a+1;
-END_IF
-IF GVL.nNumOfInputs[13].0 THEN
-	num[13]:=num[13]+1;
-	a:=a+1;
-END_IF
-IF GVL.nNumOfInputs[14].0 THEN
-	num[14]:=num[14]+1;
-	a:=a+1;
-END_IF
-
 ]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
       <LineId Id="869" Count="1" />
       <LineId Id="779" Count="0" />
+      <LineId Id="1689" Count="0" />
+      <LineId Id="1688" Count="0" />
+      <LineId Id="1690" Count="0" />
       <LineId Id="867" Count="1" />
       <LineId Id="780" Count="0" />
       <LineId Id="733" Count="0" />
       <LineId Id="783" Count="0" />
       <LineId Id="781" Count="0" />
-      <LineId Id="1103" Count="2" />
+      <LineId Id="1103" Count="0" />
+      <LineId Id="1753" Count="0" />
+      <LineId Id="1104" Count="1" />
+      <LineId Id="1754" Count="0" />
       <LineId Id="1107" Count="1" />
       <LineId Id="824" Count="0" />
       <LineId Id="736" Count="0" />
       <LineId Id="735" Count="0" />
       <LineId Id="1116" Count="0" />
-      <LineId Id="1122" Count="3" />
+      <LineId Id="1122" Count="0" />
+      <LineId Id="1755" Count="0" />
+      <LineId Id="1123" Count="1" />
+      <LineId Id="1756" Count="0" />
+      <LineId Id="1125" Count="0" />
       <LineId Id="1121" Count="0" />
       <LineId Id="825" Count="0" />
       <LineId Id="785" Count="1" />
       <LineId Id="784" Count="0" />
-      <LineId Id="1127" Count="3" />
+      <LineId Id="1127" Count="0" />
+      <LineId Id="1757" Count="0" />
+      <LineId Id="1128" Count="1" />
+      <LineId Id="1758" Count="0" />
+      <LineId Id="1130" Count="0" />
       <LineId Id="1126" Count="0" />
       <LineId Id="826" Count="0" />
       <LineId Id="738" Count="0" />
       <LineId Id="737" Count="0" />
       <LineId Id="768" Count="0" />
-      <LineId Id="1132" Count="3" />
+      <LineId Id="1132" Count="0" />
+      <LineId Id="1759" Count="0" />
+      <LineId Id="1133" Count="1" />
+      <LineId Id="1760" Count="0" />
+      <LineId Id="1135" Count="0" />
       <LineId Id="1131" Count="0" />
       <LineId Id="827" Count="0" />
       <LineId Id="741" Count="0" />
       <LineId Id="740" Count="0" />
       <LineId Id="769" Count="0" />
-      <LineId Id="1137" Count="3" />
+      <LineId Id="1137" Count="0" />
+      <LineId Id="1761" Count="0" />
+      <LineId Id="1138" Count="1" />
+      <LineId Id="1762" Count="0" />
+      <LineId Id="1140" Count="0" />
       <LineId Id="1136" Count="0" />
       <LineId Id="928" Count="0" />
       <LineId Id="931" Count="1" />
       <LineId Id="930" Count="0" />
-      <LineId Id="1142" Count="3" />
+      <LineId Id="1142" Count="0" />
+      <LineId Id="1763" Count="0" />
+      <LineId Id="1143" Count="1" />
+      <LineId Id="1764" Count="0" />
+      <LineId Id="1145" Count="0" />
       <LineId Id="1141" Count="0" />
       <LineId Id="828" Count="0" />
       <LineId Id="745" Count="0" />
       <LineId Id="744" Count="0" />
       <LineId Id="770" Count="0" />
-      <LineId Id="1147" Count="3" />
+      <LineId Id="1147" Count="0" />
+      <LineId Id="1765" Count="0" />
+      <LineId Id="1148" Count="1" />
+      <LineId Id="1766" Count="0" />
+      <LineId Id="1150" Count="0" />
       <LineId Id="1146" Count="0" />
       <LineId Id="829" Count="0" />
       <LineId Id="749" Count="0" />
       <LineId Id="748" Count="0" />
       <LineId Id="771" Count="0" />
-      <LineId Id="1152" Count="3" />
+      <LineId Id="1152" Count="0" />
+      <LineId Id="1767" Count="0" />
+      <LineId Id="1153" Count="1" />
+      <LineId Id="1768" Count="0" />
+      <LineId Id="1155" Count="0" />
       <LineId Id="1151" Count="0" />
       <LineId Id="831" Count="0" />
       <LineId Id="822" Count="1" />
       <LineId Id="1156" Count="0" />
-      <LineId Id="1162" Count="3" />
+      <LineId Id="1162" Count="0" />
+      <LineId Id="1769" Count="0" />
+      <LineId Id="1163" Count="1" />
+      <LineId Id="1770" Count="0" />
+      <LineId Id="1165" Count="0" />
       <LineId Id="1161" Count="0" />
       <LineId Id="832" Count="0" />
       <LineId Id="751" Count="0" />
       <LineId Id="750" Count="0" />
       <LineId Id="772" Count="0" />
-      <LineId Id="1167" Count="3" />
+      <LineId Id="1167" Count="0" />
+      <LineId Id="1771" Count="0" />
+      <LineId Id="1168" Count="1" />
+      <LineId Id="1772" Count="0" />
+      <LineId Id="1170" Count="0" />
       <LineId Id="1166" Count="0" />
       <LineId Id="834" Count="0" />
       <LineId Id="755" Count="0" />
       <LineId Id="754" Count="0" />
       <LineId Id="774" Count="0" />
-      <LineId Id="1172" Count="3" />
+      <LineId Id="1172" Count="0" />
+      <LineId Id="1773" Count="0" />
+      <LineId Id="1173" Count="1" />
+      <LineId Id="1774" Count="0" />
+      <LineId Id="1175" Count="0" />
       <LineId Id="1171" Count="0" />
       <LineId Id="835" Count="0" />
       <LineId Id="757" Count="0" />
       <LineId Id="756" Count="0" />
       <LineId Id="775" Count="0" />
-      <LineId Id="1177" Count="3" />
+      <LineId Id="1177" Count="0" />
+      <LineId Id="1775" Count="0" />
+      <LineId Id="1178" Count="1" />
+      <LineId Id="1776" Count="0" />
+      <LineId Id="1180" Count="0" />
       <LineId Id="1176" Count="0" />
       <LineId Id="836" Count="0" />
       <LineId Id="760" Count="0" />
       <LineId Id="759" Count="0" />
       <LineId Id="776" Count="0" />
-      <LineId Id="1182" Count="3" />
+      <LineId Id="1182" Count="0" />
+      <LineId Id="1777" Count="0" />
+      <LineId Id="1183" Count="1" />
+      <LineId Id="1778" Count="0" />
+      <LineId Id="1185" Count="0" />
       <LineId Id="1181" Count="0" />
       <LineId Id="837" Count="0" />
       <LineId Id="764" Count="0" />
       <LineId Id="763" Count="0" />
       <LineId Id="777" Count="0" />
-      <LineId Id="1187" Count="3" />
+      <LineId Id="1187" Count="0" />
+      <LineId Id="1779" Count="0" />
+      <LineId Id="1188" Count="1" />
+      <LineId Id="1780" Count="0" />
+      <LineId Id="1190" Count="0" />
       <LineId Id="1192" Count="0" />
       <LineId Id="839" Count="0" />
       <LineId Id="766" Count="0" />
       <LineId Id="765" Count="0" />
       <LineId Id="778" Count="0" />
-      <LineId Id="1198" Count="3" />
+      <LineId Id="1198" Count="0" />
+      <LineId Id="1781" Count="0" />
+      <LineId Id="1199" Count="1" />
+      <LineId Id="1782" Count="0" />
+      <LineId Id="1201" Count="0" />
       <LineId Id="1197" Count="0" />
       <LineId Id="725" Count="0" />
-      <LineId Id="721" Count="1" />
+      <LineId Id="721" Count="0" />
+      <LineId Id="1691" Count="1" />
+      <LineId Id="722" Count="0" />
       <LineId Id="103" Count="1" />
       <LineId Id="981" Count="0" />
       <LineId Id="116" Count="0" />
@@ -456,17 +524,33 @@ END_IF
       <LineId Id="935" Count="0" />
       <LineId Id="937" Count="2" />
       <LineId Id="942" Count="5" />
-      <LineId Id="949" Count="1" />
-      <LineId Id="973" Count="2" />
-      <LineId Id="952" Count="0" />
+      <LineId Id="949" Count="0" />
       <LineId Id="1102" Count="0" />
+      <LineId Id="1695" Count="0" />
+      <LineId Id="1686" Count="0" />
+      <LineId Id="1693" Count="1" />
+      <LineId Id="1699" Count="0" />
+      <LineId Id="1701" Count="0" />
+      <LineId Id="1700" Count="0" />
+      <LineId Id="1702" Count="0" />
+      <LineId Id="1745" Count="0" />
+      <LineId Id="1735" Count="0" />
+      <LineId Id="1752" Count="0" />
+      <LineId Id="1737" Count="0" />
+      <LineId Id="1739" Count="3" />
+      <LineId Id="1744" Count="0" />
+      <LineId Id="1738" Count="0" />
+      <LineId Id="1736" Count="0" />
+      <LineId Id="1746" Count="0" />
       <LineId Id="993" Count="0" />
-      <LineId Id="384" Count="0" />
-      <LineId Id="984" Count="1" />
+      <LineId Id="1785" Count="4" />
+      <LineId Id="1749" Count="0" />
+      <LineId Id="1751" Count="0" />
+      <LineId Id="985" Count="0" />
       <LineId Id="1028" Count="0" />
-      <LineId Id="1027" Count="0" />
       <LineId Id="1040" Count="1" />
-      <LineId Id="1029" Count="0" />
+      <LineId Id="1727" Count="0" />
+      <LineId Id="1703" Count="0" />
       <LineId Id="1026" Count="0" />
       <LineId Id="986" Count="3" />
       <LineId Id="1010" Count="0" />
@@ -478,7 +562,13 @@ END_IF
       <LineId Id="1005" Count="0" />
       <LineId Id="1025" Count="0" />
       <LineId Id="1013" Count="11" />
+      <LineId Id="1704" Count="0" />
+      <LineId Id="1709" Count="0" />
+      <LineId Id="1705" Count="0" />
+      <LineId Id="1716" Count="0" />
       <LineId Id="1011" Count="0" />
+      <LineId Id="1683" Count="2" />
+      <LineId Id="1696" Count="1" />
       <LineId Id="1009" Count="0" />
       <LineId Id="995" Count="0" />
       <LineId Id="1000" Count="1" />
@@ -494,39 +584,6 @@ END_IF
       <LineId Id="167" Count="0" />
       <LineId Id="484" Count="0" />
       <LineId Id="1409" Count="0" />
-      <LineId Id="1555" Count="2" />
-      <LineId Id="1615" Count="0" />
-      <LineId Id="1558" Count="0" />
-      <LineId Id="1564" Count="1" />
-      <LineId Id="1616" Count="0" />
-      <LineId Id="1566" Count="2" />
-      <LineId Id="1617" Count="0" />
-      <LineId Id="1569" Count="2" />
-      <LineId Id="1618" Count="0" />
-      <LineId Id="1572" Count="2" />
-      <LineId Id="1619" Count="0" />
-      <LineId Id="1575" Count="2" />
-      <LineId Id="1620" Count="0" />
-      <LineId Id="1578" Count="2" />
-      <LineId Id="1621" Count="0" />
-      <LineId Id="1581" Count="2" />
-      <LineId Id="1607" Count="0" />
-      <LineId Id="1584" Count="2" />
-      <LineId Id="1608" Count="0" />
-      <LineId Id="1587" Count="2" />
-      <LineId Id="1609" Count="0" />
-      <LineId Id="1590" Count="2" />
-      <LineId Id="1610" Count="0" />
-      <LineId Id="1593" Count="2" />
-      <LineId Id="1611" Count="0" />
-      <LineId Id="1596" Count="2" />
-      <LineId Id="1612" Count="0" />
-      <LineId Id="1599" Count="2" />
-      <LineId Id="1613" Count="0" />
-      <LineId Id="1602" Count="2" />
-      <LineId Id="1614" Count="0" />
-      <LineId Id="1605" Count="1" />
-      <LineId Id="1559" Count="0" />
       <LineId Id="22" Count="0" />
     </LineIds>
   </POU>

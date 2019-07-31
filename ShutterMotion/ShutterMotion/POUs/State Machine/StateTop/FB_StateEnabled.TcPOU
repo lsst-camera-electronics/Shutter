@@ -25,10 +25,10 @@ VAR_INPUT
 	stTakeExposure		: ST_TakeExposure;
 END_VAR
 VAR_OUTPUT
+	bCalibDone			: BOOL;
+	bMotionDone			: BOOL;
 	stOutCalibDone		: ST_CalibDone;
-	stOutError			: ST_Error;
 	stOutTimer			: ST_Timer;
-	
 	nSMState			: DINT;
 END_VAR
 VAR
@@ -41,10 +41,8 @@ VAR
 	
 	//Event
 	bIsCalibrated	: BOOL;
-	bStopMotion		: BOOL;
 	bShutterReady	: BOOL;
 
-	
 	//Other var
 	fbReset			: FB_Reset;
 	bResetting		: BOOL;
@@ -93,8 +91,9 @@ CASE eCurrentState OF
 			stMoveAxisAbsolute	:= stMoveAxisAbsolute,
 			stMoveAxisRelative	:= stMoveAxisRelative,
 			//outputs
+			bCalibDone			=> bCalibDone,
+			bMotionDone			=> bMotionDone,
 			stOutCalibDone		=> stOutCalibDone,
-			stOutError			=> stOutError,
 			nSMState			=> nSMState);	
 		IF bShutterReady AND eCommand = E_Commands.goToProd THEN
 			eNextState := E_StatesEnabled.Prod;
@@ -112,7 +111,7 @@ CASE eCurrentState OF
 			stCloseShutter	:= stCloseShutter,
 			stTakeExposure	:= stTakeExposure,
 			//outputs
-			stOutError		=> stOutError,
+			bMotionDone		=> bMotionDone,
 			nSMState		=> nSMState);
 	b:=b+1;	
 
@@ -169,8 +168,9 @@ bShutterReady := (stAxis[GVL.cXP].bBrake AND stAxis[GVL.cXM].bBrake) AND (stAxis
       <LineId Id="258" Count="0" />
       <LineId Id="260" Count="4" />
       <LineId Id="266" Count="5" />
+      <LineId Id="568" Count="0" />
+      <LineId Id="570" Count="0" />
       <LineId Id="291" Count="0" />
-      <LineId Id="359" Count="0" />
       <LineId Id="294" Count="0" />
       <LineId Id="300" Count="0" />
       <LineId Id="79" Count="1" />
@@ -184,7 +184,8 @@ bShutterReady := (stAxis[GVL.cXP].bBrake AND stAxis[GVL.cXM].bBrake) AND (stAxis
       <LineId Id="500" Count="0" />
       <LineId Id="494" Count="0" />
       <LineId Id="277" Count="3" />
-      <LineId Id="354" Count="1" />
+      <LineId Id="573" Count="0" />
+      <LineId Id="355" Count="0" />
       <LineId Id="482" Count="0" />
       <LineId Id="357" Count="0" />
       <LineId Id="39" Count="0" />
