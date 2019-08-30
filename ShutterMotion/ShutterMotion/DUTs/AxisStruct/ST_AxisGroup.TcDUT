@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <DUT Name="ST_AxisGroup" Id="{2b563dca-bb77-4e19-946f-8445edcd73f2}">
     <Declaration><![CDATA[TYPE ST_AxisGroup :
 STRUCT
@@ -17,18 +17,19 @@ STRUCT
 	
 	//linkable variables
 	axisRef					: AXIS_REF;;
-	bBrake AT %Q* 			: BOOL;
-	bLimitHome AT %I*		: BOOL;
-	bLimitDeployed AT %I*	: BOOL;
+	bBrake AT %Q* 			: BOOL;			(* 1-Brake disengaged, 0-Brake engaged *)
+	bLimitHome AT %I*		: BOOL;			(* 1-at limit, 0-not at limit. Should be changed to 0-at limit, 1-not at limit to be SIL-2 compliance. Requires hardware change. *)
+	bLimitDeployed AT %I*	: BOOL;			(* 1-at limit, 0-not at limit. Should be changed to 0-at limit, 1-not at limit to be SIL-2 compliance. Requires hardware change. *)
 
 	//used for tracking linear motion using hall sensors
-	fbHallSig_rtrig		: ARRAY [GVL.cHallLower .. GVL.cHallUpper] OF R_TRIG;
-	fbHallSig_ftrig 	: ARRAY [GVL.cHallLower .. GVL.cHallUpper] OF F_TRIG;
+	//fbHallSig_rtrig		: ARRAY [GVL.cHallLower .. GVL.cHallUpper] OF R_TRIG;
+	//fbHallSig_ftrig 	: ARRAY [GVL.cHallLower .. GVL.cHallUpper] OF F_TRIG;
 	fHallPosCal			: ARRAY [GVL.cDirPos .. GVL.cDirNeg, 0 .. GVL.cTripCount] OF LREAL;
 	fHallPosAct			: LREAL;
 	nHallTime			: UDINT; //unit in nanosecond
 	nTripCount 			: INT;
-	nHallSequence		: ARRAY [GVL.cDirPos .. GVL.cDirNeg, 0 .. GVL.cTripCount] OF WORD;
+	//nHallSequence		: ARRAY [GVL.cDirPos .. GVL.cDirNeg, 0 .. GVL.cTripCount] OF WORD;
+	stHall				: ARRAY [GVL.cDirPos .. GVL.cDirNeg, 0 .. GVL.cTripCount] OF ST_Hall;
 	nSeqToCompare		: WORD;
 	fPosDiffAtTrip		: LREAL;
 	bTrackedFlag		: BOOL;

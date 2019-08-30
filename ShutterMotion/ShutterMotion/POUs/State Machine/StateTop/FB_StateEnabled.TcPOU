@@ -112,7 +112,8 @@ CASE eCurrentState OF
 			stTakeExposure	:= stTakeExposure,
 			//outputs
 			bMotionDone		=> bMotionDone,
-			nSMState		=> nSMState);
+			nSMState		=> nSMState,
+			stOutTimer		=> stOutTimer);
 	b:=b+1;	
 
 END_CASE
@@ -186,6 +187,7 @@ bShutterReady := (stAxis[GVL.cXP].bBrake AND stAxis[GVL.cXM].bBrake) AND (stAxis
       <LineId Id="277" Count="3" />
       <LineId Id="573" Count="0" />
       <LineId Id="355" Count="0" />
+      <LineId Id="625" Count="0" />
       <LineId Id="482" Count="0" />
       <LineId Id="357" Count="0" />
       <LineId Id="39" Count="0" />

@@ -42,7 +42,7 @@ VAR_GLOBAL CONSTANT
 	cBrakeOn		: BOOL	:= FALSE;
 	cScanVel		: LREAL := 60;
 	cHomeVel		: LREAL	:= 3;
-	cCalibrateVel	: LREAL	:= 100;
+	cCalibrateVel	: LREAL	:= 300; //change back to 100;
 	cPositionVel	: LREAL := 300;
 	cPosStart		: LREAL := 0;
 	cPosEnd			: LREAL := 751; //this will need to change for production once keyance snesors are in
@@ -63,6 +63,7 @@ VAR_GLOBAL
 	nHallSequence 			: WORD;
 	nInputEventTime	AT %I*	: ARRAY [cHallLower .. cHallUpper] OF UDINT; //unit in nanosecond 
 	nNumOfInputs AT %I*		: ARRAY [cHallLower .. cHallUpper] OF USINT;
+	bInputEventState AT %I*	: ARRAY [cHallLower .. cHallUpper] OF BOOL;
 
 	//Timer
 	fbWaitTimer	: TON;

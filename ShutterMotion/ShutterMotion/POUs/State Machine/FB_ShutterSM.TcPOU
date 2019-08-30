@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <POU Name="FB_ShutterSM" Id="{bb014c99-9246-4485-a45b-7048ac4294d5}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_ShutterSM
 VAR_IN_OUT
@@ -46,8 +46,6 @@ VAR
 
 	//test variables
 	a,b : INT;
-	
-
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[(* Top state of the shutter state machine *)

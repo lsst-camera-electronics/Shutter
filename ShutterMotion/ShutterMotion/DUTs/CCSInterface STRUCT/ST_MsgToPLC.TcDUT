@@ -7,7 +7,7 @@ STRUCT
     lowUUID		: LINT;	(* The low-order part of the UUID. *)
     highUUID	: LINT;	(* The high-order part of the UUID. *)
     dtime		: DINT;	(* Time of day of sending, in milliseconds. *)
-    sequence	: DINT;	(* Message sequence number. *)
+    sequence	: DINT := 1;	(* Message sequence number. *)
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

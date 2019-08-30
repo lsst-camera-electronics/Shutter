@@ -40,6 +40,7 @@ VAR
 	
 	//testVar
 	a, b, c : INT;
+	
 END_VAR
 ]]></Declaration>
     <Implementation>

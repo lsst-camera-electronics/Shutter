@@ -100,6 +100,9 @@ CASE eCurrentState OF
 	E_StatesProd.Opened:
 		fbOpened(stAxis:=stAxis, bTopEntry:=bLowerEntry);
 		IF eCommand = E_Commands.closeShutter OR fbExpoTimer.Q THEN
+			IF fbExpoTimer.Q THEN
+				stOutTimer.sequence:=stOutTimer.sequence+1;
+			END_IF
 			eNextState := E_StatesProd.Closing;
 			(*add error code or warning if timer is active and closeShutter command is issued*)
 		END_IF
@@ -164,6 +167,7 @@ END_CASE]]></ST>
       <LineId Id="330" Count="0" />
       <LineId Id="169" Count="0" />
       <LineId Id="26" Count="2" />
+      <LineId Id="427" Count="2" />
       <LineId Id="119" Count="0" />
       <LineId Id="384" Count="0" />
       <LineId Id="267" Count="0" />

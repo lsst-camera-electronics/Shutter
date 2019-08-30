@@ -18,6 +18,9 @@
     <Compile Include="DUTs\AxisStruct\ST_AxisGroup.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\AxisStruct\ST_Hall.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\CCSInterface STRUCT\CCS to PLC\ST_Calibrate.TcDUT">
       <SubType>Code</SubType>
     </Compile>

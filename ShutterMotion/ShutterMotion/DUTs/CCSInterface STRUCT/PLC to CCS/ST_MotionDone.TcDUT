@@ -15,8 +15,8 @@ STRUCT
     maxtrans	: DINT := GVL.cTripCount+1;	(* Size  N of trans array. *)
     nsamples	: DINT;						(* No of encoder samples. *)
     maxsamples	: DINT := GVL.cTripCount+1;	(* Size M of samples array. *)
-    trans		: ARRAY [0 .. GVL.cTripCount] OF ST_HallTransition;
-    samples		: ARRAY	[0 .. GVL.cTripCount] OF ST_EncoderSample;
+    trans		: ARRAY [0 .. GVL.cTripCount*2] OF ST_HallTransition;
+    samples		: ARRAY	[0 .. GVL.cTripCount*2] OF ST_EncoderSample;
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

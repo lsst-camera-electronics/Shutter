@@ -4,6 +4,8 @@
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
 TYPE ST_CalibDone EXTENDS ST_MsgToCCS:
 STRUCT
+    homePosition: ARRAY [0..1] OF LREAL;
+    deployedPosition: ARRAY [0..1] of LREAL;
     (* hallPosCal[a, d, t] is coordinate of
        the (t+1)st transition that occurred
        while moving axis a+1 in direction d.

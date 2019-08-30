@@ -81,7 +81,7 @@ CASE nCurrentState OF
 		nNextState := 2000; 
 		
 	1050:
-		stAxis[stChangeBrakeState.axisIndex].bBrake := stChangeBrakeState.state;
+		stAxis[stChangeBrakeState.axisIndex].bBrake := NOT stChangeBrakeState.state;
 		nNextState := 2000; 
 
 	2000:

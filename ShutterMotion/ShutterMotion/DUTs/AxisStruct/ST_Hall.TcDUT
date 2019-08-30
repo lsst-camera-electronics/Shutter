@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="ST_Hall" Id="{952b8077-79e9-4c82-b6f6-e4f0fb250192}">
+    <Declaration><![CDATA[TYPE ST_Hall :
+STRUCT
+	nSeq	: WORD;
+	bEdge	: BOOL; // 1-rising edge, 0-falling edge
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
