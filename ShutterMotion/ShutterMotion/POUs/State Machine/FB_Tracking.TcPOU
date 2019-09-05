@@ -18,10 +18,10 @@ VAR
 	bEdgeToCompare	: ARRAY [0 .. 1] OF BOOL;
 	nHallID			: ARRAY [0 .. 1] OF DINT;
 	nAxisID			: INT;
-	tTimeStart		: T_DCTIME64;
 	tTimeEnd		: T_DCTIME64;
 	nMask			: ULINT := 16#FFFF_FFFF_0000_0000;
 	tDcTime			: T_DCTIME64;
+	fSpeed			: LREAL;
 	
 	
 	//bXorResult 		: BOOL;
@@ -30,9 +30,9 @@ VAR
 	bDoubleTrip		: BOOL;
 	nGoNextSeq		: BOOL;
 	
+	fbMoving_Rtrig : ARRAY[0 .. 1] OF R_TRIG;
 	fbRtrig		: ARRAY[GVL.cHallLower..GVL.cHallUpper] OF R_Trig;
 	bInMotion	: BOOL;
-	fbResetMotionData_rTrig : R_TRIG;
 	stMotionDone : ARRAY [0..1] OF ST_MotionDone;	
 	nSequence	: DINT;
 	
@@ -41,6 +41,7 @@ VAR
 	
 	//TestVar
 	testInt: INT;
+	testLREAL : LREAL;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -54,6 +55,7 @@ stAxis[GVL.cXP].bTrackedFlag:=FALSE;
 stAxis[GVL.cXM].bTrackedFlag:=FALSE;
 j:=0;
 
+(*
 //Check if command causes motion
 IF (eCommand=E_Commands.calibrate) OR_ELSE
 	(eCommand=E_Commands.closeShutter) OR_ELSE
@@ -65,34 +67,45 @@ IF (eCommand=E_Commands.calibrate) OR_ELSE
 		bInMotion := TRUE;
 		tTimeStart := F_GetCurDcTaskTime64();
 END_IF
-fbResetMotionData_rtrig(CLK:=bInMotion);
-IF fbResetMotionData_rtrig.Q THEN
+*)
+fbMoving_Rtrig[GVL.cXP](CLK:=stAxis[GVL.cXP].axisRef.Status.Moving);
+IF fbMoving_Rtrig[GVL.cXP].Q THEN
+	bInMotion:=TRUE;
 	//AxisXP
 	stMotionDone[GVL.cXP].axisNum := GVL.cXP;
 	stMotionDone[GVL.cXP].nsamples := 0;
 	stMotionDone[GVL.cXP].ntrans := 0;
-	stMotionDone[gvl.cXP].targetPos := stAxis[gvl.cXP].axisRef.NcToPlc.TargetPos;
+	stMotionDone[gvl.cXP].startPos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 	stMotionDone[GVL.cXP].startTime := F_GetCurDcTaskTime64();
 	stMotionDone[GVL.cXP].targetDur := LTIME#0D0H0M0S0MS0US0NS;
-	
+END_IF
+fbMoving_Rtrig[GVL.cXM](CLK:=stAxis[GVL.cXM].axisRef.Status.Moving);
+IF fbMoving_Rtrig[GVL.cXM].Q THEN
+	bInMotion:=TRUE;
 	//AxisXM
 	stMotionDone[gvl.cXM].axisNum := GVL.cXM;
 	stMotionDone[gvl.cXM].nsamples := 0;
 	stMotionDone[gvl.cXM].ntrans := 0;
 	stMotionDone[gvl.cXM].startPos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
-	stMotionDone[gvl.cXM].targetPos := stAxis[gvl.cXM].axisRef.NcToPlc.TargetPos;
 	stMotionDone[gvl.cXM].startTime := F_GetCurDcTaskTime64();
 	stMotionDone[gvl.cXM].targetDur := LTIME#0D0H0M0S0MS0US0NS;
 END_IF
+
 IF bMotionDone THEN
+	IF MAIN.inReset.speed > 0 THEN
+		fSpeed := MAIN.inReset.speed;
+	ELSE
+		fSpeed := 0.01;
+	END_IF
 	bInMotion := FALSE;
 	nSequence := nSequence+1;
 	tTimeEnd := F_GetCurDcTaskTime64();
-	stMotionDone[nAxisID].actualDur := ULINT_TO_LTIME(tTimeEnd-tTimeStart);
-	stMotionDone[nAxisID].targetDur := ULINT_TO_LTIME(tTimeEnd-tTimeStart); //Needs to be changed to actually calculate expected duration
+	stMotionDone[nAxisID].actualDur := ULINT_TO_LTIME(tTimeEnd-stMotionDone[nAxisID].startTime);
+	stMotionDone[nAxisID].targetDur := ULINT_TO_LTIME(tTimeEnd-stMotionDone[nAxisID].startTime); //Needs to be changed to actually calculate expected duration //LREAL_TO_LTIME((2*ABS(stMotionDone[nAxisID].startPos-stAxis[nAxisID].axisRef.NcToPlc.TargetPos)/fSpeed)*1000000000);//
+	stMotionDone[nAxisID].targetPos := stAxis[nAxisID].axisRef.NcToPlc.TargetPos;
 	stMotionDone[nAxisID].endPos := stAxis[nAxisID].axisRef.NcToPlc.ActPos;
 	
-	stMotionDone[nAxisID].version := 1; //needs to reference a const instead and prefereably only set once
+	testLREAL :=(2*ABS(stMotionDone[nAxisID].startPos-stAxis[nAxisID].axisRef.NcToPlc.TargetPos)/fSpeed);//ULINT_TO_LTIME(tTimeEnd-tTimeStart);
 	
 	stOutMotionDone:=stMotionDone[nAxisID];
 	stOutMotionDone.sequence:=nSequence;
@@ -167,7 +180,7 @@ IF bValidInput THEN
 			IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 				nAxisID:= GVL.cXP;
 				tDcTime:=F_GetCurDcTaskTime64() AND nMask;
-				stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].dcTime := GVL.nInputEventTime[((nSeqToCompare[0]-5)/10)];
+				stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].dcTime := GVL.nInputEventTime[nHallID[0]]+tDcTime;
 				stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].id := nHallID[0];
 				stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].on := bEdgeToCompare[0];
 				stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
@@ -196,7 +209,7 @@ IF bValidInput THEN
 			IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 				nAxisID:= GVL.cXM;
 				tDcTime:=F_GetCurDcTaskTime64() AND nMask;
-				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].dcTime := GVL.nInputEventTime[nHallID[1]];
+				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].dcTime := GVL.nInputEventTime[nHallID[1]]+tDcTime;
 				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].id := nHallID[1];
 				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].on := bEdgeToCompare[1];
 				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
@@ -221,7 +234,7 @@ IF bValidInput THEN
 			IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 				nAxisID:= GVL.cXM;
 				tDcTime:=F_GetCurDcTaskTime64() AND nMask;
-				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].dcTime := GVL.nInputEventTime[nHallID[1]];
+				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].dcTime := GVL.nInputEventTime[nHallID[1]]+tDcTime;
 				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].id := nHallID[1];
 				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].on := bEdgeToCompare[1];
 				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
@@ -281,8 +294,6 @@ IF bDoubleTrip THEN
 			stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
 			stAxis[GVL.cXM].bTrackedFlag:=TRUE;
 			
-			
-			
 		END_IF
 	END_IF
 END_IF
@@ -291,33 +302,34 @@ END_IF
     <LineIds Name="FB_Tracking">
       <LineId Id="1021" Count="1" />
       <LineId Id="1024" Count="6" />
+      <LineId Id="1818" Count="0" />
       <LineId Id="1288" Count="3" />
       <LineId Id="1294" Count="5" />
       <LineId Id="1544" Count="0" />
-      <LineId Id="1292" Count="0" />
-      <LineId Id="1344" Count="1" />
-      <LineId Id="1765" Count="0" />
-      <LineId Id="1761" Count="1" />
-      <LineId Id="1767" Count="0" />
-      <LineId Id="1353" Count="1" />
-      <LineId Id="1356" Count="0" />
-      <LineId Id="1359" Count="0" />
-      <LineId Id="1362" Count="0" />
-      <LineId Id="1364" Count="1" />
-      <LineId Id="1771" Count="0" />
-      <LineId Id="1768" Count="0" />
-      <LineId Id="1367" Count="1" />
-      <LineId Id="1361" Count="0" />
+      <LineId Id="1815" Count="0" />
+      <LineId Id="1822" Count="0" />
+      <LineId Id="1816" Count="0" />
+      <LineId Id="1819" Count="0" />
+      <LineId Id="1835" Count="6" />
+      <LineId Id="1820" Count="0" />
+      <LineId Id="1824" Count="0" />
+      <LineId Id="1817" Count="0" />
+      <LineId Id="1826" Count="0" />
+      <LineId Id="1842" Count="6" />
+      <LineId Id="1827" Count="0" />
+      <LineId Id="1825" Count="0" />
       <LineId Id="1347" Count="0" />
+      <LineId Id="1852" Count="1" />
+      <LineId Id="1855" Count="2" />
       <LineId Id="1311" Count="0" />
       <LineId Id="1313" Count="0" />
       <LineId Id="1425" Count="0" />
       <LineId Id="1550" Count="0" />
       <LineId Id="1543" Count="0" />
+      <LineId Id="1814" Count="0" />
       <LineId Id="1670" Count="0" />
-      <LineId Id="1631" Count="0" />
-      <LineId Id="1630" Count="0" />
       <LineId Id="1551" Count="0" />
+      <LineId Id="1859" Count="1" />
       <LineId Id="1421" Count="0" />
       <LineId Id="1507" Count="0" />
       <LineId Id="1426" Count="0" />
@@ -382,7 +394,8 @@ END_IF
       <LineId Id="1329" Count="2" />
       <LineId Id="1136" Count="2" />
       <LineId Id="9" Count="0" />
-      <LineId Id="236" Count="7" />
+      <LineId Id="236" Count="1" />
+      <LineId Id="240" Count="3" />
       <LineId Id="2" Count="0" />
     </LineIds>
   </POU>
