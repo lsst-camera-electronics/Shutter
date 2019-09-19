@@ -94,6 +94,7 @@ CASE eCurrentState OF
 		END_IF
 		IF fbExpoTimer.Q THEN 
 			eNextState := E_StatesProd.Traveling;
+			stOutTimer.sequence:=stOutTimer.sequence+1;
 		END_IF
 		d := d+1;
 	
@@ -163,6 +164,7 @@ END_CASE]]></ST>
       <LineId Id="385" Count="0" />
       <LineId Id="83" Count="2" />
       <LineId Id="218" Count="0" />
+      <LineId Id="470" Count="0" />
       <LineId Id="168" Count="0" />
       <LineId Id="330" Count="0" />
       <LineId Id="169" Count="0" />

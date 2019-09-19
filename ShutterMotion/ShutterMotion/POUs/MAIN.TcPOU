@@ -62,13 +62,14 @@ VAR
 	stCalibDone_rtrig	: R_TRIG;
 	
 	//TestVar
-	a,b,c,d,e,f,g, h: INT;
-	num : ARRAY [0..14] OF INT;
-	i : int;
-	fbEL1259Read : FB_EcCoESdoRead;
-	testInt : INT;
-	tTimeTest : T_DCTIME64;
-	
+	DCtime						: T_DCTIME64;
+	nTestEventTime	AT %I*		: UDINT; //unit in nanosecond 
+	nTestEventTimeSaved			: T_DCTIME64;
+	nTestEventTimeSavedAppend	: T_DCTIME64;
+	nTestNumOfInputs AT %I*		: USINT;
+	bTestInputEventState AT %I*	: BOOL;
+	bTestInputEventStateSaved	: BOOL;
+	a ,b: int;
 END_VAR
 VAR CONSTANT
 	//Will change later once motionProfile and version are decided
@@ -80,7 +81,6 @@ END_VAR]]></Declaration>
 stAxis[GVL.cXP].axisRef.ReadStatus();
 stAxis[GVL.cXM].axisRef.ReadStatus();
 
-tTimeTest := F_GetCurDcTaskTime64();
 ////////////////////////////////////////////////////////////////////
 //Shutter State Machine
 ////////////////////////////////////////////////////////////////////
@@ -232,7 +232,6 @@ ELSIF F_HaveDifferentIDs( inHomeAxis, ackHomeAxis) THEN
 	END_IF
 	
 ELSIF F_HaveDifferentIDs( inMoveAxisAbsolute, ackMoveAxisAbsolute) THEN
-	h := h+1;
 	ackMoveAxisAbsolute :=  inMoveAxisAbsolute;	
 	IF ackMoveAxisAbsolute.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
@@ -385,7 +384,7 @@ END_IF
 fbTracking(stAxis:=stAxis, eCommand:=eCommand, bMotionDone:=fbShutterSM.bMotionDone, stOutMotionDone=>outMotionDone);
 
 (*shutter protection module*)
-//fbProtect(stAxis := stAxis, bAuxElxPermit := bAuxElxPermit);
+//fbProtect(stAxis := stAxis, bAuxElxPermit := bAuxElxPermit, fbShutterSM:=fbShutterSM);
 	
 (*
 //write persistent data to file every second
@@ -397,12 +396,25 @@ ELSE
 END_IF
 *)
 
+IF nTestNumOfInputs.0 THEN
+	DCtime				:= F_GetCurDcTaskTime64();
+	nTestEventTimeSaved := nTestEventTime;
+	nTestEventTimeSavedAppend := nTestEventTimeSaved + (DCtime AND 16#FFFF_FFFF_0000_0000);
+
+	IF nTestEventTimeSavedAppend>DCtime THEN
+		nTestEventTimeSavedAppend := nTestEventTimeSavedAppend - 16#1_0000_0000;
+		a:=a+1;
+	END_IF 
+	bTestInputEventStateSaved := bTestInputEventState;
+	b:=b+1;
+	
+END_IF
+
 ]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
       <LineId Id="869" Count="1" />
       <LineId Id="779" Count="0" />
-      <LineId Id="1989" Count="0" />
       <LineId Id="1984" Count="0" />
       <LineId Id="2099" Count="22" />
       <LineId Id="1985" Count="0" />
@@ -510,7 +522,6 @@ END_IF
       <LineId Id="1170" Count="0" />
       <LineId Id="1166" Count="0" />
       <LineId Id="834" Count="0" />
-      <LineId Id="2065" Count="0" />
       <LineId Id="755" Count="0" />
       <LineId Id="774" Count="0" />
       <LineId Id="1172" Count="0" />
@@ -630,7 +641,19 @@ END_IF
       <LineId Id="983" Count="0" />
       <LineId Id="315" Count="0" />
       <LineId Id="314" Count="0" />
+      <LineId Id="2195" Count="0" />
       <LineId Id="316" Count="0" />
+      <LineId Id="2290" Count="0" />
+      <LineId Id="2281" Count="0" />
+      <LineId Id="2285" Count="1" />
+      <LineId Id="2282" Count="0" />
+      <LineId Id="2287" Count="0" />
+      <LineId Id="2365" Count="0" />
+      <LineId Id="2288" Count="0" />
+      <LineId Id="2283" Count="0" />
+      <LineId Id="2276" Count="0" />
+      <LineId Id="2280" Count="0" />
+      <LineId Id="2278" Count="1" />
       <LineId Id="318" Count="0" />
       <LineId Id="324" Count="0" />
     </LineIds>

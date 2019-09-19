@@ -42,10 +42,10 @@ VAR_GLOBAL CONSTANT
 	cBrakeOn		: BOOL	:= FALSE;
 	cScanVel		: LREAL := 60;
 	cHomeVel		: LREAL	:= 3;
-	cCalibrateVel	: LREAL	:= 300; //change back to 100;
+	cCalibrateVel	: LREAL	:= 100;
 	cPositionVel	: LREAL := 300;
 	cPosStart		: LREAL := 0;
-	cPosEnd			: LREAL := 751; //this will need to change for production once keyance snesors are in
+	cPosEnd			: LREAL := 750.76; //this will need to change for production once keyance snesors are in
 	cHomeOffSetXP	: LREAL	:= (cPosStart+35); //this will need to change for production once keyance snesors are in
 	cHomeOffSetXM	: LREAL	:= (cPosEnd-84);//this will need to change for production once keyance snesors are in
 	

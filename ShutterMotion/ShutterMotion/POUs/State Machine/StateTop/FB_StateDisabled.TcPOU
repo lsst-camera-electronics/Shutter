@@ -18,8 +18,8 @@ END_VAR
 	bTopEntry := FALSE;
 END_IF	
 	
-stAxis[GVL.cXP].mcPower(Axis := stAxis[GVL.cXP].axisRef, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE);
-stAxis[GVL.cXM].mcPower(Axis := stAxis[GVL.cXM].axisRef, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE);	
+stAxis[GVL.cXP].mcPower(Axis := stAxis[GVL.cXP].axisRef, Enable_Positive := FALSE, Enable_Negative := FALSE);
+stAxis[GVL.cXM].mcPower(Axis := stAxis[GVL.cXM].axisRef, Enable_Positive := FALSE, Enable_Negative := FALSE);	
 stAxis[GVL.cXP].mcHome(Axis := stAxis[GVL.cXP].axisRef, Execute := FALSE);
 stAxis[GVL.cXM].mcHome(Axis := stAxis[GVL.cXP].axisRef, Execute := FALSE);
 stAxis[GVL.cXP].mcReset(Axis := stAxis[GVL.cXP].axisRef, Execute := FALSE);

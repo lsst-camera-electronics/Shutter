@@ -194,7 +194,7 @@
 		<ImageData Id="1008">424de6000000000000007600000028000000100000000e000000010004000000000000000000c30e0000c30e0000000000000000000000ff4c00c0c0c000808080000003ff0000000000002878000000ff0000001600ffffff0000ff000000000000000000000000000000000000000000000000000088888888888222228888888888814142444444444444444445665456654566544444646446764464444464644646446445665454454544544444646446464464444464644646446445665456654566544444444444444444999999999991414299999999999161629999999999911112</ImageData>
 		<ImageData Id="1009">424dd6020000000000003600000028000000100000000e0000000100180000000000a0020000c40e0000c40e00000000000000000000ff00ffff00ffff00ffff00ffff00ffff00ff808080808080808080ff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffc0c0c0c0c0c0808080ff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffc0c0c0c0c0c0808080ff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffc0c0c0c0c0c0808080ff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffc0c0c0c0c0c0808080ff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffc0c0c0c0c0c0808080ff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffff00ffc0c0c0c0c0c0808080ff00ffff00ffff00ffff00ffff00ffff00ffff00ff007fff007fff007fff007fff007fff007fffc0c0c0c0c0c0808080ff00ffff00ffff00ffff00ffff00ffff00ffff00ff007fff007fff007fff007fff007fff007fffc0c0c0c0c0c0808080ff00ffff00ffff00ffff00ffff00ffff00ffff00ff007fff007fff007fff007fff007fff007fffc0c0c0c0c0c0808080ff00ffff00ffff00ffff00ffff00ffff00ffff00ff007fff007fff007fff007fff007fff007fffc0c0c0c0c0c0808080ff00ffff00ffff00ffff00ffff00ffff00ffff00ff007fff007fff007fff007fff007fff007fffc0c0c0c0c0c0808080ff00ffff00ffff00ffff00ffff00ffff00ffff00ff007fff007fff007fff007fff007fff007fffc0c0c0c0c0c0808080ff00ffff00ffff00ffff00ffff00ffff00ffff00ff007fff007fff007fff007fff007fff007fffc0c0c0c0c0c0808080ff00ffff00ffff00ffff00ffff00ffff00ffff00ff</ImageData>
 	</ImageDatas>
-	<Device Id="1" DevType="111" DevFlags="#x0003" AmsPort="28673" AmsNetId="5.48.66.18.2.1" RemoteName="Device 1 (EtherCAT)">
+	<Device Id="1" DevType="111" DevFlags="#x0003" AmsPort="28673" AmsNetId="5.54.106.120.2.1" RemoteName="Device 1 (EtherCAT)">
 		<Name>__FILENAME__</Name>
 		<AddressInfo>
 			<Ccat>
@@ -2701,7 +2701,7 @@
 					<Fmmu>0000000000000000001900010100000002000000000000000000000000000000</Fmmu>
 					<Fmmu>00000000000000000d0800010100000003000000000000000000000000000000</Fmmu>
 					<BootStrapData>0010f400f410f400</BootStrapData>
-					<DcData>000300000000000000000000000000000300ffff000000000000000000000000</DcData>
+					<DcData>0003000040420f0000000000000000000000ffff000000000000000000000000</DcData>
 					<DcMode>4443000000000000000000000000000044432d53796e6368726f6e00000000000000000000000000000000000000000040420f000000000000000000ffff00030000000000000000000000000000000000000000000000000000000000000000</DcMode>
 					<Pdo Name="MTO Inputs Channel 1" Index="#x1a00" Flags="#x0010" SyncMan="3">
 						<Entry Name="Status__Output short circuit" Index="#x6000" Sub="#x01" Flags="#x00000020">
@@ -3030,7 +3030,7 @@
 						</Entry>
 					</Pdo>
 					<Pdo Name="MTI Inputs 2x Channel 1" Index="#x1a0a" Flags="#x0010" SyncMan="3">
-						<Entry Name="Status__No of input events" Index="#x6081" Sub="#x01">
+						<Entry Name="Status__No of input events" Index="#x6081" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
 						<Entry Name="Status__Input state" Index="#x6081" Sub="#x09">
@@ -3068,7 +3068,7 @@
 						</Entry>
 					</Pdo>
 					<Pdo Name="MTI Inputs 1x Channel 1" Index="#x1a0b" Flags="#x0010">
-						<Entry Name="Status__No of input events" Index="#x6081" Sub="#x01">
+						<Entry Name="Status__No of input events" Index="#x6081" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
 						<Entry Name="Status__Input state" Index="#x6081" Sub="#x09" Flags="#x00000020">
@@ -3242,7 +3242,7 @@
 						</Entry>
 					</Pdo>
 					<Pdo Name="MTI Inputs 2x Channel 2" Index="#x1a0e" Flags="#x0010" SyncMan="3">
-						<Entry Name="Status__No of input events" Index="#x6091" Sub="#x01">
+						<Entry Name="Status__No of input events" Index="#x6091" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
 						<Entry Name="Status__Input state" Index="#x6091" Sub="#x09">
@@ -3263,7 +3263,7 @@
 						<Entry Name="Status__Input order feedback" Index="#x6091" Sub="#x12">
 							<Type>USINT</Type>
 						</Entry>
-						<Entry Name="Inputs__Input event state 1" Index="#x6091" Sub="#x21">
+						<Entry Name="Inputs__Input event state 1" Index="#x6091" Sub="#x21" Flags="#x00000020">
 							<Type>BIT</Type>
 						</Entry>
 						<Entry Name="Inputs__Input event state 2" Index="#x6091" Sub="#x22">
@@ -3280,7 +3280,7 @@
 						</Entry>
 					</Pdo>
 					<Pdo Name="MTI Inputs 1x Channel 2" Index="#x1a0f" Flags="#x0010">
-						<Entry Name="Status__No of input events" Index="#x6091" Sub="#x01">
+						<Entry Name="Status__No of input events" Index="#x6091" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
 						<Entry Name="Status__Input state" Index="#x6091" Sub="#x09" Flags="#x00000020">
@@ -3454,10 +3454,10 @@
 						</Entry>
 					</Pdo>
 					<Pdo Name="MTI Inputs 2x Channel 3" Index="#x1a12" Flags="#x0010" SyncMan="3">
-						<Entry Name="Status__No of input events" Index="#x60a1" Sub="#x01">
+						<Entry Name="Status__No of input events" Index="#x60a1" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
-						<Entry Name="Status__Input state" Index="#x60a1" Sub="#x09">
+						<Entry Name="Status__Input state" Index="#x60a1" Sub="#x09" Flags="#x00000020">
 							<Type>BIT</Type>
 						</Entry>
 						<Entry Name="Status__Input buffer overflow" Index="#x60a1" Sub="#x0a">
@@ -3475,7 +3475,7 @@
 						<Entry Name="Status__Input order feedback" Index="#x60a1" Sub="#x12">
 							<Type>USINT</Type>
 						</Entry>
-						<Entry Name="Inputs__Input event state 1" Index="#x60a1" Sub="#x21">
+						<Entry Name="Inputs__Input event state 1" Index="#x60a1" Sub="#x21" Flags="#x00000020">
 							<Type>BIT</Type>
 						</Entry>
 						<Entry Name="Inputs__Input event state 2" Index="#x60a1" Sub="#x22">
@@ -3492,7 +3492,7 @@
 						</Entry>
 					</Pdo>
 					<Pdo Name="MTI Inputs 1x Channel 3" Index="#x1a13" Flags="#x0010">
-						<Entry Name="Status__No of input events" Index="#x60a1" Sub="#x01">
+						<Entry Name="Status__No of input events" Index="#x60a1" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
 						<Entry Name="Status__Input state" Index="#x60a1" Sub="#x09" Flags="#x00000020">
@@ -3666,7 +3666,7 @@
 						</Entry>
 					</Pdo>
 					<Pdo Name="MTI Inputs 2x Channel 4" Index="#x1a16" Flags="#x0010" SyncMan="3">
-						<Entry Name="Status__No of input events" Index="#x60b1" Sub="#x01">
+						<Entry Name="Status__No of input events" Index="#x60b1" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
 						<Entry Name="Status__Input state" Index="#x60b1" Sub="#x09">
@@ -3687,7 +3687,7 @@
 						<Entry Name="Status__Input order feedback" Index="#x60b1" Sub="#x12">
 							<Type>USINT</Type>
 						</Entry>
-						<Entry Name="Inputs__Input event state 1" Index="#x60b1" Sub="#x21">
+						<Entry Name="Inputs__Input event state 1" Index="#x60b1" Sub="#x21" Flags="#x00000020">
 							<Type>BIT</Type>
 						</Entry>
 						<Entry Name="Inputs__Input event state 2" Index="#x60b1" Sub="#x22">
@@ -3704,7 +3704,7 @@
 						</Entry>
 					</Pdo>
 					<Pdo Name="MTI Inputs 1x Channel 4" Index="#x1a17" Flags="#x0010">
-						<Entry Name="Status__No of input events" Index="#x60b1" Sub="#x01">
+						<Entry Name="Status__No of input events" Index="#x60b1" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
 						<Entry Name="Status__Input state" Index="#x60b1" Sub="#x09" Flags="#x00000020">
@@ -3878,7 +3878,7 @@
 						</Entry>
 					</Pdo>
 					<Pdo Name="MTI Inputs 2x Channel 5" Index="#x1a1a" Flags="#x0010" SyncMan="3">
-						<Entry Name="Status__No of input events" Index="#x60c1" Sub="#x01">
+						<Entry Name="Status__No of input events" Index="#x60c1" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
 						<Entry Name="Status__Input state" Index="#x60c1" Sub="#x09">
@@ -3899,7 +3899,7 @@
 						<Entry Name="Status__Input order feedback" Index="#x60c1" Sub="#x12">
 							<Type>USINT</Type>
 						</Entry>
-						<Entry Name="Inputs__Input event state 1" Index="#x60c1" Sub="#x21">
+						<Entry Name="Inputs__Input event state 1" Index="#x60c1" Sub="#x21" Flags="#x00000020">
 							<Type>BIT</Type>
 						</Entry>
 						<Entry Name="Inputs__Input event state 2" Index="#x60c1" Sub="#x22">
@@ -3916,7 +3916,7 @@
 						</Entry>
 					</Pdo>
 					<Pdo Name="MTI Inputs 1x Channel 5" Index="#x1a1b" Flags="#x0010">
-						<Entry Name="Status__No of input events" Index="#x60c1" Sub="#x01">
+						<Entry Name="Status__No of input events" Index="#x60c1" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
 						<Entry Name="Status__Input state" Index="#x60c1" Sub="#x09" Flags="#x00000020">
@@ -4090,7 +4090,7 @@
 						</Entry>
 					</Pdo>
 					<Pdo Name="MTI Inputs 2x Channel 6" Index="#x1a1e" Flags="#x0010" SyncMan="3">
-						<Entry Name="Status__No of input events" Index="#x60d1" Sub="#x01">
+						<Entry Name="Status__No of input events" Index="#x60d1" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
 						<Entry Name="Status__Input state" Index="#x60d1" Sub="#x09">
@@ -4111,7 +4111,7 @@
 						<Entry Name="Status__Input order feedback" Index="#x60d1" Sub="#x12">
 							<Type>USINT</Type>
 						</Entry>
-						<Entry Name="Inputs__Input event state 1" Index="#x60d1" Sub="#x21">
+						<Entry Name="Inputs__Input event state 1" Index="#x60d1" Sub="#x21" Flags="#x00000020">
 							<Type>BIT</Type>
 						</Entry>
 						<Entry Name="Inputs__Input event state 2" Index="#x60d1" Sub="#x22">
@@ -4128,7 +4128,7 @@
 						</Entry>
 					</Pdo>
 					<Pdo Name="MTI Inputs 1x Channel 6" Index="#x1a1f" Flags="#x0010">
-						<Entry Name="Status__No of input events" Index="#x60d1" Sub="#x01">
+						<Entry Name="Status__No of input events" Index="#x60d1" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
 						<Entry Name="Status__Input state" Index="#x60d1" Sub="#x09" Flags="#x00000020">
@@ -4302,7 +4302,7 @@
 						</Entry>
 					</Pdo>
 					<Pdo Name="MTI Inputs 2x Channel 7" Index="#x1a22" Flags="#x0010" SyncMan="3">
-						<Entry Name="Status__No of input events" Index="#x60e1" Sub="#x01">
+						<Entry Name="Status__No of input events" Index="#x60e1" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
 						<Entry Name="Status__Input state" Index="#x60e1" Sub="#x09">
@@ -4323,10 +4323,10 @@
 						<Entry Name="Status__Input order feedback" Index="#x60e1" Sub="#x12">
 							<Type>USINT</Type>
 						</Entry>
-						<Entry Name="Inputs__Input event state 1" Index="#x60e1" Sub="#x21">
+						<Entry Name="Inputs__Input event state 1" Index="#x60e1" Sub="#x21" Flags="#x00000020">
 							<Type>BIT</Type>
 						</Entry>
-						<Entry Name="Inputs__Input event state 2" Index="#x60e1" Sub="#x22">
+						<Entry Name="Inputs__Input event state 2" Index="#x60e1" Sub="#x22" Flags="#x00000020">
 							<Type>BIT</Type>
 						</Entry>
 						<Entry>
@@ -4340,7 +4340,7 @@
 						</Entry>
 					</Pdo>
 					<Pdo Name="MTI Inputs 1x Channel 7" Index="#x1a23" Flags="#x0010">
-						<Entry Name="Status__No of input events" Index="#x60e1" Sub="#x01">
+						<Entry Name="Status__No of input events" Index="#x60e1" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
 						<Entry Name="Status__Input state" Index="#x60e1" Sub="#x09" Flags="#x00000020">
@@ -4514,7 +4514,7 @@
 						</Entry>
 					</Pdo>
 					<Pdo Name="MTI Inputs 2x Channel 8" Index="#x1a26" Flags="#x0010" SyncMan="3">
-						<Entry Name="Status__No of input events" Index="#x60f1" Sub="#x01">
+						<Entry Name="Status__No of input events" Index="#x60f1" Sub="#x01" Flags="#x00000020">
 							<Type>USINT</Type>
 						</Entry>
 						<Entry Name="Status__Input state" Index="#x60f1" Sub="#x09">
