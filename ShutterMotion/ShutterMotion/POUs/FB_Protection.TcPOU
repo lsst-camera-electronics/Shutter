@@ -4,11 +4,11 @@
     <Declaration><![CDATA[FUNCTION_BLOCK FB_Protection
 VAR_IN_OUT
 	stAxis  	: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;
+	eCommand 	: E_Commands;
 END_VAR
 VAR_INPUT
 	bAuxElxPermit	: BOOL;	
-	fbShutterSM : FB_ShutterSM;
-	reset : BOOL;
+	nState : DINT;
 END_VAR
 VAR_OUTPUT
 
@@ -17,40 +17,60 @@ VAR
 	checkHomed_TON 	: TON;
 	
 	//for use end of travel protection
-	eotDistTravel	: ARRAY [GVL.cXP .. GVL.cXM, lmHome .. lmDeploy] OF LREAL;
-	eotDistStart	: ARRAY [GVL.cXP .. GVL.cXM, lmHome .. lmDeploy] OF LREAL;
-	eotRtrig		: ARRAY [GVL.cXP .. GVL.cXM, lmHome .. lmDeploy] OF R_Trig;
+	fEotDistTravel	: ARRAY [GVL.cXP .. GVL.cXM, cLmHome .. cLmDeploy] OF LREAL;
+	fEotDistStart	: ARRAY [GVL.cXP .. GVL.cXM, cLmHome .. cLmDeploy] OF LREAL;
+	fbEotRtrig		: ARRAY [GVL.cXP .. GVL.cXM, cLmHome .. cLmDeploy] OF R_Trig;
 	
 	//test int
-	a,b,c,d,e,f,g,h,i,j : INT;
+	a,b,c,d,e,f,g,h,i,j,k, l, p : INT;
 END_VAR
 
 VAR CONSTANT
-	lmHome 		: INT 	:= 0;
-	lmDeploy	: INT 	:= 1;
-	eotTravelLm	: LREAL := 2;
-	diffLimit 	: LREAL	:= 5;
+	cLmHome 		: INT 	:= 0;
+	cLmDeploy		: INT 	:= 1;
+	cEotTravelLm	: LREAL := 4;
+	cDiffLimit 		: LREAL	:= 5;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[(*
 This function block contains the logic for the shutter system protection. 
 *)
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(*Reset Errors*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+IF (eCommand=E_Commands.reset) THEN
+	
+	stAxis[GVL.cXP].fPosDiffAtTrip := 0;
+	stAxis[GVL.cXM].fPosDiffAtTrip := 0;
+	fEotDistStart[GVL.cXP,cLmHome] := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
+	fEotDistStart[GVL.cXP,cLmDeploy] := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
+	fEotDistStart[GVL.cXM,cLmHome] := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
+	fEotDistStart[GVL.cXM,cLmDeploy] := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
+END_IF
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (*Checks permit from auxiliary electronic subsystem*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 IF NOT bAuxElxPermit THEN
 	(*
 	stAxis[GVL.cXP].mcStop(Axis:=stAxis[GVL.cXP].axisRef, Execute:=TRUE);
 	stAxis[GVL.cXM].mcStop(Axis:=stAxis[GVL.cXM].axisRef, Execute:=TRUE);
 	*)
+	stAxis[GVL.cXP].mcStop(Axis := stAxis[GVL.cXP].axisRef, Deceleration := 29630, Jerk := 263374.5, Execute := TRUE);
+	stAxis[GVL.cXM].mcStop(Axis := stAxis[GVL.cXM].axisRef, Deceleration := 29630, Jerk := 263374.5, Execute := TRUE);
 	stAxis[GVL.cXP].mcPower(Axis := stAxis[GVL.cXP].axisRef, Enable_Positive := FALSE, Enable_Negative := FALSE);
 	stAxis[GVL.cXM].mcPower(Axis := stAxis[GVL.cXM].axisRef, Enable_Positive := FALSE, Enable_Negative := FALSE); 
 	stAxis[GVL.cXP].bBrake := GVL.cBrakeOn;
 	stAxis[GVL.cXM].bBrake := GVL.cBrakeOn;
 	a := a+1;
-END_IF	
+ELSE
+	stAxis[GVL.cXP].mcStop(Axis := stAxis[GVL.cXP].axisRef, Deceleration := 29630, Jerk := 263374.5, Execute := FALSE);
+	stAxis[GVL.cXM].mcStop(Axis := stAxis[GVL.cXM].axisRef, Deceleration := 29630, Jerk := 263374.5, Execute := FALSE);
+END_IF
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (*Check brake status - prevents motion if motion is commanded while brake is engaged*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 IF stAxis[GVL.cXP].bBrake = GVL.cBrakeOn OR stAxis[GVL.cXM].bBrake = GVL.cBrakeOn THEN
 	IF stAxis[GVL.cXP].axisRef.Status.Moving OR stAxis[GVL.cXM].axisRef.Status.Moving THEN
 		stAxis[GVL.cXP].mcPower(Axis := stAxis[GVL.cXP].axisRef, Enable_Positive := FALSE, Enable_Negative := FALSE);
@@ -61,26 +81,35 @@ IF stAxis[GVL.cXP].bBrake = GVL.cBrakeOn OR stAxis[GVL.cXM].bBrake = GVL.cBrakeO
 	c:=c+1;
 END_IF
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (*Check position differences - Compare hall switch and motor encoder position. Stop motion if greater than diffLimit.*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(*
 IF stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated THEN
-	IF ABS(stAxis[GVL.cXP].fPosDiffAtTrip)>diffLimit OR ABS(stAxis[GVL.cXM].fPosDiffAtTrip)>diffLimit THEN
+	IF ABS(stAxis[GVL.cXP].fPosDiffAtTrip)>cDiffLimit OR ABS(stAxis[GVL.cXM].fPosDiffAtTrip)>cDiffLimit THEN
 		//stAxis[GVL.cXP].mcStop(Axis := stAxis[GVL.cXP].axisRef, Execute := TRUE);
 		//stAxis[GVL.cXM].mcStop(Axis := stAxis[GVL.cXM].axisRef, Execute := TRUE);
-		stAxis[GVL.cXP].mcPower(Axis := stAxis[GVL.cXP].axisRef, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE);
-		stAxis[GVL.cXM].mcPower(Axis := stAxis[GVL.cXM].axisRef, Enable := TRUE, Enable_Positive := FALSE, Enable_Negative := FALSE); 
+		stAxis[GVL.cXP].mcPower(Axis := stAxis[GVL.cXP].axisRef, Enable_Positive := FALSE, Enable_Negative := FALSE);
+		stAxis[GVL.cXM].mcPower(Axis := stAxis[GVL.cXM].axisRef, Enable_Positive := FALSE, Enable_Negative := FALSE); 
+		stAxis[GVL.cXP].bBrake := GVL.cBrakeOn;
+		stAxis[GVL.cXM].bBrake := GVL.cBrakeOn;
 		//////// --set error here-- //////////////////////////////////////////////////////////////////////////////////////////
 		d:=d+1;
 	END_IF
 	e:=e+1;
 END_IF
-
+*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (*Check exposure time - If less than 100 ms, prevent exposure command from running*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (*
 	Need to define how exposure is set before this section can be done
 	--code here--
 *)
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (*Check calibration status - If both blades not calibrated, speed cannot be higher than 200 mms.*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 IF NOT stAxis[GVL.cXP].bIsCalibrated AND NOT stAxis[GVL.cXM].bIsCalibrated THEN
 	(*
 	need to define how speed is set before this section can be done
@@ -90,81 +119,78 @@ END_IF
 
 (*Check home status - Prevents all other motion if not homed*)
 IF NOT stAxis[GVL.cXP].axisRef.Status.Homed OR NOT stAxis[GVL.cXM].axisRef.Status.Homed THEN
-	IF fbShutterSM.nSMState<>E_StatesMaint.Calibrating THEN
-		IF stAxis[GVL.cXP].axisRef.Status.Moving OR stAxis[GVL.cXM].axisRef.Status.Moving THEN
-			 //stAxis[GVL.cXP].mcStop(Axis:=stAxis[GVL.cXP].axisRef, Execute:=TRUE);
-			 //stAxis[GVL.cXM].mcStop(Axis:=stAxis[GVL.cXM].axisRef, Execute:=TRUE);
-			stAxis[GVL.cXP].mcPower(Axis := stAxis[GVL.cXP].axisRef, Enable_Positive := FALSE, Enable_Negative := FALSE);
-			stAxis[GVL.cXM].mcPower(Axis := stAxis[GVL.cXM].axisRef, Enable_Positive := FALSE, Enable_Negative := FALSE); 
-			 //////// --set error here-- //////////////////////////////////////////////////////////////////////////////////////////
-			 f:=f+1;
-		 END_IF
+	IF eCommand=E_Commands.calibrate OR eCommand=E_Commands.closeShutter OR eCommand=E_Commands.goToProd 
+		OR eCommand=E_Commands.moveAxisAbsolute OR eCommand=E_Commands.moveAxisRelative 
+		OR eCommand=E_Commands.openShutter OR eCommand=E_Commands.takeExposure THEN
+			p:=p+1;
 	END_IF
-	 g:=g+1;
 END_IF
 
-
-(* limit switch protection no enabled; require all limit switch to function ....	
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(* limit switch protection no enabled; require all limit switch to function ....	*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //End of travel stop
-eotRtrig[XP,lmHome](CLK := axis[XM].limitHome);
-eotRtrig[XP,lmDeploy](CLK := axis[XP].limitDeployed);
-eotRtrig[XM,lmHome](CLK := axis[XM].limitHome);
-eotRtrig[XM,lmDeploy](CLK := axis[XM].limitDeployed);
-IF eotRtrig[XP,lmHome].Q THEN
-	eotDistStart[XP,lmHome] := axis[XP].axisRef.NcToPlc.ActPos;
+fbEotRtrig[GVL.cXP,cLmHome](CLK := stAxis[GVL.cXP].bLimitHome);
+fbEotRtrig[GVL.cXP,cLmDeploy](CLK := stAxis[GVL.cXP].bLimitDeployed);
+fbEotRtrig[GVL.cXM,cLmHome](CLK := stAxis[GVL.cXM].bLimitHome);
+fbEotRtrig[GVL.cXM,cLmDeploy](CLK := stAxis[GVL.cXM].bLimitDeployed);
+IF fbEotRtrig[GVL.cXP,cLmHome].Q THEN
+	fEotDistStart[GVL.cXP,cLmHome] := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 END_IF
-IF eotRtrig[XP,lmDeploy].Q THEN
-	eotDistStart[XP,lmDeploy] := axis[XP].axisRef.NcToPlc.ActPos;
+IF fbEotRtrig[GVL.cXP,cLmDeploy].Q THEN
+	fEotDistStart[GVL.cXP,cLmDeploy] := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 END_IF
-IF eotRtrig[XM,lmHome].Q THEN
-	eotDistStart[XM,lmHome] := axis[XM].axisRef.NcToPlc.ActPos;
+IF fbEotRtrig[GVL.cXM,cLmHome].Q THEN
+	fEotDistStart[GVL.cXM,cLmHome] := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 END_IF
-IF eotRtrig[XM,lmDeploy].Q THEN
-	eotDistStart[XM,lmDeploy] := axis[XM].axisRef.NcToPlc.ActPos;
+IF fbEotRtrig[GVL.cXM,cLmDeploy].Q THEN
+	fEotDistStart[GVL.cXM,cLmDeploy] := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 END_IF									
 
-IF axis[XP].limitHome THEN
-	eotDistTravel[XP,lmHome] := eotDistStart[XP,lmHome] - axis[XP].axisRef.NcToPlc.ActPos;
-	IF eotDistTravel[XP,lmHome] > eotTravelLm THEN
-		axis[XP].mcPower(Axis := axis[XP].axisRef, Enable_Negative := FALSE);
+IF stAxis[GVL.cXP].bLimitHome THEN
+	fEotDistTravel[GVL.cXP,cLmHome] := fEotDistStart[GVL.cXP,cLmHome] - stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
+	IF fEotDistTravel[GVL.cXP,cLmHome] > cEotTravelLm THEN
+		stAxis[GVL.cXP].mcPower(Axis := stAxis[GVL.cXP].axisRef, Enable_Negative := FALSE);
+		h:=h+1;
 	END_IF
-ELSE
-	axis[XP].mcPower(Axis := axis[XP].axisRef, Enable_Negative := TRUE);
 END_IF
 
-IF axis[XP].limitDeployed THEN
-	eotDistTravel[XP,lmDeploy] := axis[XP].axisRef.NcToPlc.ActPos - eotDistStart[XP,lmDeploy];
-	IF eotDistTravel[XP,lmHome] > eotTravelLm THEN
-		axis[XP].mcPower(Axis := axis[XP].axisRef, Enable_Positive := FALSE);
+IF stAxis[GVL.cXP].bLimitDeployed THEN
+	fEotDistTravel[GVL.cXP,cLmDeploy] := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - fEotDistStart[GVL.cXP,cLmDeploy];
+	IF fEotDistTravel[GVL.cXP,cLmHome] > cEotTravelLm THEN
+		stAxis[GVL.cXP].mcPower(Axis := stAxis[GVL.cXP].axisRef, Enable_Positive := FALSE);
+		i:=i+1;
 	END_IF
-ELSE
-	axis[XP].mcPower(Axis := axis[XP].axisRef, Enable_Positive := TRUE);
 END_IF
 
 
-IF axis[XM].limitHome THEN
-	eotDistTravel[XM,lmHome] := axis[XM].axisRef.NcToPlc.ActPos - eotDistStart[XM,lmHome];
-	IF eotDistTravel[XM,lmHome] > eotTravelLm THEN
-		axis[XM].mcPower(Axis := axis[XM].axisRef, Enable_Positive := FALSE);
+IF stAxis[GVL.cXM].bLimitHome THEN
+	fEotDistTravel[GVL.cXM,clmHome] := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - fEotDistStart[GVL.cXM,cLmHome];
+	IF fEotDistTravel[GVL.cXM,cLmHome] > cEotTravelLm THEN
+		stAxis[GVL.cXM].mcPower(Axis := stAxis[GVL.cXM].axisRef, Enable_Positive := FALSE);
+		j:=j+1;
 	END_IF
-ELSE
-	axis[XM].mcPower(Axis := axis[XM].axisRef, Enable_Positive := TRUE);
 END_IF
 
-IF axis[XM].limitDeployed THEN
-	eotDistTravel[XM,lmDeploy] := eotDistStart[XM,lmDeploy] - axis[XM].axisRef.NcToPlc.ActPos;
-	IF eotDistTravel[XM,lmHome] > eotTravelLm THEN
-		axis[XM].mcPower(Axis := axis[XM].axisRef, Enable_Negative := FALSE);
+IF stAxis[GVL.cXM].bLimitDeployed THEN
+	fEotDistTravel[GVL.cXM,cLmDeploy] := fEotDistStart[GVL.cXM,cLmDeploy] - stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
+	IF fEotDistTravel[GVL.cXM,cLmHome] > cEotTravelLm THEN
+		stAxis[GVL.cXM].mcPower(Axis := stAxis[GVL.cXM].axisRef, Enable_Negative := FALSE);
+		k:=k+1;
 	END_IF
-ELSE
-	axis[XM].mcPower(Axis := axis[XM].axisRef, Enable_Negative := TRUE);
 END_IF
 
-*)
 
-
-
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(*Check for NC errors. If any, disable movement for both motors*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+IF stAxis[GVL.cXP].axisRef.Status.Error OR stAxis[GVL.cXM].axisRef.Status.Error THEN
+	stAxis[GVL.cXP].mcPower(Axis := stAxis[GVL.cXP].axisRef, Enable_Positive := FALSE, Enable_Negative := FALSE);
+	stAxis[GVL.cXM].mcPower(Axis := stAxis[GVL.cXM].axisRef, Enable_Positive := FALSE, Enable_Negative := FALSE); 
+	stAxis[GVL.cXP].bBrake := GVL.cBrakeOn;
+	stAxis[GVL.cXM].bBrake := GVL.cBrakeOn;
+	l:=l+1;
+END_IF
 
 
 
@@ -182,38 +208,66 @@ END_IF
     <LineIds Name="FB_Protection">
       <LineId Id="178" Count="1" />
       <LineId Id="177" Count="0" />
+      <LineId Id="585" Count="1" />
+      <LineId Id="583" Count="0" />
+      <LineId Id="595" Count="1" />
+      <LineId Id="584" Count="0" />
+      <LineId Id="587" Count="0" />
+      <LineId Id="592" Count="2" />
+      <LineId Id="566" Count="0" />
+      <LineId Id="544" Count="0" />
       <LineId Id="386" Count="0" />
       <LineId Id="326" Count="0" />
+      <LineId Id="545" Count="0" />
       <LineId Id="496" Count="0" />
       <LineId Id="388" Count="0" />
       <LineId Id="390" Count="0" />
-      <LineId Id="497" Count="2" />
+      <LineId Id="497" Count="0" />
+      <LineId Id="636" Count="1" />
+      <LineId Id="498" Count="1" />
       <LineId Id="394" Count="1" />
       <LineId Id="460" Count="0" />
       <LineId Id="396" Count="0" />
+      <LineId Id="639" Count="0" />
+      <LineId Id="642" Count="0" />
+      <LineId Id="640" Count="0" />
       <LineId Id="389" Count="0" />
-      <LineId Id="65" Count="2" />
-      <LineId Id="398" Count="0" />
+      <LineId Id="546" Count="0" />
+      <LineId Id="65" Count="1" />
+      <LineId Id="547" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="564" Count="0" />
       <LineId Id="71" Count="1" />
       <LineId Id="461" Count="0" />
       <LineId Id="410" Count="0" />
       <LineId Id="462" Count="0" />
       <LineId Id="399" Count="0" />
       <LineId Id="146" Count="0" />
-      <LineId Id="401" Count="4" />
+      <LineId Id="548" Count="0" />
+      <LineId Id="401" Count="1" />
+      <LineId Id="644" Count="0" />
+      <LineId Id="549" Count="0" />
+      <LineId Id="403" Count="2" />
       <LineId Id="500" Count="1" />
       <LineId Id="406" Count="0" />
+      <LineId Id="562" Count="1" />
       <LineId Id="463" Count="0" />
       <LineId Id="409" Count="0" />
       <LineId Id="464" Count="0" />
-      <LineId Id="407" Count="1" />
+      <LineId Id="407" Count="0" />
+      <LineId Id="645" Count="0" />
+      <LineId Id="550" Count="0" />
       <LineId Id="411" Count="0" />
       <LineId Id="400" Count="0" />
+      <LineId Id="551" Count="0" />
       <LineId Id="412" Count="0" />
       <LineId Id="414" Count="0" />
       <LineId Id="416" Count="0" />
       <LineId Id="413" Count="0" />
-      <LineId Id="417" Count="2" />
+      <LineId Id="553" Count="0" />
+      <LineId Id="417" Count="1" />
+      <LineId Id="554" Count="0" />
+      <LineId Id="419" Count="0" />
       <LineId Id="422" Count="0" />
       <LineId Id="425" Count="0" />
       <LineId Id="424" Count="0" />
@@ -222,19 +276,15 @@ END_IF
       <LineId Id="208" Count="0" />
       <LineId Id="355" Count="0" />
       <LineId Id="212" Count="0" />
-      <LineId Id="506" Count="0" />
-      <LineId Id="428" Count="0" />
-      <LineId Id="213" Count="0" />
-      <LineId Id="502" Count="1" />
-      <LineId Id="214" Count="0" />
-      <LineId Id="465" Count="0" />
-      <LineId Id="430" Count="0" />
-      <LineId Id="507" Count="0" />
-      <LineId Id="466" Count="0" />
+      <LineId Id="634" Count="1" />
+      <LineId Id="633" Count="0" />
+      <LineId Id="628" Count="0" />
       <LineId Id="429" Count="0" />
       <LineId Id="216" Count="0" />
-      <LineId Id="324" Count="1" />
+      <LineId Id="591" Count="0" />
+      <LineId Id="325" Count="0" />
       <LineId Id="240" Count="0" />
+      <LineId Id="542" Count="0" />
       <LineId Id="251" Count="3" />
       <LineId Id="256" Count="0" />
       <LineId Id="278" Count="10" />
@@ -242,12 +292,29 @@ END_IF
       <LineId Id="241" Count="1" />
       <LineId Id="289" Count="0" />
       <LineId Id="292" Count="1" />
-      <LineId Id="295" Count="1" />
-      <LineId Id="243" Count="0" />
-      <LineId Id="297" Count="9" />
+      <LineId Id="577" Count="0" />
+      <LineId Id="574" Count="0" />
+      <LineId Id="297" Count="5" />
+      <LineId Id="578" Count="0" />
+      <LineId Id="303" Count="0" />
+      <LineId Id="306" Count="0" />
       <LineId Id="257" Count="0" />
-      <LineId Id="307" Count="16" />
-      <LineId Id="258" Count="18" />
+      <LineId Id="307" Count="4" />
+      <LineId Id="579" Count="0" />
+      <LineId Id="312" Count="0" />
+      <LineId Id="315" Count="5" />
+      <LineId Id="580" Count="0" />
+      <LineId Id="321" Count="0" />
+      <LineId Id="258" Count="0" />
+      <LineId Id="261" Count="2" />
+      <LineId Id="556" Count="0" />
+      <LineId Id="555" Count="0" />
+      <LineId Id="264" Count="0" />
+      <LineId Id="559" Count="2" />
+      <LineId Id="557" Count="0" />
+      <LineId Id="581" Count="0" />
+      <LineId Id="558" Count="0" />
+      <LineId Id="265" Count="11" />
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>

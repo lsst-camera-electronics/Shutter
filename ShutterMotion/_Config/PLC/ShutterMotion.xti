@@ -1055,15 +1055,15 @@ External Setpoint Generation:
 					<Type GUID="{18071995-0000-0000-0000-000C00000006}">ARRAY [0..5] OF DINT</Type>
 				</Var>
 				<Var>
+					<Name>MAIN.nTestNumOfInputs</Name>
+					<Type>USINT</Type>
+				</Var>
+				<Var>
 					<Name>MAIN.nTestEventTime</Name>
 					<Comment>
 						<![CDATA[unit in nanosecond ]]>
 					</Comment>
 					<Type>UDINT</Type>
-				</Var>
-				<Var>
-					<Name>MAIN.nTestNumOfInputs</Name>
-					<Type>USINT</Type>
 				</Var>
 				<Var>
 					<Name>MAIN.bTestInputEventState</Name>
@@ -1107,6 +1107,10 @@ External Setpoint Generation:
 					<Comment>
 						<![CDATA[ 1-Brake disengaged, 0-Brake engaged ]]>
 					</Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fastStop</Name>
 					<Type>BOOL</Type>
 				</Var>
 			</Vars>
@@ -1243,6 +1247,13 @@ External Setpoint Generation:
 						<Link VarA="MAIN.stAxis[0].nInputEventTime[5]" TypeA="UDINT" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000008}" VarB="MTI Inputs 1x Channel 6^Input event time 1" RestoreInfo="ANotFound"/>
 						<Link VarA="MAIN.stAxis[0].nInputEventTime[6]" TypeA="UDINT" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000008}" VarB="MTI Inputs 1x Channel 7^Input event time 1" RestoreInfo="ANotFound"/>
 						<Link VarA="MAIN.stAxis[0].nInputEventTime[7]" TypeA="UDINT" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000008}" VarB="MTI Inputs 1x Channel 8^Input event time 1" RestoreInfo="ANotFound"/>
+					</OwnerB>
+				</OwnerA>
+			</UnrestoredVarLinks>
+			<UnrestoredVarLinks ImportTime="2019-09-24T10:53:23">
+				<OwnerA Name="InputDst" Prefix="TIPC^ShutterMotion^ShutterMotion Instance" Type="1">
+					<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 12 (EL1259)">
+						<Link VarA="MAIN.bAuxElxPermit" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTI Inputs 2x Channel 8^Status^Input state" Size="1" RestoreInfo="ANotFound"/>
 					</OwnerB>
 				</OwnerA>
 			</UnrestoredVarLinks>

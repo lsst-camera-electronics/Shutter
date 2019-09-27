@@ -10,8 +10,8 @@ VAR
 	fbShutterSM	: FB_ShutterSM;
 	
 	//external input...... need to link
-	bAuxElxPermit	: BOOL;
-	fMotorTemp		: LREAL;
+	bAuxElxPermit : BOOL;//AT %I*: BOOL;
+	fMotorTemp			: LREAL;
 
 	//other function block
 	fbPower		: FB_Power;
@@ -69,7 +69,8 @@ VAR
 	nTestNumOfInputs AT %I*		: USINT;
 	bTestInputEventState AT %I*	: BOOL;
 	bTestInputEventStateSaved	: BOOL;
-	a ,b: int;
+	a ,b: INT;
+	fastStop AT %Q* : bool;
 END_VAR
 VAR CONSTANT
 	//Will change later once motionProfile and version are decided
@@ -81,10 +82,12 @@ END_VAR]]></Declaration>
 stAxis[GVL.cXP].axisRef.ReadStatus();
 stAxis[GVL.cXM].axisRef.ReadStatus();
 
+(*shutter protection module*)
+fbProtect(stAxis := stAxis, bAuxElxPermit := bAuxElxPermit, nState := fbShutterSM.nSMState, eCommand := eCommand);
+
 ////////////////////////////////////////////////////////////////////
 //Shutter State Machine
 ////////////////////////////////////////////////////////////////////
-
 fbShutterSM(
 	//inputs
 	stAxis				:= stAxis,
@@ -383,9 +386,6 @@ END_IF
 (*track motion of both blades*)
 fbTracking(stAxis:=stAxis, eCommand:=eCommand, bMotionDone:=fbShutterSM.bMotionDone, stOutMotionDone=>outMotionDone);
 
-(*shutter protection module*)
-//fbProtect(stAxis := stAxis, bAuxElxPermit := bAuxElxPermit, fbShutterSM:=fbShutterSM);
-	
 (*
 //write persistent data to file every second
 IF fbWriteDelay.Q THEN
@@ -415,8 +415,10 @@ END_IF
     <LineIds Name="MAIN">
       <LineId Id="869" Count="1" />
       <LineId Id="779" Count="0" />
+      <LineId Id="2448" Count="2" />
       <LineId Id="1984" Count="0" />
-      <LineId Id="2099" Count="22" />
+      <LineId Id="2099" Count="1" />
+      <LineId Id="2102" Count="19" />
       <LineId Id="1985" Count="0" />
       <LineId Id="1689" Count="0" />
       <LineId Id="1688" Count="0" />
@@ -630,8 +632,7 @@ END_IF
       <LineId Id="1025" Count="0" />
       <LineId Id="1013" Count="11" />
       <LineId Id="1704" Count="0" />
-      <LineId Id="1683" Count="2" />
-      <LineId Id="1696" Count="1" />
+      <LineId Id="1683" Count="1" />
       <LineId Id="1009" Count="0" />
       <LineId Id="995" Count="0" />
       <LineId Id="1000" Count="1" />
