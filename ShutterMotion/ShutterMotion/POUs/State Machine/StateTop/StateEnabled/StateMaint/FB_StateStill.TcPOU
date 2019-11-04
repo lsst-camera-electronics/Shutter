@@ -61,7 +61,7 @@ CASE nCurrentState OF
 	1010:	
 		stAxis[stChangeAxisEnable.axisIndex].mcPower(Axis:=stAxis[stChangeAxisEnable.axisIndex].axisRef,
 			 Enable:=stChangeAxisEnable.enabled, Enable_Positive:=stChangeAxisEnable.enabled, Enable_Negative:=stChangeAxisEnable.enabled);
-		nNextState := 2000; 
+		//nNextState := 2000; 
 
 	1020:	
 		stAxis[stClearAxisFaults.axisIndex].mcReset(Axis:=stAxis[stClearAxisFaults.axisIndex].axisRef, Execute:=TRUE);
@@ -106,8 +106,8 @@ END_CASE]]></ST>
       <LineId Id="232" Count="1" />
       <LineId Id="178" Count="1" />
       <LineId Id="44" Count="0" />
-      <LineId Id="230" Count="0" />
-      <LineId Id="259" Count="0" />
+      <LineId Id="320" Count="0" />
+      <LineId Id="319" Count="0" />
       <LineId Id="176" Count="1" />
       <LineId Id="48" Count="0" />
       <LineId Id="263" Count="1" />

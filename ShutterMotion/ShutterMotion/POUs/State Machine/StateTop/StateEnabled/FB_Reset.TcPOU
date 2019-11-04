@@ -40,7 +40,6 @@ CASE nCurrentstate OF
 			fbResetTimer(IN:=FALSE);
 			nNextState:=200;
 		END_IF
-		//nNextState := 200;
 		a := a+1;
 		
 	200:
@@ -93,7 +92,7 @@ END_CASE
       <LineId Id="192" Count="2" />
       <LineId Id="196" Count="0" />
       <LineId Id="195" Count="0" />
-      <LineId Id="172" Count="1" />
+      <LineId Id="173" Count="0" />
       <LineId Id="171" Count="0" />
       <LineId Id="85" Count="0" />
       <LineId Id="104" Count="0" />

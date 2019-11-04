@@ -10,6 +10,8 @@ VAR_INPUT
 	nExt	: INT;
 	nRet	: INT;
 	fSpeed	: LREAL;
+	fAccel	: LREAL;
+	fJerk	: LREAL;
 END_VAR
 VAR_OUTPUT
 	bBusy	: BOOL;
@@ -35,15 +37,15 @@ CASE nCurrentState OF
 (*Perform Open Shutter Motion*)
 	1400:
 		IF nRet = GVL.cXP THEN
-			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosStart, Velocity:=fSpeed, Execute:=TRUE);
+			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosStart, Velocity:=fSpeed, Acceleration:=fAccel, Deceleration:=fAccel, Jerk:=fJerk, Execute:=TRUE);
 		ELSIF nRet = GVL.cXM THEN
-			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosEnd, Velocity:=fSpeed, Execute:=TRUE);
+			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosEnd, Velocity:=fSpeed, Acceleration:=fAccel, Deceleration:=fAccel, Jerk:=fJerk, Execute:=TRUE);
 		END_IF
 		
 		IF nExt = GVL.cXP THEN
-			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosEnd, Velocity:=fSpeed, Execute:=TRUE);
+			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosEnd, Velocity:=fSpeed, Acceleration:=fAccel, Deceleration:=fAccel, Jerk:=fJerk, Execute:=TRUE);
 		ELSIF nExt = GVL.cXM THEN	
-			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosStart, Velocity:=fSpeed, Execute:=TRUE);
+			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosStart, Velocity:=fSpeed, Acceleration:=fAccel, Deceleration:=fAccel, Jerk:=fJerk, Execute:=TRUE);
 		END_IF
 	
 		IF stAxis[GVL.cXP].mcMoveAbs.Done THEN

@@ -3992,7 +3992,7 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                 <v n="VisualElementIdentifier">"GenElemInst_67"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
                   <v>OnMouseUp</v>
                   <a cet="STSnippetInputAction">
                     <o>
@@ -5635,10 +5635,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
               <d n="FbMethods" t="CaseInsensitiveHashtable" ckt="String" cvt="Guid">
                 <v>FB_Init</v>
                 <v>a34fda68-ea57-451d-84ba-f64a41fb0235</v>
-                <v>FB_Exit</v>
-                <v>1b57cff7-6f15-436e-b02d-adbc5df6fce8</v>
                 <v>FB_Reinit</v>
                 <v>310ce281-f150-4cc8-979e-5925ca8ebdd9</v>
+                <v>FB_Exit</v>
+                <v>1b57cff7-6f15-436e-b02d-adbc5df6fce8</v>
               </d>
               <v n="FbName">"NotImportant"</v>
               <v n="FbGuid">{8b25fc7b-31d2-4d93-aeae-0948edd1ad10}</v>
@@ -5729,6 +5729,7 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
         <Type n="Guid">System.Guid</Type>
         <Type n="Hashtable">System.Collections.Hashtable</Type>
         <Type n="HotkeyConfiguration">{6b108d46-58af-4e41-a3f4-174d8f160cc4}</Type>
+        <Type n="IInputAction[]">_3S.CoDeSys.VisualElem.IInputAction[], VisualElem, Version=3.5.8.0, Culture=neutral, PublicKeyToken=null</Type>
         <Type n="InputBoxInputAction">{e8e7e747-f76f-4dee-ab1c-b9637e41ac26}</Type>
         <Type n="InputBoxInputAction[]">_3S.CoDeSys.VisualElem.InputBoxInputAction[], VisualElem.plugin, Version=3.5.8.40, Culture=neutral, PublicKeyToken=null</Type>
         <Type n="Int16">System.Int16</Type>

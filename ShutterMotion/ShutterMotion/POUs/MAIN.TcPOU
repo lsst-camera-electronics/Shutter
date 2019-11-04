@@ -11,13 +11,15 @@ VAR
 	
 	//external input...... need to link
 	bAuxElxPermit : BOOL;//AT %I*: BOOL;
-	fMotorTemp			: LREAL;
 
 	//other function block
 	fbPower		: FB_Power;
 	fbProtect	: FB_Protection;
 	fbTracking	: FB_Tracking;
-
+	
+	//motor temps
+	fbReadMotorTemp		: FB_ReadMotorTemp;
+	
 	//Timing test vars
 	fbInputRtrig		: R_trig;
 	fbInputFtrig		: F_trig;
@@ -81,33 +83,6 @@ END_VAR]]></Declaration>
       <ST><![CDATA[(*update Axis_Ref status*)
 stAxis[GVL.cXP].axisRef.ReadStatus();
 stAxis[GVL.cXM].axisRef.ReadStatus();
-
-(*shutter protection module*)
-fbProtect(stAxis := stAxis, bAuxElxPermit := bAuxElxPermit, nState := fbShutterSM.nSMState, eCommand := eCommand);
-
-////////////////////////////////////////////////////////////////////
-//Shutter State Machine
-////////////////////////////////////////////////////////////////////
-fbShutterSM(
-	//inputs
-	stAxis				:= stAxis,
-	bAuxElxPermit		:= bAuxElxPermit,
-	eCommand			:= eCommand,
-	stCalibrate			:= inCalibrate,
-	stChangeAxisEnable	:= inChangeAxisEnable,
-	stChangeBrakeState	:= inChangeBrakeState,
-	stClearAllFaults	:= inClearAllFaults,
-	stClearAxisFaults	:= inClearAxisFaults,
-	stCloseShutter		:= inCloseShutter,
-	stDisableAllAxes	:= inDisableAllAxes,
-	stEnableAllAxes		:= inEnableAllAxes,
-	stGoToProd			:= inGoToProd,
-	stHomeAxis			:= inHomeAxis,
-	stMoveAxisAbsolute	:= inMoveAxisAbsolute,
-	stMoveAxisRelative	:= inMoveAxisRelative,
-	stOpenShutter		:= inOpenShutter,
-	stReset				:= inReset,
-	stTakeExposure		:= inTakeExposure);
 
 ////////////////////////////////////////////////////////////////////
 //CCS to PLC
@@ -295,6 +270,42 @@ ELSIF F_HaveDifferentIDs(inTakeExposure, ackTakeExposure) THEN
 	END_IF
 END_IF
 
+////////////////////////////////////////////////////////////////////
+(*shutter protection module*)
+////////////////////////////////////////////////////////////////////
+
+fbProtect(
+	stAxis 				:= stAxis, 
+	bAuxElxPermit 		:= bAuxElxPermit, 
+	nState 				:= fbShutterSM.nSMState, 
+	inTakeExposure		:= inTakeExposure,
+	inMoveAxisAbsolute	:= inMoveAxisAbsolute,
+	inMoveAxisRelative	:= inMoveAxisRelative,
+	eCommand 			:= eCommand);
+
+////////////////////////////////////////////////////////////////////
+//Shutter State Machine
+////////////////////////////////////////////////////////////////////
+fbShutterSM(
+	//inputs
+	stAxis				:= stAxis,
+	bAuxElxPermit		:= bAuxElxPermit,
+	eCommand			:= eCommand,
+	stCalibrate			:= inCalibrate,
+	stChangeAxisEnable	:= inChangeAxisEnable,
+	stChangeBrakeState	:= inChangeBrakeState,
+	stClearAllFaults	:= inClearAllFaults,
+	stClearAxisFaults	:= inClearAxisFaults,
+	stCloseShutter		:= inCloseShutter,
+	stDisableAllAxes	:= inDisableAllAxes,
+	stEnableAllAxes		:= inEnableAllAxes,
+	stGoToProd			:= inGoToProd,
+	stHomeAxis			:= inHomeAxis,
+	stMoveAxisAbsolute	:= inMoveAxisAbsolute,
+	stMoveAxisRelative	:= inMoveAxisRelative,
+	stOpenShutter		:= inOpenShutter,
+	stReset				:= inReset,
+	stTakeExposure		:= inTakeExposure);
 
 ////////////////////////////////////////////////////////////////////
 //PLC to CCS
@@ -321,9 +332,6 @@ stDisable_ftrig(CLK:=(fbShutterSM.nSMState = E_StatesTop.Disabled));
 IF stDisable_ftrig.Q THEN
 	outEnable.sequence := outEnable.sequence + 1;
 END_IF
-
-//Shutter Errored
-//outError.sequence := outError.sequence + 1;
 
 //Exposure timer ended
 outTimer.sequence := fbShutterSM.stOutTimer.sequence;
@@ -361,7 +369,7 @@ IF fbOutTimer.Q THEN
 	outShutterStatus.axis[GVL.cXP].highLimit := stAxis[GVL.cXP].bLimitDeployed;
 	outShutterStatus.axis[GVL.cXP].lowLimit := stAxis[GVL.cXP].bLimitHome;
 	outShutterStatus.axis[GVL.cXP].isHomed := stAxis[GVL.cXP].axisRef.Status.Homed;
-	outShutterStatus.axis[GVL.cXP].motorTemp := fMotorTemp;
+	outShutterStatus.axis[GVL.cXP].motorTemp := fbReadMotorTemp.nMotorTemp[GVL.cXP];
 	
 	(*shutter status update, axis XM specific*)
 	outShutterStatus.axis[GVL.cXM].actPos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
@@ -375,17 +383,27 @@ IF fbOutTimer.Q THEN
 	outShutterStatus.axis[GVL.cXM].highLimit := stAxis[GVL.cXM].bLimitHome;
 	outShutterStatus.axis[GVL.cXM].lowLimit := stAxis[GVL.cXM].bLimitDeployed;
 	outShutterStatus.axis[GVL.cXM].isHomed := stAxis[GVL.cXM].axisRef.Status.Homed;
-	outShutterStatus.axis[GVL.cXM].motorTemp := fMotorTemp;
+	outShutterStatus.axis[GVL.cXM].motorTemp := fbReadMotorTemp.nMotorTemp[GVL.cXM];
 	
 END_IF
 
 ////////////////////////////////////////////////////////////////////
-//Other (protection, tracking, etc.
+//Other (tracking, etc.)
 ////////////////////////////////////////////////////////////////////
 
 (*track motion of both blades*)
-fbTracking(stAxis:=stAxis, eCommand:=eCommand, bMotionDone:=fbShutterSM.bMotionDone, stOutMotionDone=>outMotionDone);
+fbTracking(
+	stAxis				:=stAxis, 
+	eCommand			:=eCommand, 
+	bMotionDone			:=fbShutterSM.bMotionDone, 
+	inReset				:= inReset,
+	inMoveAxisAbsolute	:= inMoveAxisAbsolute,
+	inMoveAxisRelative	:= inMoveAxisRelative,
+	stOutMotionDone		=>outMotionDone);
 
+(*Motor Temperature*)
+fbReadMotorTemp();
+	
 (*
 //write persistent data to file every second
 IF fbWriteDelay.Q THEN
@@ -396,6 +414,7 @@ ELSE
 END_IF
 *)
 
+//Test
 IF nTestNumOfInputs.0 THEN
 	DCtime				:= F_GetCurDcTaskTime64();
 	nTestEventTimeSaved := nTestEventTime;
@@ -414,11 +433,6 @@ END_IF
     </Implementation>
     <LineIds Name="MAIN">
       <LineId Id="869" Count="1" />
-      <LineId Id="779" Count="0" />
-      <LineId Id="2448" Count="2" />
-      <LineId Id="1984" Count="0" />
-      <LineId Id="2099" Count="1" />
-      <LineId Id="2102" Count="19" />
       <LineId Id="1985" Count="0" />
       <LineId Id="1689" Count="0" />
       <LineId Id="1688" Count="0" />
@@ -575,7 +589,19 @@ END_IF
       <LineId Id="1201" Count="0" />
       <LineId Id="1197" Count="0" />
       <LineId Id="725" Count="0" />
+      <LineId Id="2477" Count="0" />
       <LineId Id="1102" Count="0" />
+      <LineId Id="2478" Count="0" />
+      <LineId Id="2566" Count="0" />
+      <LineId Id="2452" Count="0" />
+      <LineId Id="2480" Count="0" />
+      <LineId Id="2479" Count="0" />
+      <LineId Id="2481" Count="0" />
+      <LineId Id="2483" Count="2" />
+      <LineId Id="2482" Count="0" />
+      <LineId Id="2565" Count="0" />
+      <LineId Id="2454" Count="22" />
+      <LineId Id="2691" Count="0" />
       <LineId Id="1686" Count="0" />
       <LineId Id="1693" Count="1" />
       <LineId Id="1699" Count="0" />
@@ -592,9 +618,6 @@ END_IF
       <LineId Id="1881" Count="0" />
       <LineId Id="1865" Count="0" />
       <LineId Id="1860" Count="0" />
-      <LineId Id="1874" Count="0" />
-      <LineId Id="1873" Count="0" />
-      <LineId Id="1868" Count="0" />
       <LineId Id="1876" Count="0" />
       <LineId Id="1875" Count="0" />
       <LineId Id="1867" Count="0" />
@@ -606,7 +629,7 @@ END_IF
       <LineId Id="1904" Count="0" />
       <LineId Id="1903" Count="0" />
       <LineId Id="1905" Count="2" />
-      <LineId Id="1910" Count="0" />
+      <LineId Id="2737" Count="0" />
       <LineId Id="1908" Count="0" />
       <LineId Id="1866" Count="0" />
       <LineId Id="1859" Count="0" />
@@ -633,7 +656,13 @@ END_IF
       <LineId Id="1013" Count="11" />
       <LineId Id="1704" Count="0" />
       <LineId Id="1683" Count="1" />
+      <LineId Id="2561" Count="2" />
+      <LineId Id="2567" Count="2" />
+      <LineId Id="2564" Count="0" />
       <LineId Id="1009" Count="0" />
+      <LineId Id="2903" Count="0" />
+      <LineId Id="2905" Count="0" />
+      <LineId Id="2902" Count="0" />
       <LineId Id="995" Count="0" />
       <LineId Id="1000" Count="1" />
       <LineId Id="1202" Count="0" />
@@ -643,6 +672,7 @@ END_IF
       <LineId Id="315" Count="0" />
       <LineId Id="314" Count="0" />
       <LineId Id="2195" Count="0" />
+      <LineId Id="2906" Count="0" />
       <LineId Id="316" Count="0" />
       <LineId Id="2290" Count="0" />
       <LineId Id="2281" Count="0" />

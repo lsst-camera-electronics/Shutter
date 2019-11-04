@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+  <POU Name="FB_ReadMotorTemp" Id="{546e31bc-5df1-4481-ae5d-4929f140ac9e}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ReadMotorTemp
+VAR_OUTPUT
+	nMotorTemp			: ARRAY [0..1] OF BYTE;
+END_VAR
+VAR
+	//motor temps
+	IOFGetDeviceNetId	: IOF_GetDeviceNetId;
+	fbCoeReadCase		: INT;
+	fbCoEReadTemp		: FB_EcCoESdoRead;
+	fbCoeReadTimer		: TON;
+	bNetIdValid			: BOOL;
+END_VAR
+VAR CONSTANT
+	twaitTime			: TIME := T#2S;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IOFGetDeviceNetId(DEVICEID:=1, start:=TRUE);
+IF IOFGetDeviceNetId.ERR THEN
+	IOFGetDeviceNetId(start:=FALSE);
+	bNetIdValid := FALSE;
+ELSE
+	bNetIdValid := TRUE;
+END_IF
+IF bNetIdValid THEN
+	CASE fbCoeReadCase OF
+		0: 	//read Axis0 temp
+			fbCoeReadTemp(
+				sNetId		:= IOFGetDeviceNetId.DeviceNetId,
+				nSlaveAddr	:= 1001,
+				nIndex		:= 16#F900,
+				nSubIndex	:= 2,
+				pDstBuf		:= ADR(nMotorTemp[0]),
+				cbBufLen	:= SIZEOF(nMotorTemp[0]),
+				bExecute	:= TRUE);
+			IF (NOT fbCoeReadTemp.bBusy)THEN
+				fbCoeReadCase := 1;
+			END_IF
+		
+		1:	//small delay
+			fbCoeReadTemp(bExecute:=FALSE);
+			fbCoeReadCase := 2;
+		
+		2:	//read Axis1 temp
+			fbCoeReadTemp(
+				sNetId		:= IOFGetDeviceNetId.DeviceNetId,
+				nSlaveAddr	:= 1004,
+				nIndex		:= 16#F900,
+				nSubIndex	:= 2,
+				pDstBuf		:= ADR(nMotorTemp[1]),
+				cbBufLen	:= SIZEOF(nMotorTemp[1]),
+				bExecute	:= TRUE);
+			IF (NOT fbCoeReadTemp.bBusy)THEN
+				fbCoeReadTimer(IN:=FALSE);
+				fbCoeReadCase := 3;
+			END_IF
+			
+		3://small delay
+			fbCoeReadTimer(in:=TRUE, PT:=twaitTime);
+			IF fbCoeReadTimer.Q THEN
+				fbCoeReadTemp(bExecute:=FALSE);
+				fbCoeReadCase := 0;
+			END_IF
+	END_CASE
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_ReadMotorTemp">
+      <LineId Id="6" Count="3" />
+      <LineId Id="11" Count="12" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="28" Count="3" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="33" Count="10" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="47" Count="4" />
+      <LineId Id="79" Count="1" />
+      <LineId Id="82" Count="0" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="54" Count="1" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

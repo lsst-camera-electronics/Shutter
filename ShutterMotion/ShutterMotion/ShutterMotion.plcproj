@@ -145,6 +145,9 @@
     <Compile Include="POUs\FB_Protection.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\FB_ReadMotorTemp.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\F_HaveDifferentIDs.TcPOU">
       <SubType>Code</SubType>
     </Compile>
@@ -277,6 +280,10 @@
     <PlaceholderReference Include="Tc2_EtherCAT">
       <DefaultResolution>Tc2_EtherCAT, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc2_EtherCAT</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc2_IoFunctions">
+      <DefaultResolution>Tc2_IoFunctions, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_IoFunctions</Namespace>
     </PlaceholderReference>
     <PlaceholderReference Include="Tc2_MC2">
       <DefaultResolution>Tc2_MC2, * (Beckhoff Automation GmbH)</DefaultResolution>

@@ -6,8 +6,11 @@ VAR_IN_OUT
 	stAxis  : ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;	
 END_VAR
 VAR_INPUT
-	eCommand 	: E_Commands;
-	bMotionDone	: BOOL;
+	eCommand 			: E_Commands;
+	bMotionDone			: BOOL;
+	inReset				: ST_Reset;
+	inMoveAxisAbsolute	: ST_MoveAxisAbsolute;
+	inMoveAxisRelative	: ST_MoveAxisRelative;
 END_VAR
 VAR_OUTPUT
 	stOutMotionDone : ST_MotionDone;
@@ -20,7 +23,11 @@ VAR
 	nAxisID			: INT;
 	tTimeEnd		: T_DCTIME64;
 	nMask			: ULINT := 16#FFFF_FFFF_0000_0000;
+	
+	//used in determining target duration
 	fSpeed			: LREAL;
+	tTargetDur		: LTIME;
+	fDistance		: LREAL;
 	
 	fbMoving_Rtrig : ARRAY[0 .. 1] OF R_TRIG;
 	fbRtrig		: ARRAY[GVL.cHallLower..GVL.cHallUpper] OF R_Trig;
@@ -40,11 +47,18 @@ VAR
 	testInt2: INT;
 	testInt3: INT;
 	testInt4: INT;
+	testInt5: INT;
+	testInt6: INT;
 	testLREAL : LREAL;
 	testTemp : ARRAY[0 .. 4] OF ST_Track;
-	testTime : T_DCTIME64;
+	testTime : ARRAY[0 .. 4] OF T_DCTIME64;
+	teststTrack : ARRAY[0 .. 4] OF T_DCTIME64;
+	testDCTime	: ARRAY[0 .. 4] OF T_DCTIME64;
 	nMask2	 : ULINT := 16#0000_0000_FFFF_FFFF;
 	a, b : INT;
+	
+	
+	
 END_VAR
 
 
@@ -56,7 +70,6 @@ END_VAR
 stAxis[GVL.cXP].bTrackedFlag:=FALSE;
 stAxis[GVL.cXM].bTrackedFlag:=FALSE;
 nTPC:=0;
-testTime:= (F_GetCurDcTaskTime64() AND nMask2);
 testInt3:=0;
 testInt4:=0;
 
@@ -83,6 +96,28 @@ IF fbMoving_Rtrig[GVL.cXM].Q THEN
 	stMotionDone[gvl.cXM].targetDur := LTIME#0D0H0M0S0MS0US0NS;
 END_IF
 
+//determine target duration
+IF eCommand = E_Commands.takeExposure THEN
+	fSpeed	:= inReset.speed;
+	IF (fSpeed>0) THEN
+		IF (fSpeed>1668.355556) THEN
+			fSpeed:=1668.355556;
+		END_IF
+		tTargetDur 	:= LREAL_TO_LTIME((2*GVL.cPosEnd)/(fSpeed)*EXPT(10,9));
+	END_IF
+ELSIF eCommand = E_Commands.moveAxisAbsolute THEN
+	fDistance := ABS(stAxis[inMoveAxisAbsolute.axisIndex].axisRef.NcToPlc.ActPos - inMoveAxisAbsolute.position);
+	fSpeed	:= inMoveAxisAbsolute.speed;
+	IF (fSpeed>0) THEN
+		IF (fSpeed>1668.355556) THEN
+			fSpeed:=1668.355556;
+		END_IF
+		tTargetDur 	:= LREAL_TO_LTIME(((2*fDistance)/(fSpeed))*EXPT(10,9));
+	END_IF
+ELSIF eCommand = E_Commands.moveAxisRelative THEN
+	tTargetDur	:= TIME_TO_LTIME(inMoveAxisRelative.moveTime);
+END_IF
+
 //Checks to see which blade set last moved
 IF (stAxis[GVL.cXM].axisRef.Status.Moving AND stAxis[GVL.cXP].axisRef.Status.InTargetPosition) THEN
 	nLastMoved:=GVL.cXM;
@@ -98,23 +133,16 @@ IF bMotionDone THEN
 	ELSE 
 		nAxisID:=nLastMoved;
 	END_IF
-	
-	IF MAIN.inReset.speed > 0 THEN
-		fSpeed := MAIN.inReset.speed;
-	ELSE
-		fSpeed := 0.01;
-	END_IF
+	//bInMotion flag remains true if any of the blade set is still in motion
 	IF ((NOT stAxis[GVL.cXP].axisRef.Status.Moving) AND (NOT stAxis[GVL.cXM].axisRef.Status.Moving)) THEN
 		bInMotion := FALSE;
 	END_IF
 	nSequence := nSequence+1;
 	tTimeEnd := F_GetCurDcTaskTime64();
 	stMotionDone[nAxisID].actualDur := ULINT_TO_LTIME(tTimeEnd-stMotionDone[nAxisID].startTime);
-	stMotionDone[nAxisID].targetDur := ULINT_TO_LTIME(tTimeEnd-stMotionDone[nAxisID].startTime); //Needs to be changed to actually calculate expected duration //LREAL_TO_LTIME((2*ABS(stMotionDone[nAxisID].startPos-stAxis[nAxisID].axisRef.NcToPlc.TargetPos)/fSpeed)*1000000000);//
+	stMotionDone[nAxisID].targetDur := tTargetDur;
 	stMotionDone[nAxisID].targetPos := stAxis[nAxisID].axisRef.NcToPlc.TargetPos;
 	stMotionDone[nAxisID].endPos := stAxis[nAxisID].axisRef.NcToPlc.ActPos;
-	
-	testLREAL :=(2*ABS(stMotionDone[nAxisID].startPos-stAxis[nAxisID].axisRef.NcToPlc.TargetPos)/fSpeed);//ULINT_TO_LTIME(tTimeEnd-tTimeStart);
 	
 	stOutMotionDone:=stMotionDone[nAxisID];
 	stOutMotionDone.sequence:=nSequence;
@@ -137,10 +165,9 @@ FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
 			Decrement the 33rd bit of the appended time by 1 to get the correct time.
 		*)
 		stTrack[nTPC].tScanTime := (F_GetCurDcTaskTime64() AND nMask) + GVL.nInputEventTime[stTrack[nTPC].nHallID];
-		IF nTPC>0 THEN
-			IF stTrack[nTPC].tScanTime > F_GetCurDcTaskTime64() THEN
-				stTrack[nTPC].tScanTIME := stTrack[nTPC].tScanTime - 16#1_0000_0000;
-			END_IF
+		IF stTrack[nTPC].tScanTime > F_GetCurDcTaskTime64() THEN
+			stTrack[nTPC].tScanTIME := stTrack[nTPC].tScanTime - 16#1_0000_0000;
+			testInt5:=testInt5+1;
 		END_IF
 		//increment the index
 		nTPC:=nTPC+1;
@@ -152,31 +179,56 @@ FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
 						stTrackTemp := stTrack[j];
 						stTrack[j] := stTrack[j-1];
 						stTrack[j-1] := stTrackTemp;
-				ELSE
-					EXIT;
+						testInt6 := testInt6+1;
 				END_IF
 			END_FOR
 		END_IF
+
+		
 		//For debugging only: To see the highest number of trip per cycle
 		testRTrig2(CLK:=(nTPC>=2));
 		IF testRTrig2.Q THEN
-			testInt4 := 1;
+			testInt3 := 1;
 		END_IF
 		testRTrig(CLK:=(nTPC>=3));
 		IF testRTrig.Q THEN
 			testTemp := stTrack;
-			testInt3 := 1;
+			testInt4 := 1;
 		END_IF
 		IF m<nTPC THEN
 			m:= nTPC;
 		END_IF
+		
+
+			IF ((F_GetCurDcTaskTime64() - stTrack[0].tScanTime)>2000000) AND nTPC=1 THEN
+				testTime[0]	:= F_GetCurDcTaskTime64() - stTrack[0].tScanTime;
+				teststTrack[0] := stTrack[0].tScanTime;
+				 testDCTime[0] := F_GetCurDcTaskTime64();
+			END_IF
+			IF ((F_GetCurDcTaskTime64() - stTrack[1].tScanTime)>2000000) AND nTPC=2 THEN
+				testTime[1]	:= F_GetCurDcTaskTime64() - stTrack[1].tScanTime;
+				teststTrack[1] := stTrack[1].tScanTime;
+				testDCTime[1] := F_GetCurDcTaskTime64();
+			END_IF
+			IF ((F_GetCurDcTaskTime64() - stTrack[2].tScanTime)>2000000) AND nTPC=3 THEN
+				testTime[2]	:= F_GetCurDcTaskTime64() - stTrack[2].tScanTime;
+				teststTrack[2] := stTrack[2].tScanTime;
+				testDCTime[2] := F_GetCurDcTaskTime64();
+			END_IF
+			IF ((F_GetCurDcTaskTime64() - stTrack[3].tScanTime)>2000000) AND nTPC=4 THEN
+				testTime[3]	:= F_GetCurDcTaskTime64() - stTrack[3].tScanTime;
+				teststTrack[3] := stTrack[3].tScanTime;
+				testDCTime[3] := F_GetCurDcTaskTime64();
+			END_IF
 	END_IF
+	
 	//For debugging - checks to see if the same hall switch is tripped twice in one cycle
 	IF GVL.nNumOfInputs[i]=2 THEN
 		testInt:=testint+1;
 	END_IF
 	
 END_FOR
+
 
 	
 //blade motion tracking
@@ -428,10 +480,17 @@ END_IF]]></ST>
     <LineIds Name="FB_Tracking">
       <LineId Id="1927" Count="1" />
       <LineId Id="1932" Count="2" />
-      <LineId Id="2411" Count="0" />
       <LineId Id="2414" Count="0" />
       <LineId Id="2419" Count="0" />
       <LineId Id="1935" Count="23" />
+      <LineId Id="2593" Count="0" />
+      <LineId Id="2659" Count="8" />
+      <LineId Id="2620" Count="6" />
+      <LineId Id="2632" Count="0" />
+      <LineId Id="2634" Count="0" />
+      <LineId Id="2641" Count="0" />
+      <LineId Id="2649" Count="0" />
+      <LineId Id="2597" Count="0" />
       <LineId Id="2493" Count="0" />
       <LineId Id="2486" Count="4" />
       <LineId Id="1959" Count="0" />
@@ -441,11 +500,11 @@ END_IF]]></ST>
       <LineId Id="2491" Count="1" />
       <LineId Id="2476" Count="0" />
       <LineId Id="2480" Count="0" />
-      <LineId Id="1960" Count="4" />
       <LineId Id="2541" Count="0" />
       <LineId Id="1965" Count="0" />
       <LineId Id="2542" Count="0" />
-      <LineId Id="1966" Count="13" />
+      <LineId Id="1966" Count="5" />
+      <LineId Id="1974" Count="5" />
       <LineId Id="2252" Count="0" />
       <LineId Id="2255" Count="5" />
       <LineId Id="2398" Count="0" />
@@ -457,10 +516,10 @@ END_IF]]></ST>
       <LineId Id="2300" Count="0" />
       <LineId Id="2292" Count="0" />
       <LineId Id="2299" Count="0" />
-      <LineId Id="2285" Count="0" />
       <LineId Id="2287" Count="0" />
-      <LineId Id="2289" Count="1" />
-      <LineId Id="2288" Count="0" />
+      <LineId Id="2289" Count="0" />
+      <LineId Id="2724" Count="0" />
+      <LineId Id="2290" Count="0" />
       <LineId Id="2325" Count="1" />
       <LineId Id="2391" Count="0" />
       <LineId Id="2271" Count="0" />
@@ -468,9 +527,12 @@ END_IF]]></ST>
       <LineId Id="2328" Count="1" />
       <LineId Id="2331" Count="0" />
       <LineId Id="2333" Count="1" />
-      <LineId Id="2339" Count="2" />
+      <LineId Id="2726" Count="0" />
+      <LineId Id="2341" Count="0" />
       <LineId Id="2330" Count="0" />
-      <LineId Id="2272" Count="1" />
+      <LineId Id="2272" Count="0" />
+      <LineId Id="2727" Count="1" />
+      <LineId Id="2273" Count="0" />
       <LineId Id="2421" Count="1" />
       <LineId Id="2424" Count="1" />
       <LineId Id="2404" Count="0" />
@@ -479,9 +541,28 @@ END_IF]]></ST>
       <LineId Id="2417" Count="0" />
       <LineId Id="2304" Count="0" />
       <LineId Id="2407" Count="2" />
+      <LineId Id="2720" Count="0" />
+      <LineId Id="2722" Count="0" />
+      <LineId Id="2698" Count="1" />
+      <LineId Id="2712" Count="0" />
+      <LineId Id="2716" Count="0" />
+      <LineId Id="2700" Count="0" />
+      <LineId Id="2681" Count="0" />
+      <LineId Id="2701" Count="0" />
+      <LineId Id="2713" Count="0" />
+      <LineId Id="2717" Count="0" />
+      <LineId Id="2702" Count="2" />
+      <LineId Id="2714" Count="0" />
+      <LineId Id="2718" Count="0" />
+      <LineId Id="2705" Count="2" />
+      <LineId Id="2715" Count="0" />
+      <LineId Id="2719" Count="0" />
+      <LineId Id="2708" Count="0" />
       <LineId Id="2274" Count="0" />
+      <LineId Id="2721" Count="0" />
       <LineId Id="2276" Count="5" />
-      <LineId Id="2253" Count="0" />
+      <LineId Id="2674" Count="0" />
+      <LineId Id="2742" Count="0" />
       <LineId Id="2004" Count="1" />
       <LineId Id="2225" Count="0" />
       <LineId Id="2221" Count="0" />
