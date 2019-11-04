@@ -228,9 +228,23 @@ IF(stAxis[GVL.cXP].axisRef.Status.Homed AND stAxis[GVL.cXM].axisRef.Status.Homed
 	END_IF
 END_IF
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-(* Checks to see if blades have reach end of travel. If it has, stop further motion in that direction	*)
+(*If Axis not enabled, Brakes turns are automatically engaged and cannot be turned off*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+IF (NOT MAIN.outShutterStatus.axis[GVL.cXP].enabled) THEN
+	IF (stAxis[GVL.cXP].bBrake) THEN
+		stAxis[GVL.cXP].bBrake := FALSE;
+		nShutterError := nShutterError OR 2#0000_0000_0100_0000;
+	END_IF
+END_IF
+IF (NOT MAIN.outShutterStatus.axis[GVL.cXP].enabled) THEN
+	IF (stAxis[GVL.cXM].bBrake) THEN
+		stAxis[GVL.cXM].bBrake := FALSE;
+		nShutterError := nShutterError OR 2#0000_0000_0100_0000;
+	END_IF
+END_IF
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(* If error, stop shutter*)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 IF (nShutterError.0 OR_ELSE nShutterError.1 OR_ELSE nShutterError.2 OR_ELSE nShutterError.3 OR_ELSE nShutterError.4 OR_ELSE nShutterError.5) THEN
@@ -366,6 +380,15 @@ END_IF
       <LineId Id="321" Count="0" />
       <LineId Id="258" Count="0" />
       <LineId Id="261" Count="1" />
+      <LineId Id="980" Count="1" />
+      <LineId Id="978" Count="0" />
+      <LineId Id="982" Count="0" />
+      <LineId Id="985" Count="0" />
+      <LineId Id="987" Count="0" />
+      <LineId Id="986" Count="0" />
+      <LineId Id="983" Count="0" />
+      <LineId Id="979" Count="0" />
+      <LineId Id="997" Count="4" />
       <LineId Id="558" Count="0" />
       <LineId Id="860" Count="1" />
       <LineId Id="267" Count="0" />
