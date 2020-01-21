@@ -1,14 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
   <POU Name="FB_StateCalibrating" Id="{7d0dc74d-1ee4-41a4-99a9-54fce7fd062a}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_StateCalibrating
 VAR_IN_OUT
 	stAxis  	: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;	
 	bTopEntry	: BOOL;
+	bCalibDone	: BOOL;
+	bInterrupted: BOOL;
 END_VAR
 VAR_OUTPUT
 	stOutCalibDone	: ST_CalibDone;
-	bCalibDone		: BOOL;
 END_VAR
 VAR
 	nCurrentState	: INT;
@@ -18,13 +19,19 @@ VAR
 	i	: INT;
 	nTripCountXP	: INT;
 	nTripCountXM	: INT;
+	
+	//test var
+	a, b, c : INT;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[//////////////////////////////////////////////////
 //perform software calibration of axis. 		//
 //////////////////////////////////////////////////
-
+IF bInterrupted THEN
+	bInterrupted := FALSE;
+	nNextState := 0;
+END_IF
 IF bTopEntry = TRUE THEN
 	bTopEntry := FALSE;
 	nNextState :=8010;
@@ -32,21 +39,24 @@ END_IF
 nCurrentState := nNextState;
 bCalibDone := FALSE;
 CASE nCurrentState OF
-
+	0:
+	
 	(*Perform software calibration of axis xp*)
 	8010: //Clear previous Calibration value
 		FOR i:=0 TO GVL.cTripCount BY 1 DO
 			stAxis[GVL.cXP].fHallPosCal[0,i]:=0;
 			stAxis[GVL.cXP].fHallPosCal[1,i]:=0;
 		END_FOR
+		stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
+		stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
 		stAxis[GVL.cXP].nTripCount := 0;	
 		nTripCountXP := 0;	
 		stAxis[GVL.cXP].bIsCalibrated := FALSE;
 		nNextState:=8020;
 		
 	8020: //Put Shutter in Open Position
-		stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosStart, Velocity:=GVL.cPositionVel, Execute:=TRUE);
-		stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosEnd, Velocity:=GVL.cPositionVel, Execute:=TRUE);
+		stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosStart, Velocity:=GVL.cPositionVel, Acceleration:=0, Deceleration:=0, Jerk:=0, Execute:=TRUE);
+		stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosEnd, Velocity:=GVL.cPositionVel, Acceleration:=0, Deceleration:=0, Jerk:=0, Execute:=TRUE);
 		IF stAxis[GVL.cXP].mcMoveAbs.Done AND stAxis[GVL.cXM].mcMoveAbs.Done THEN
 			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
 			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
@@ -58,18 +68,15 @@ CASE nCurrentState OF
 		//record position and sequence of hall trips at rising and falling edge.
 		FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
 			IF GVL.nNumOfInputs[i].0 THEN
-				//identifies which hall switch tripped
-				//stAxis[GVL.cXP].nHallSequence[GVL.cDirPos, nTripCountXP] := INT_TO_WORD((i*10)+5);
-				
+				//identifies which hall switch tripped along with if it's rising or falling edge
 				stAxis[GVL.cXP].stHall[GVL.cDirPos, nTripCountXP].nSeq := INT_TO_WORD((i*10)+5);
 				stAxis[GVL.cXP].stHall[GVL.cDirPos, nTripCountXP].bEdge := GVL.bInputEventState[i];
-				
 				stAxis[GVL.cXP].fHallPosCal[GVL.cDirPos, nTripCountXP] := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 				nTripCountXP := nTripCountXP + 1;
 			END_IF
 		END_FOR
 		//start moving axisXP towards x- side
-		stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosEnd, Velocity:=GVL.cCalibrateVel, Execute:=TRUE);
+		stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosEnd, Velocity:=GVL.cCalibrateVel, Acceleration:=0, Deceleration:=0, Jerk:=0, Execute:=TRUE);
 		IF stAxis[GVL.cXP].mcMoveAbs.Done THEN
 			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
 			nNextState:= 8040;
@@ -79,9 +86,7 @@ CASE nCurrentState OF
 		//record position and sequence of hall trips at rising and falling edge
 		FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
 			IF GVL.nNumOfInputs[i].0 THEN
-				//identifies which hall switch tripped
-				//stAxis[GVL.cXP].nHallSequence[GVL.cDirNeg, nTripCountXP] := INT_TO_WORD((i*10)+5);
-				
+				//identifies which hall switch tripped along with if it's rising or falling edge
 				stAxis[GVL.cXP].stHall[GVL.cDirNeg, nTripCountXP].nSeq := INT_TO_WORD((i*10)+5);
 				stAxis[GVL.cXP].stHall[GVL.cDirNeg, nTripCountXP].bEdge := GVL.bInputEventState[i];
 				
@@ -91,7 +96,7 @@ CASE nCurrentState OF
 			END_IF
 		END_FOR
 		//start moving axisXP towards x+ side
-		stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosStart, Velocity:=GVL.cCalibrateVel, Execute:=TRUE);
+		stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosStart-0.1, Velocity:=GVL.cCalibrateVel, Acceleration:=0, Deceleration:=0, Jerk:=0, Execute:=TRUE);
 		IF stAxis[GVL.cXP].mcMoveAbs.Done THEN
 			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
 			nNextState := 8050;
@@ -103,10 +108,12 @@ CASE nCurrentState OF
 			stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXM].axisRef, Mode := MC_JOGMODE_CONTINOUS, JogForward := FALSE);
 			nNextState := 8060;
 		END_IF
-
+		
 	8060: //slowly home back to limit switch
 		stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXP].axisRef, Mode := MC_JOGMODE_CONTINOUS, Velocity := GVL.cHomeVel, JogBackwards := NOT stAxis[GVL.cXP].bLimitHome);
+		a := a +1;
 		IF stAxis[GVL.cXP].bLimitHome THEN
+			b := b+1;
 			stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXP].axisRef, Mode := MC_JOGMODE_CONTINOUS, JogBackwards := FALSE);
 			IF nTripCountXP = 0 THEN	
 				stAxis[GVL.cXP].bIsCalibrated := TRUE; //should signal a warning to indicate bad calibration... Can be added later.
@@ -127,8 +134,8 @@ CASE nCurrentState OF
 		nNextState:=9020;
 		
 	9020: //Put Shutter in Open Position
-		stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosStart, Velocity:=GVL.cPositionVel, Execute:=TRUE);
-		stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosEnd, Velocity:=GVL.cPositionVel, Execute:=TRUE);
+		stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Position:=GVL.cPosStart, Velocity:=GVL.cPositionVel, Acceleration:=0, Deceleration:=0, Jerk:=0, Execute:=TRUE);
+		stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosEnd, Velocity:=GVL.cPositionVel, Acceleration:=0, Deceleration:=0, Jerk:=0, Execute:=TRUE);
 		IF stAxis[GVL.cXP].mcMoveAbs.Done AND stAxis[GVL.cXM].mcMoveAbs.Done THEN
 			stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
 			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
@@ -139,9 +146,7 @@ CASE nCurrentState OF
 		//record position and sequence of hall trips at rising and falling edge.
 		FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
 			IF GVL.nNumOfInputs[i].0 THEN
-				//identifies which hall switch tripped
-				//stAxis[GVL.cXM].nHallSequence[GVL.cDirNeg, nTripCountXM] := INT_TO_WORD((i*10)+5);
-				
+				//identifies which hall switch tripped along with if it's rising or falling edge
 				stAxis[GVL.cXM].stHall[GVL.cDirNeg, nTripCountXM].nSeq := INT_TO_WORD((i*10)+5);
 				stAxis[GVL.cXM].stHall[GVL.cDirNeg, nTripCountXM].bEdge := GVL.bInputEventState[i];
 				
@@ -150,7 +155,7 @@ CASE nCurrentState OF
 			END_IF
 		END_FOR
 		//start moving stAxisGVL.cXP towards x+ side
-		stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosStart, Velocity:=GVL.cCalibrateVel, Execute:=TRUE);
+		stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosStart, Velocity:=GVL.cCalibrateVel, Acceleration:=0, Deceleration:=0, Jerk:=0, Execute:=TRUE);
 		IF stAxis[GVL.cXM].mcMoveAbs.Done THEN
 			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
 			nNextState:= 9040;
@@ -161,9 +166,7 @@ CASE nCurrentState OF
 		//record position and sequence of hall trips at rising and falling edge.
 		FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
 			IF GVL.nNumOfInputs[i].0 THEN
-				//identifies which hall switch tripped
-				//stAxis[GVL.cXM].nHallSequence[GVL.cDirPos, nTripCountXM] := INT_TO_WORD((i*10)+5);
-				
+				//identifies which hall switch tripped along with if it's rising or falling edge
 				stAxis[GVL.cXM].stHall[GVL.cDirPos, nTripCountXM].nSeq := INT_TO_WORD((i*10)+5);
 				stAxis[GVL.cXM].stHall[GVL.cDirPos, nTripCountXM].bEdge := GVL.bInputEventState[i];
 				
@@ -172,7 +175,7 @@ CASE nCurrentState OF
 			END_IF
 		END_FOR
 		//start moving stAxisGVL.cXP towards x- side
-		stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosEnd, Velocity:=GVL.cCalibrateVel, Execute:=TRUE);
+		stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Position:=GVL.cPosEnd+0.1, Velocity:=GVL.cCalibrateVel, Acceleration:=0, Deceleration:=0, Jerk:=0, Execute:=TRUE);
 		IF stAxis[GVL.cXM].mcMoveAbs.Done THEN
 			stAxis[GVL.cXM].mcMoveAbs(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
 			nNextState := 9050;
@@ -203,6 +206,7 @@ CASE nCurrentState OF
 			stOutCalibDone.hallPosCal[GVL.cXM, GVL.cDirNeg, i] := stAxis[GVL.cXM].fHallPosCal[GVL.cDirNeg, i];
 		END_FOR
 		bCalibDone := TRUE;
+		nNextState :=0;
 	
 END_CASE
 
@@ -211,43 +215,45 @@ END_CASE
     <LineIds Name="FB_StateCalibrating">
       <LineId Id="1940" Count="1" />
       <LineId Id="2225" Count="0" />
-      <LineId Id="1943" Count="13" />
+      <LineId Id="2256" Count="2" />
+      <LineId Id="1943" Count="7" />
+      <LineId Id="2247" Count="0" />
+      <LineId Id="1951" Count="5" />
+      <LineId Id="2249" Count="1" />
       <LineId Id="2131" Count="0" />
       <LineId Id="1957" Count="18" />
-      <LineId Id="2191" Count="1" />
       <LineId Id="2189" Count="0" />
       <LineId Id="2173" Count="0" />
-      <LineId Id="2175" Count="0" />
       <LineId Id="2193" Count="0" />
       <LineId Id="1978" Count="0" />
-      <LineId Id="1980" Count="13" />
-      <LineId Id="2194" Count="1" />
-      <LineId Id="1994" Count="0" />
+      <LineId Id="1980" Count="14" />
       <LineId Id="2178" Count="0" />
       <LineId Id="2180" Count="0" />
       <LineId Id="2196" Count="0" />
       <LineId Id="1996" Count="1" />
       <LineId Id="2197" Count="0" />
-      <LineId Id="1999" Count="19" />
+      <LineId Id="1999" Count="14" />
+      <LineId Id="2288" Count="0" />
+      <LineId Id="2015" Count="2" />
+      <LineId Id="2284" Count="1" />
+      <LineId Id="2018" Count="0" />
       <LineId Id="2151" Count="1" />
       <LineId Id="2019" Count="9" />
       <LineId Id="2132" Count="0" />
       <LineId Id="2029" Count="11" />
-      <LineId Id="2050" Count="5" />
-      <LineId Id="2198" Count="1" />
-      <LineId Id="2056" Count="0" />
+      <LineId Id="2050" Count="6" />
       <LineId Id="2184" Count="0" />
       <LineId Id="2182" Count="0" />
       <LineId Id="2200" Count="0" />
-      <LineId Id="2058" Count="15" />
-      <LineId Id="2202" Count="1" />
-      <LineId Id="2074" Count="0" />
+      <LineId Id="2058" Count="16" />
       <LineId Id="2205" Count="0" />
       <LineId Id="2186" Count="0" />
       <LineId Id="2204" Count="0" />
       <LineId Id="2076" Count="21" />
       <LineId Id="2153" Count="1" />
-      <LineId Id="2098" Count="14" />
+      <LineId Id="2098" Count="10" />
+      <LineId Id="2248" Count="0" />
+      <LineId Id="2109" Count="3" />
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>

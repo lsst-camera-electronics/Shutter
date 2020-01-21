@@ -20,6 +20,11 @@ VAR_OUTPUT
 	nSMState		: DINT;
 END_VAR
 VAR
+	//motion parameter
+	fTime			: LREAL;
+	fAccel			: LREAL;
+	fJerk			: LREAL;
+	
 	//state-machine
 	eCurrentState	: E_StatesProd;
 	eNextState		: E_StatesProd;
@@ -60,6 +65,20 @@ IF bTopEntry = TRUE THEN
 	END_IF
 	bLowerEntry := TRUE;
 END_IF	
+
+(* calculate acceleration and jerk *)
+IF (fSpeed>0) THEN
+	IF (fSpeed>1668.355556) THEN
+		fSpeed:=1668.355556;
+	END_IF
+	fTime	:= 2*GVL.cPosEnd/fSpeed;
+	IF (fTime<0.9) THEN
+		fTime:=0.9;
+	END_IF
+	fAccel 	:= (8*GVL.cPosEnd)/(fTime*fTime);
+	fJerk	:= (32*GVL.cPosEnd)/(fTime*fTime*fTime);
+END_IF
+
 IF eCurrentState <> eNextState THEN
 	bLowerEntry := TRUE;
 END_IF
@@ -87,13 +106,14 @@ CASE eCurrentState OF
 		c := c+1;
 
 	E_StatesProd.Opening:
-		fbOpening(stAxis:=stAxis, bTopEntry:=bLowerEntry, fSpeed:=fSpeed, nRet:=nRet);
+		fbOpening(stAxis:=stAxis, bTopEntry:=bLowerEntry, fSpeed:=fSpeed, fAccel:=fAccel, fJerk:=fJerk, nRet:=nRet);
 		IF NOT fbOpening.bBusy THEN
 			bMotionDone := TRUE;
 			eNextState := E_StatesProd.Opened;
 		END_IF
 		IF fbExpoTimer.Q THEN 
 			eNextState := E_StatesProd.Traveling;
+			stOutTimer.sequence:=stOutTimer.sequence+1;
 		END_IF
 		d := d+1;
 	
@@ -109,7 +129,7 @@ CASE eCurrentState OF
 		e := e+1;
 		
 	E_StatesProd.Closing:
-		fbClosing(stAxis:=stAxis, bTopEntry:=bLowerEntry, nExt:=nExt, fSpeed:=fSpeed);
+		fbClosing(stAxis:=stAxis, bTopEntry:=bLowerEntry, nExt:=nExt, fSpeed:=fSpeed, fAccel:=fAccel, fJerk:=fJerk);
 		IF NOT fbClosing.bBusy THEN
 			bMotionDone := TRUE;
 			eNextState := E_StatesProd.Closed;
@@ -117,7 +137,7 @@ CASE eCurrentState OF
 		f := f+1;
 	
 	E_StatesProd.Traveling:
-		fbTravelling(stAxis:=stAxis, bTopEntry:=bLowerEntry, nExt:=nExt, nRet:=nRet, fSpeed:=fspeed);
+		fbTravelling(stAxis:=stAxis, bTopEntry:=bLowerEntry, nExt:=nExt, nRet:=nRet, fSpeed:=fspeed, fAccel:=fAccel, fJerk:=fJerk);
 		IF NOT fbTravelling.bBusy THEN
 			bMotionDone := TRUE;
 			eNextState := E_StatesProd.Closing;
@@ -138,6 +158,7 @@ END_CASE]]></ST>
       <LineId Id="323" Count="0" />
       <LineId Id="313" Count="0" />
       <LineId Id="60" Count="0" />
+      <LineId Id="544" Count="13" />
       <LineId Id="57" Count="0" />
       <LineId Id="53" Count="2" />
       <LineId Id="224" Count="0" />
@@ -163,6 +184,7 @@ END_CASE]]></ST>
       <LineId Id="385" Count="0" />
       <LineId Id="83" Count="2" />
       <LineId Id="218" Count="0" />
+      <LineId Id="470" Count="0" />
       <LineId Id="168" Count="0" />
       <LineId Id="330" Count="0" />
       <LineId Id="169" Count="0" />

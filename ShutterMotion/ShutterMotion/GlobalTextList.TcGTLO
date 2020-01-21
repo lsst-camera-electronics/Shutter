@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
   <GlobalTextList Name="GlobalTextList" Id="{8bfaf04f-6206-4060-9e10-5ffa58a3a22b}">
     <XmlArchive>
       <Data>
@@ -58,6 +58,11 @@
             <o>
               <v n="TextID">"25"</v>
               <v n="TextDefault">"AxisXP move to:"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"960"</v>
+              <v n="TextDefault">"AXIS_0: %7.4f mm"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>

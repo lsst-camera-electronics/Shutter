@@ -33,6 +33,7 @@ IF bTopEntry = TRUE THEN
 END_IF	
 nCurrentState := nNextState;
 CASE nCurrentState OF
+	0:
 	
 	410: //Clear Homed flag and calibrated flag
 		fbHomeDelay(IN:=FALSE);
@@ -91,8 +92,16 @@ CASE nCurrentState OF
 			nNextState := 470;
 		END_IF	
 		
-	470: //End Action
+	470://delay
+		fbHomeDelay(IN:=TRUE, PT:=T#100MS);
+		IF fbHomeDelay.Q THEN
+			fbHomeDelay(IN:=FALSE);	
+			nNextState := 480;
+		END_IF
+		
+	480: //End Action
 		bBusy := FALSE;
+		nNextState :=0;
 END_CASE]]></ST>
     </Implementation>
     <LineIds Name="FB_Homing">
@@ -100,7 +109,9 @@ END_CASE]]></ST>
       <LineId Id="134" Count="1" />
       <LineId Id="161" Count="0" />
       <LineId Id="136" Count="1" />
-      <LineId Id="19" Count="2" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="186" Count="0" />
+      <LineId Id="20" Count="1" />
       <LineId Id="160" Count="0" />
       <LineId Id="22" Count="4" />
       <LineId Id="154" Count="1" />
@@ -109,8 +120,14 @@ END_CASE]]></ST>
       <LineId Id="28" Count="0" />
       <LineId Id="166" Count="0" />
       <LineId Id="29" Count="1" />
-      <LineId Id="33" Count="42" />
+      <LineId Id="33" Count="40" />
+      <LineId Id="193" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="188" Count="4" />
+      <LineId Id="194" Count="0" />
+      <LineId Id="75" Count="0" />
       <LineId Id="77" Count="0" />
+      <LineId Id="187" Count="0" />
       <LineId Id="80" Count="0" />
       <LineId Id="9" Count="0" />
     </LineIds>

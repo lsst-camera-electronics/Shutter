@@ -1,122 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4020.32">
-	<DataTypes>
-		<DataType>
-			<Name GUID="{A39361D3-D4AC-4F67-8FEE-F366F3137B89}" Namespace="AX5000" PersistentType="true">E_AX5000_P_0275_ActiveFeedbackAndMemory</Name>
-			<BitSize>8</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000001}">BYTE</BaseType>
-			<EnumInfo>
-				<Text>
-					<![CDATA[EAX5000_P_0275_MEMORY_NONE]]>
-				</Text>
-				<Enum>0</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text>
-					<![CDATA[EAX5000_P_0275_FEEDBACK1_MEMORY_ENCODER]]>
-				</Text>
-				<Enum>1</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text>
-					<![CDATA[EAX5000_P_0275_FEEDBACK1_MEMORY_DRIVE]]>
-				</Text>
-				<Enum>2</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text>
-					<![CDATA[EAX5000_P_0275_FEEDBACK2_MEMORY_ENCODER]]>
-				</Text>
-				<Enum>16</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text>
-					<![CDATA[EAX5000_P_0275_FEEDBACK2_MEMORY_DRIVE]]>
-				</Text>
-				<Enum>32</Enum>
-			</EnumInfo>
-			<Hides>
-				<Hide GUID="{F1A82E04-2D76-4E5D-BB15-437337214D25}"/>
-				<Hide GUID="{85DC3E7A-8ADA-435B-9479-25573909A7DB}"/>
-			</Hides>
-		</DataType>
-		<DataType>
-			<Name GUID="{A0791761-1F5D-414F-8699-E5B3472004F1}" Namespace="AX5000" PersistentType="true">ST_AX5000_P_0275</Name>
-			<BitSize>16</BitSize>
-			<SubItem>
-				<Name>ActiveFeedbackAndMemory</Name>
-				<Type GUID="{A39361D3-D4AC-4F67-8FEE-F366F3137B89}" Namespace="AX5000">E_AX5000_P_0275_ActiveFeedbackAndMemory</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>0</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>InitializationErrorBehavior</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
-				<BitSize>1</BitSize>
-				<BitOffs>8</BitOffs>
-			</SubItem>
-			<Hides>
-				<Hide GUID="{0D1A14D3-018F-4F48-88A7-90B490A317B5}"/>
-				<Hide GUID="{43B3CFF1-FA94-4CC1-8B03-C73EF940373B}"/>
-				<Hide GUID="{81B09CD0-943C-4070-AA5B-0A6818251CEB}"/>
-				<Hide GUID="{B6598B95-DC2C-454C-9B12-DE628B32D897}"/>
-				<Hide GUID="{D7D16A25-71D5-48E0-882D-56AB4D826BC2}"/>
-			</Hides>
-		</DataType>
-	</DataTypes>
-	<Project ProjectGUID="{02C0499F-514F-4877-BFF2-0E76EA357A75}" TargetNetId="5.48.66.18.1.1" ShowHideConfigurations="#x106">
+<TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4022.22">
+	<Project ProjectGUID="{02C0499F-514F-4877-BFF2-0E76EA357A75}" TargetNetId="5.54.106.120.1.1" ShowHideConfigurations="#x106">
 		<System>
-			<Settings RouterMemory="32505856">
-				<IoIdleTask Priority="3"/>
+			<Settings MaxCpus="2" NonWinCpus="1" RouterMemory="32505856">
+				<Cpu BaseTime="5000"/>
+				<Cpu CpuId="1" BaseTime="5000"/>
+				<IoIdleTask Priority="3" CycleTime="5000" Affinity="#x00000002"/>
 			</Settings>
+			<Licenses>
+				<Target BkhfOrder="00239946">
+					<ManualSelect>{8C57D0A8-BD63-4554-BAE1-E9C797EF0D0E}</ManualSelect>
+				</Target>
+			</Licenses>
 			<Tasks>
-				<Task Id="2" Priority="36" CycleTime="20000" AmsPort="350" ExceedWarning="1">
-					<Name>PlcTask</Name>
-				</Task>
-				<Task Id="6" Priority="4" CycleTime="20000" AmsPort="351" ExceedWarning="1">
-					<Name>PlcTask1</Name>
-				</Task>
-				<Task Id="7" Priority="6" CycleTime="20000" AmsPort="352" ExceedWarning="1">
-					<Name>PlcTask2</Name>
-				</Task>
-				<Task Id="8" Priority="8" CycleTime="20000" AmsPort="353" ExceedWarning="1">
-					<Name>PlcTask3</Name>
-				</Task>
-				<Task Id="9" Priority="12" CycleTime="20000" AmsPort="354" ExceedWarning="1">
-					<Name>PlcTask4</Name>
-				</Task>
-				<Task Id="10" Priority="14" CycleTime="20000" AmsPort="355" ExceedWarning="1">
-					<Name>PlcTask5</Name>
-				</Task>
-				<Task Id="11" Priority="16" CycleTime="20000" AmsPort="356" ExceedWarning="1">
-					<Name>PlcTask6</Name>
-				</Task>
-				<Task Id="12" Priority="18" CycleTime="20000" AmsPort="357" ExceedWarning="1">
-					<Name>PlcTask7</Name>
-				</Task>
-				<Task Id="13" Priority="20" CycleTime="20000" AmsPort="358" ExceedWarning="1">
-					<Name>PlcTask8</Name>
-				</Task>
-				<Task Id="14" Priority="22" CycleTime="20000" AmsPort="359" ExceedWarning="1">
-					<Name>PlcTask9</Name>
-				</Task>
-				<Task Id="15" Priority="24" CycleTime="20000" AmsPort="360" ExceedWarning="1">
-					<Name>PlcTask10</Name>
-				</Task>
-				<Task Id="16" Priority="26" CycleTime="20000" AmsPort="361" ExceedWarning="1">
-					<Name>PlcTask11</Name>
-				</Task>
-				<Task Id="17" Priority="28" CycleTime="20000" AmsPort="362" ExceedWarning="1">
-					<Name>PlcTask12</Name>
-				</Task>
-				<Task Id="18" Priority="30" CycleTime="20000" AmsPort="363" ExceedWarning="1">
-					<Name>PlcTask13</Name>
-				</Task>
-				<Task Id="19" Priority="32" CycleTime="20000" AmsPort="364" ExceedWarning="1">
-					<Name>PlcTask14</Name>
-				</Task>
-				<Task Id="20" Priority="34" CycleTime="20000" AmsPort="365" ExceedWarning="1">
-					<Name>PlcTask15</Name>
+				<Task Id="20" Priority="20" CycleTime="5000" AmsPort="350" Affinity="#x00000002" ExceedWarning="1">
+					<Name>PlcTaskMain</Name>
 				</Task>
 			</Tasks>
 		</System>
@@ -125,15 +23,16 @@
 		</Motion>
 		<Plc>
 			<Project File="ShutterMotion.xti"/>
+			<PlcAuxTask Affinity="#x00000002"/>
 		</Plc>
 		<Io>
 			<Device File="Device 1 (EtherCAT).xti" Id="1"/>
 		</Io>
 	</Project>
 	<Mappings>
-		<MappingInfo Identifier="{08502001-0010-0304-0020-500810000403}" Id="#x02030030" Watchdog="04000000080000000400000004000000"/>
-		<MappingInfo Identifier="{05000010-2001-0850-3000-040300205008}" Id="#x02030040" Watchdog="08000000040000000400000004000000"/>
+		<MappingInfo Identifier="{08502001-0010-0304-0020-500810000403}" Id="#x02030020" Watchdog="00000000000000000000000000000000"/>
+		<MappingInfo Identifier="{05000010-2001-0850-3000-040300205008}" Id="#x02030040" Watchdog="04000000040000000400000004000000"/>
 		<MappingInfo Identifier="{00000000-0010-0304-3000-040310000403}" Id="#x02030010"/>
-		<MappingInfo Identifier="{00000000-2001-0850-0020-500840000403}" Id="#x02030020"/>
+		<MappingInfo Identifier="{00000000-2001-0850-0020-500841000403}" Id="#x02030030"/>
 	</Mappings>
 </TcSmProject>

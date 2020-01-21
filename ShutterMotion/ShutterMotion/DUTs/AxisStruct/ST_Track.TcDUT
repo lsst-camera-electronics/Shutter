@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+  <DUT Name="ST_Track" Id="{58167d2e-7a14-4b15-8245-0026a77f8b9b}">
+    <Declaration><![CDATA[TYPE ST_Track :
+STRUCT
+	nSeqToCompare 	: WORD;
+	bEdgeToCompare	: BOOL;
+	tScanTime		: T_DCTIME64;
+	nHallID			: DINT;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

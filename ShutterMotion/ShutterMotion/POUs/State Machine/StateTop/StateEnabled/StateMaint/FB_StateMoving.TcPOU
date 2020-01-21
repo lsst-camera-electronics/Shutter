@@ -23,7 +23,7 @@ VAR
 	//homing subroutine
 	fbHoming	: FB_Homing;
 	//move relative vars
-	fTime, fSpeed, fAccel, fJerk : LREAL;
+	fDistance, fTime, fSpeed, fAccel, fJerk : LREAL;
 
 END_VAR
 ]]></Declaration>
@@ -33,6 +33,19 @@ END_VAR
 	IF eCommand = E_Commands.homeAxis THEN
 		nNextState := 1000;
 	ELSIF eCommand = E_Commands.moveAxisAbsolute THEN
+		fDistance := ABS(stAxis[stMoveAxisAbsolute.axisIndex].axisRef.NcToPlc.ActPos - stMoveAxisAbsolute.position);
+		fSpeed	:= stMoveAxisAbsolute.speed;
+		IF (fSpeed>0) THEN
+			IF (fSpeed>1668.355556) THEN
+				fSpeed:=1668.355556;
+			END_IF
+			fTime 	:= (2*fDistance)/(fSpeed);
+			IF (fTime<0.9) THEN
+				fTime:=0.9;
+			END_IF
+			fAccel 	:= (8*fDistance)/(fTime*fTime);
+			fJerk	:= (32*fDistance)/(fTime*fTime*fTime);
+		END_IF
 		nNextState := 1010;
 	ELSIF eCommand = E_Commands.moveAxisRelative THEN
 		(* 
@@ -42,12 +55,25 @@ END_VAR
 			jerk 			= 32*distance/time^3
 		*)
 		fTime	:= TIME_TO_LREAL(stMoveAxisRelative.moveTime)/1000;
-		fSpeed 	:= (2*stMoveAxisRelative.distance)/(fTime);
-		fAccel 	:= (8*stMoveAxisRelative.distance)/(fTime*fTime);
-		fJerk	:= (32*stMoveAxisRelative.distance)/(fTime*fTime*fTime);
+		IF (fTime>0) THEN
+			fSpeed 	:= (2*ABS(stMoveAxisRelative.distance))/(fTime);
+			fAccel 	:= (8*ABS(stMoveAxisRelative.distance))/(fTime*fTime);
+			fJerk	:= (32*ABS(stMoveAxisRelative.distance))/(fTime*fTime*fTime);
+		END_IF
+
 		nNextState := 1020;
 	END_IF
 END_IF	
+
+IF (fSpeed > 1668.35556) THEN
+	fSpeed := 1668.3556;
+END_IF
+IF (fAccel > 7414.91358) THEN
+	fAccel := 7414.91358;
+END_IF
+IF (fJerk > 32955.17147) THEN
+	fJerk := 32955.17147;
+END_IF
 
 IF nCurrentState <> nNextState THEN
 	bLowerEntry := TRUE;
@@ -64,7 +90,7 @@ CASE nCurrentState OF
 		
 	1010://move absolute
 		stAxis[stMoveAxisAbsolute.axisIndex].mcMoveAbs(Axis:=stAxis[stMoveAxisAbsolute.axisIndex].axisRef,
-			Position:=stMoveAxisAbsolute.position, Velocity:=stMoveAxisAbsolute.speed, Execute:=TRUE);
+			Position:=stMoveAxisAbsolute.position, Velocity:=fSpeed, Acceleration:= fAccel, Deceleration:= fAccel, Jerk:= fJerk,  Execute:=TRUE);
 		IF stAxis[stMoveAxisAbsolute.axisIndex].mcMoveAbs.Done THEN
 			stAxis[stMoveAxisAbsolute.axisIndex].mcMoveAbs(Axis:=stAxis[stMoveAxisAbsolute.axisIndex].axisRef, Execute:=FALSE);
 			nNextState := 2000;
@@ -87,15 +113,28 @@ END_CASE]]></ST>
       <LineId Id="31" Count="1" />
       <LineId Id="82" Count="0" />
       <LineId Id="233" Count="0" />
-      <LineId Id="86" Count="2" />
+      <LineId Id="315" Count="0" />
+      <LineId Id="307" Count="0" />
+      <LineId Id="329" Count="0" />
+      <LineId Id="331" Count="2" />
+      <LineId Id="345" Count="0" />
+      <LineId Id="335" Count="5" />
+      <LineId Id="312" Count="0" />
+      <LineId Id="87" Count="1" />
       <LineId Id="248" Count="4" />
       <LineId Id="247" Count="0" />
+      <LineId Id="346" Count="1" />
+      <LineId Id="350" Count="1" />
+      <LineId Id="348" Count="0" />
       <LineId Id="255" Count="0" />
-      <LineId Id="246" Count="0" />
-      <LineId Id="253" Count="1" />
+      <LineId Id="254" Count="0" />
       <LineId Id="89" Count="0" />
       <LineId Id="93" Count="0" />
       <LineId Id="281" Count="0" />
+      <LineId Id="316" Count="0" />
+      <LineId Id="318" Count="1" />
+      <LineId Id="321" Count="5" />
+      <LineId Id="317" Count="0" />
       <LineId Id="34" Count="0" />
       <LineId Id="143" Count="1" />
       <LineId Id="140" Count="0" />

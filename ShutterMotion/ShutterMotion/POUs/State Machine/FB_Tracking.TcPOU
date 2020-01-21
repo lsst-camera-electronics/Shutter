@@ -6,68 +6,73 @@ VAR_IN_OUT
 	stAxis  : ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;	
 END_VAR
 VAR_INPUT
-	eCommand 	: E_Commands;
-	bMotionDone	: BOOL;
+	eCommand 			: E_Commands;
+	bMotionDone			: BOOL;
+	inReset				: ST_Reset;
+	inMoveAxisAbsolute	: ST_MoveAxisAbsolute;
+	inMoveAxisRelative	: ST_MoveAxisRelative;
 END_VAR
 VAR_OUTPUT
 	stOutMotionDone : ST_MotionDone;
 END_VAR
 VAR
 	//used in tracking Action
-	nSeqToCompare 	: ARRAY [0 .. 1] OF WORD;
-	bEdgeToCompare	: ARRAY [0 .. 1] OF BOOL;
-	nHallID			: ARRAY [0 .. 1] OF DINT;
+	stTrack			: ARRAY [0 .. 4] OF ST_TRACK;
+	stTrackTemp		: ST_TRACK;
+	bGoNextSeq		: BOOL;
 	nAxisID			: INT;
 	tTimeEnd		: T_DCTIME64;
 	nMask			: ULINT := 16#FFFF_FFFF_0000_0000;
-	tDcTime			: T_DCTIME64;
+	
+	//used in determining target duration
 	fSpeed			: LREAL;
-	
-	
-	//bXorResult 		: BOOL;
-	nSeqTime		: ARRAY [0 .. 1] OF UDINT;
-	bValidInput		: BOOL;
-	bDoubleTrip		: BOOL;
-	nGoNextSeq		: BOOL;
+	tTargetDur		: LTIME;
+	fDistance		: LREAL;
 	
 	fbMoving_Rtrig : ARRAY[0 .. 1] OF R_TRIG;
 	fbRtrig		: ARRAY[GVL.cHallLower..GVL.cHallUpper] OF R_Trig;
 	bInMotion	: BOOL;
 	stMotionDone : ARRAY [0..1] OF ST_MotionDone;	
 	nSequence	: DINT;
+	nLastMoved	: INT;
 	
 	//counter
-	i, j	: INT :=0;
+	i, j, k, m		: INT := 0;
+	nTPC	: INT; //Trip Per Cycle
 	
 	//TestVar
+	testRtrig : R_TRIG;
+	testRtrig2 : R_TRIG;
 	testInt: INT;
+	testInt2: INT;
+	testInt3: INT;
+	testInt4: INT;
+	testInt5: INT;
+	testInt6: INT;
 	testLREAL : LREAL;
+	testTemp : ARRAY[0 .. 4] OF ST_Track;
+	testTime : ARRAY[0 .. 4] OF T_DCTIME64;
+	teststTrack : ARRAY[0 .. 4] OF T_DCTIME64;
+	testDCTime	: ARRAY[0 .. 4] OF T_DCTIME64;
+	nMask2	 : ULINT := 16#0000_0000_FFFF_FFFF;
+	a, b : INT;
+	
+	
+	
 END_VAR
+
+
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[//////////////////////////////////////////////////////////////
 //Algorithm for tracking blade position using hall switches	//
 //////////////////////////////////////////////////////////////
-bValidInput:=FALSE;
-bDoubleTrip:=FALSE;
-nGoNextSeq := FALSE;
 stAxis[GVL.cXP].bTrackedFlag:=FALSE;
 stAxis[GVL.cXM].bTrackedFlag:=FALSE;
-j:=0;
+nTPC:=0;
+testInt3:=0;
+testInt4:=0;
 
-(*
-//Check if command causes motion
-IF (eCommand=E_Commands.calibrate) OR_ELSE
-	(eCommand=E_Commands.closeShutter) OR_ELSE
-	(eCommand=E_Commands.homeAxis) OR_ELSE
-	(eCommand=E_Commands.moveAxisAbsolute) OR_ELSE
-	(eCommand=E_Commands.moveAxisRelative) OR_ELSE
-	(eCommand=E_Commands.openShutter) OR_ELSE
-	(eCommand=E_Commands.takeExposure) THEN
-		bInMotion := TRUE;
-		tTimeStart := F_GetCurDcTaskTime64();
-END_IF
-*)
 fbMoving_Rtrig[GVL.cXP](CLK:=stAxis[GVL.cXP].axisRef.Status.Moving);
 IF fbMoving_Rtrig[GVL.cXP].Q THEN
 	bInMotion:=TRUE;
@@ -91,312 +96,528 @@ IF fbMoving_Rtrig[GVL.cXM].Q THEN
 	stMotionDone[gvl.cXM].targetDur := LTIME#0D0H0M0S0MS0US0NS;
 END_IF
 
-IF bMotionDone THEN
-	IF MAIN.inReset.speed > 0 THEN
-		fSpeed := MAIN.inReset.speed;
-	ELSE
-		fSpeed := 0.01;
+//determine target duration
+IF eCommand = E_Commands.takeExposure THEN
+	fSpeed	:= inReset.speed;
+	IF (fSpeed>0) THEN
+		IF (fSpeed>1668.355556) THEN
+			fSpeed:=1668.355556;
+		END_IF
+		tTargetDur 	:= LREAL_TO_LTIME((2*GVL.cPosEnd)/(fSpeed)*EXPT(10,9));
 	END_IF
-	bInMotion := FALSE;
+ELSIF eCommand = E_Commands.moveAxisAbsolute THEN
+	fDistance := ABS(stAxis[inMoveAxisAbsolute.axisIndex].axisRef.NcToPlc.ActPos - inMoveAxisAbsolute.position);
+	fSpeed	:= inMoveAxisAbsolute.speed;
+	IF (fSpeed>0) THEN
+		IF (fSpeed>1668.355556) THEN
+			fSpeed:=1668.355556;
+		END_IF
+		tTargetDur 	:= LREAL_TO_LTIME(((2*fDistance)/(fSpeed))*EXPT(10,9));
+	END_IF
+ELSIF eCommand = E_Commands.moveAxisRelative THEN
+	tTargetDur	:= TIME_TO_LTIME(inMoveAxisRelative.moveTime);
+END_IF
+
+//Checks to see which blade set last moved
+IF (stAxis[GVL.cXM].axisRef.Status.Moving AND stAxis[GVL.cXP].axisRef.Status.InTargetPosition) THEN
+	nLastMoved:=GVL.cXM;
+ELSIF (stAxis[GVL.cXP].axisRef.Status.Moving AND stAxis[GVL.cXM].axisRef.Status.InTargetPosition) THEN
+	nLastMoved:=GVL.cXP;
+END_IF
+IF bMotionDone THEN
+	//use for determining which blade set has finished during a travelling slit motion
+	IF (stAxis[GVL.cXM].axisRef.Status.Moving AND stAxis[GVL.cXP].axisRef.Status.InTargetPosition) THEN
+		nAxisID:=GVL.cXP;
+	ELSIF (stAxis[GVL.cXP].axisRef.Status.Moving AND stAxis[GVL.cXM].axisRef.Status.InTargetPosition) THEN
+		nAxisID:=GVL.cXM;
+	ELSE 
+		nAxisID:=nLastMoved;
+	END_IF
+	//bInMotion flag remains true if any of the blade set is still in motion
+	IF ((NOT stAxis[GVL.cXP].axisRef.Status.Moving) AND (NOT stAxis[GVL.cXM].axisRef.Status.Moving)) THEN
+		bInMotion := FALSE;
+	END_IF
 	nSequence := nSequence+1;
 	tTimeEnd := F_GetCurDcTaskTime64();
 	stMotionDone[nAxisID].actualDur := ULINT_TO_LTIME(tTimeEnd-stMotionDone[nAxisID].startTime);
-	stMotionDone[nAxisID].targetDur := ULINT_TO_LTIME(tTimeEnd-stMotionDone[nAxisID].startTime); //Needs to be changed to actually calculate expected duration //LREAL_TO_LTIME((2*ABS(stMotionDone[nAxisID].startPos-stAxis[nAxisID].axisRef.NcToPlc.TargetPos)/fSpeed)*1000000000);//
+	stMotionDone[nAxisID].targetDur := tTargetDur;
 	stMotionDone[nAxisID].targetPos := stAxis[nAxisID].axisRef.NcToPlc.TargetPos;
 	stMotionDone[nAxisID].endPos := stAxis[nAxisID].axisRef.NcToPlc.ActPos;
-	
-	testLREAL :=(2*ABS(stMotionDone[nAxisID].startPos-stAxis[nAxisID].axisRef.NcToPlc.TargetPos)/fSpeed);//ULINT_TO_LTIME(tTimeEnd-tTimeStart);
 	
 	stOutMotionDone:=stMotionDone[nAxisID];
 	stOutMotionDone.sequence:=nSequence;
 END_IF
+
 
 //Detect hall switch transitions
 FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
 	fbRtrig[i](CLK:=GVL.nNumOfInputs[i].0);
 	IF fbRtrig[i].Q THEN
 		//identifies which hall switch tripped
-		nSeqToCompare[j] := INT_TO_WORD((i*10)+5);
-		bEdgeToCompare[j] := GVL.bInputEventState[i];
-		nHallID[j] := i;
-		
-		//along with the trip time
-		stAxis[GVL.cXP].nHallTime := GVL.nInputEventTime[i];
-		
-		//increment the index
-		j:=j+1;
-		bValidInput:=TRUE;
-		IF j=2 THEN
-			bDoubleTrip:=TRUE;
+		stTrack[nTPC].nSeqToCompare := INT_TO_WORD((i*10)+5);
+		stTrack[nTPC].bEdgeToCompare := GVL.bInputEventState[i];
+		stTrack[nTPC].nHallID := i;
+		(*
+			The time-stamping module only keeps track of the lower 32-bit time (about 4.29 seconds).
+			To get the actual 64-bit time, add the acquired 32-bit time to the upper 32 bit of the DC time. 
+			Check to see if the event time has overflowed by comparing appended time with current DC task time. 
+			If appeneded time is greater than dc task time, then the 32-bit clock has overflowed.
+			Decrement the 33rd bit of the appended time by 1 to get the correct time.
+		*)
+		stTrack[nTPC].tScanTime := (F_GetCurDcTaskTime64() AND nMask) + GVL.nInputEventTime[stTrack[nTPC].nHallID];
+		IF stTrack[nTPC].tScanTime > F_GetCurDcTaskTime64() THEN
+			stTrack[nTPC].tScanTIME := stTrack[nTPC].tScanTime - 16#1_0000_0000;
+			testInt5:=testInt5+1;
 		END_IF
+		//increment the index
+		nTPC:=nTPC+1;
+		
+		//Sort the data from lowest time to highest time
+		IF nTPC>=2 THEN
+			FOR j:=nTPC-1 TO 1 BY -1 DO
+				IF (stTrack[j].tScanTime < stTrack[j-1].tScanTime) THEN
+						stTrackTemp := stTrack[j];
+						stTrack[j] := stTrack[j-1];
+						stTrack[j-1] := stTrackTemp;
+						testInt6 := testInt6+1;
+				END_IF
+			END_FOR
+		END_IF
+
+		
+		//For debugging only: To see the highest number of trip per cycle
+		testRTrig2(CLK:=(nTPC>=2));
+		IF testRTrig2.Q THEN
+			testInt3 := 1;
+		END_IF
+		testRTrig(CLK:=(nTPC>=3));
+		IF testRTrig.Q THEN
+			testTemp := stTrack;
+			testInt4 := 1;
+		END_IF
+		IF m<nTPC THEN
+			m:= nTPC;
+		END_IF
+		
+
+			IF ((F_GetCurDcTaskTime64() - stTrack[0].tScanTime)>2000000) AND nTPC=1 THEN
+				testTime[0]	:= F_GetCurDcTaskTime64() - stTrack[0].tScanTime;
+				teststTrack[0] := stTrack[0].tScanTime;
+				 testDCTime[0] := F_GetCurDcTaskTime64();
+			END_IF
+			IF ((F_GetCurDcTaskTime64() - stTrack[1].tScanTime)>2000000) AND nTPC=2 THEN
+				testTime[1]	:= F_GetCurDcTaskTime64() - stTrack[1].tScanTime;
+				teststTrack[1] := stTrack[1].tScanTime;
+				testDCTime[1] := F_GetCurDcTaskTime64();
+			END_IF
+			IF ((F_GetCurDcTaskTime64() - stTrack[2].tScanTime)>2000000) AND nTPC=3 THEN
+				testTime[2]	:= F_GetCurDcTaskTime64() - stTrack[2].tScanTime;
+				teststTrack[2] := stTrack[2].tScanTime;
+				testDCTime[2] := F_GetCurDcTaskTime64();
+			END_IF
+			IF ((F_GetCurDcTaskTime64() - stTrack[3].tScanTime)>2000000) AND nTPC=4 THEN
+				testTime[3]	:= F_GetCurDcTaskTime64() - stTrack[3].tScanTime;
+				teststTrack[3] := stTrack[3].tScanTime;
+				testDCTime[3] := F_GetCurDcTaskTime64();
+			END_IF
 	END_IF
 	
+	//For debugging - checks to see if the same hall switch is tripped twice in one cycle
 	IF GVL.nNumOfInputs[i]=2 THEN
 		testInt:=testint+1;
 	END_IF
 	
 END_FOR
-	
-//Single blade motion tracking
-IF bValidInput THEN
-	
-	//Hall sensors position tracking for axis XP
-	IF stAxis[GVL.cXP].axisRef.Status.Moving AND NOT nGoNextSeq THEN
-		//Compare current sequence with recorded sequence. Update position if match. Positive direction.
-		IF stAxis[GVL.cXP].axisRef.status.PositiveDirection AND stAxis[GVL.cXP].stHall[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].nSeq = nSeqToCompare[0] AND 
-				stAxis[GVL.cXP].stHall[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].bEdge = bEdgeToCompare[0] THEN
-			stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXP].nTripCount];
-			stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount + 1;
-			//track difference between hall sensor and encoder data at trip point
-			stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
-			stAxis[GVL.cXP].bTrackedFlag:=TRUE;
-			nGoNextSeq := TRUE;
-			
-			IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
-				nAxisID:= GVL.cXP;
-				tDcTime:=F_GetCurDcTaskTime64() AND nMask;
-				stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].dcTime := GVL.nInputEventTime[nHallID[0]]+tDcTime;
-				stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].id := nHallID[0];
-				stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].on := bEdgeToCompare[0];
-				stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
-				stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
-				
-				stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_GetCurDcTaskTime64();
-				stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
-				stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
-			END_IF
-			
-		END_IF
-		//Compare current sequence with recorded sequence. Update position if match. Negative direction.
-		IF stAxis[GVL.cXP].axisRef.status.NegativeDirection AND stAxis[GVL.cXP].stHall[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].nSeq = nSeqToCompare[0] AND
-				stAxis[GVL.cXP].stHall[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].bEdge = bEdgeToCompare[0] THEN
-			stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount];
-			stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount - 1;		
-			//track difference between hall sensor and encoder data at trip point
-			stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
-			stAxis[GVL.cXP].bTrackedFlag:=TRUE;
-			nGoNextSeq := TRUE;
-			
-			IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
-				nAxisID:= GVL.cXP;
-				tDcTime:=F_GetCurDcTaskTime64() AND nMask;
-				stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].dcTime := GVL.nInputEventTime[nHallID[0]]+tDcTime;
-				stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].id := nHallID[0];
-				stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].on := bEdgeToCompare[0];
-				stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
-				stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
-				
-				stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_GetCurDcTaskTime64();
-				stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
-				stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
-			END_IF
-			
-		END_IF
-	END_IF
-	
-	//Hall sensors position tracking for axis XM
-	IF stAxis[GVL.cXM].axisRef.Status.Moving AND NOT nGoNextSeq THEN
-		//Compare current sequence with recorded sequence. Update position if match. Positive direction.
-		IF stAxis[GVL.cXM].axisRef.status.PositiveDirection AND stAxis[GVL.cXM].stHall[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].nSeq = nSeqToCompare[0] AND
-				stAxis[GVL.cXM].stHall[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].bEdge = bEdgeToCompare[0] THEN
-			stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXM].nTripCount];
-			stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount - 1;	
-			//track difference between hall sensor and encoder data at trip point
-			stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
-			stAxis[GVL.cXM].bTrackedFlag:=TRUE;
-			nGoNextSeq := TRUE;
-			
-			IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
-				nAxisID:= GVL.cXM;
-				tDcTime:=F_GetCurDcTaskTime64() AND nMask;
-				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].dcTime := GVL.nInputEventTime[nHallID[1]]+tDcTime;
-				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].id := nHallID[1];
-				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].on := bEdgeToCompare[1];
-				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
-				stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
-				
-				stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_GetCurDcTaskTime64();
-				stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
-				stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
-			END_IF
-			
-		END_IF
-		//Compare current sequence with recorded sequence. Update position if match. Negative direction.
-		IF stAxis[GVL.cXM].axisRef.status.NegativeDirection AND stAxis[GVL.cXM].stHall[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].nSeq = nSeqToCompare[0] AND
-				stAxis[GVL.cXM].stHall[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].bEdge = bEdgeToCompare[0] THEN
-			stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount];
-			stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount + 1;	
-			//track difference between hall sensor and encoder data at trip point
-			stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
-			stAxis[GVL.cXM].bTrackedFlag:=TRUE;
-			nGoNextSeq := TRUE;
-			
-			IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
-				nAxisID:= GVL.cXM;
-				tDcTime:=F_GetCurDcTaskTime64() AND nMask;
-				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].dcTime := GVL.nInputEventTime[nHallID[1]]+tDcTime;
-				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].id := nHallID[1];
-				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].on := bEdgeToCompare[1];
-				stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
-				stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
-				
-				stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_GetCurDcTaskTime64();
-				stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
-				stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
-			END_IF
-			
-		END_IF
-	END_IF
-	
-END_IF
 
-//Double blade motion tracking. If not already tracked in the first sequence then second sequence MUST be for the untracked blade
-IF bDoubleTrip THEN
-	IF NOT stAxis[GVL.cXP].bTrackedFlag THEN
-		//Compare current sequence with recorded sequence. Update position if match. Positive direction.
-		IF stAxis[GVL.cXP].axisRef.status.PositiveDirection THEN
-			stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXP].nTripCount];
-			stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount + 1;
-			//track difference between hall sensor and encoder data at trip point
-			stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
-			stAxis[GVL.cXP].bTrackedFlag:=TRUE;
-			
-	
-		END_IF
-		//Compare current sequence with recorded sequence. Update position if match. Negative direction.
-		IF stAxis[GVL.cXP].axisRef.status.NegativeDirection THEN
-			stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount];
-			stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount - 1;		
-			//track difference between hall sensor and encoder data at trip point
-			stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
-			stAxis[GVL.cXP].bTrackedFlag:=TRUE;
-			
 
-		END_IF
-	END_IF
 	
-	IF NOT stAxis[GVL.cXM].bTrackedFlag THEN
-		//Compare current sequence with recorded sequence. Update position if match. Positive direction.
-		IF stAxis[GVL.cXM].axisRef.status.PositiveDirection THEN
-			stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXM].nTripCount];
-			stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount - 1;	
-			//track difference between hall sensor and encoder data at trip point
-			stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
-			stAxis[GVL.cXM].bTrackedFlag:=TRUE;
-			
-
+//blade motion tracking
+IF nTPC>0 THEN
+	FOR k:=0 TO nTPC-1 BY 1 DO
+		IF (stAxis[GVL.cXP].axisRef.Status.Moving AND stAxis[GVL.cXM].axisRef.Status.Moving) AND
+			(stAxis[GVL.cXP].axisRef.Status.PositiveDirection AND stAxis[GVL.cXM].axisRef.Status.PositiveDirection) THEN
+			ACT_TrackingDoublePositive();
+		ELSIF (stAxis[GVL.cXP].axisRef.Status.Moving AND stAxis[GVL.cXM].axisRef.Status.Moving) AND
+			(stAxis[GVL.cXP].axisRef.Status.NegativeDirection AND stAxis[GVL.cXM].axisRef.Status.NegativeDirection) THEN
+			ACT_TrackingDoubleNegative();
+		ELSE
+			ACT_TrackingSingle();
 		END_IF
-		//Compare current sequence with recorded sequence. Update position if match. Negative direction.
-		IF stAxis[GVL.cXM].axisRef.status.NegativeDirection THEN
-			stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount];
-			stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount + 1;	
-			//track difference between hall sensor and encoder data at trip point
-			stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
-			stAxis[GVL.cXM].bTrackedFlag:=TRUE;
-			
+		bGoNextSeq:=FALSE;
+		IF nTPC=2 THEN
+			testInt2:=testInt2+1;
 		END_IF
-	END_IF
+	END_FOR
 END_IF
 ]]></ST>
     </Implementation>
+    <Action Name="ACT_TrackingDoubleNegative" Id="{0039cb21-b703-43f6-867c-8fbe57c73e86}">
+      <Implementation>
+        <ST><![CDATA[//Hall sensors position tracking for axis XP
+IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
+	//Compare current sequence with recorded sequence. Update position if match. Negative direction.
+	IF stAxis[GVL.cXP].axisRef.status.NegativeDirection AND stAxis[GVL.cXP].stHall[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].nSeq = stTrack[k].nSeqToCompare AND
+			stAxis[GVL.cXP].stHall[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].bEdge = stTrack[k].bEdgeToCompare AND (NOT bGoNextSeq) THEN
+		stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount];
+		stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount - 1;		
+		//track difference between hall sensor and encoder data at trip point
+		stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
+		stAxis[GVL.cXP].bTrackedFlag:=TRUE;
+		bGoNextSeq:=TRUE;
+		
+		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
+			nAxisID:= GVL.cXP;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].dcTime := stTrack[k].tScanTime;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].id := stTrack[k].nHallID;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].on := stTrack[k].bEdgeToCompare;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
+			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
+			
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_GetCurDcTaskTime64();
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
+			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
+		END_IF
+		
+	END_IF
+END_IF
+
+//Hall sensors position tracking for axis XM
+IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
+	//Compare current sequence with recorded sequence. Update position if match. Negative direction.
+	IF stAxis[GVL.cXM].axisRef.status.NegativeDirection AND stAxis[GVL.cXM].stHall[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].nSeq = stTrack[k].nSeqToCompare AND
+			stAxis[GVL.cXM].stHall[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].bEdge = stTrack[k].bEdgeToCompare AND (NOT bGoNextSeq) THEN
+		stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount];
+		stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount + 1;	
+		//track difference between hall sensor and encoder data at trip point
+		stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
+		stAxis[GVL.cXM].bTrackedFlag:=TRUE;
+		bGoNextSeq:=TRUE;
+		
+		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
+			nAxisID:= GVL.cXM;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].dcTime := stTrack[k].tScanTime;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].id := stTrack[k].nHallID;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].on := stTrack[k].bEdgeToCompare;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
+			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
+			
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_GetCurDcTaskTime64();
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
+			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
+		END_IF
+		
+	END_IF
+END_IF]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="ACT_TrackingDoublePositive" Id="{015fe346-39d0-42ba-a488-79403589a261}">
+      <Implementation>
+        <ST><![CDATA[//Hall sensors position tracking for axis XM
+IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
+	//Compare current sequence with recorded sequence. Update position if match. Positive direction.
+	IF stAxis[GVL.cXM].axisRef.status.PositiveDirection AND stAxis[GVL.cXM].stHall[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].nSeq = stTrack[k].nSeqToCompare AND
+			stAxis[GVL.cXM].stHall[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].bEdge = stTrack[k].bEdgeToCompare AND (NOT bGoNextSeq) THEN
+		stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXM].nTripCount];
+		stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount - 1;	
+		//track difference between hall sensor and encoder data at trip point
+		stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
+		stAxis[GVL.cXM].bTrackedFlag:=TRUE;
+		bGoNextSeq:=TRUE;
+		
+		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
+			nAxisID:= GVL.cXM;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].dcTime := stTrack[k].tScanTime;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].id := stTrack[k].nHallID;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].on := stTrack[k].bEdgeToCompare;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
+			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
+			
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_GetCurDcTaskTime64();
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
+			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
+		END_IF
+		
+	END_IF
+END_IF
+
+//Hall sensors position tracking for axis XP
+IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
+	//Compare current sequence with recorded sequence. Update position if match. Positive direction.
+	IF stAxis[GVL.cXP].axisRef.status.PositiveDirection AND stAxis[GVL.cXP].stHall[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].nSeq = stTrack[k].nSeqToCompare AND 
+			stAxis[GVL.cXP].stHall[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].bEdge = stTrack[k].bEdgeToCompare AND (NOT bGoNextSeq) THEN
+		stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXP].nTripCount];
+		stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount + 1;
+		//track difference between hall sensor and encoder data at trip point
+		stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
+		stAxis[GVL.cXP].bTrackedFlag:=TRUE;
+		bGoNextSeq:=TRUE;
+		
+		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
+			nAxisID:= GVL.cXP;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].dcTime := stTrack[k].tScanTime;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].id := stTrack[k].nHallID;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].on := stTrack[k].bEdgeToCompare;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
+			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
+			
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_GetCurDcTaskTime64();
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
+			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
+		END_IF
+		
+	END_IF
+END_IF
+]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="ACT_TrackingSingle" Id="{68bb727f-4301-4350-9f19-54a85b8d6b0c}">
+      <Implementation>
+        <ST><![CDATA[//Hall sensors position tracking for axis XP
+IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
+	//Compare current sequence with recorded sequence. Update position if match. Positive direction.
+	IF stAxis[GVL.cXP].axisRef.status.PositiveDirection AND stAxis[GVL.cXP].stHall[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].nSeq = stTrack[k].nSeqToCompare AND 
+			stAxis[GVL.cXP].stHall[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].bEdge = stTrack[k].bEdgeToCompare AND (NOT bGoNextSeq) THEN
+		stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXP].nTripCount];
+		stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount + 1;
+		//track difference between hall sensor and encoder data at trip point
+		stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
+		stAxis[GVL.cXP].bTrackedFlag:=TRUE;
+		bGoNextSeq:=TRUE;
+		
+		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
+			nAxisID:= GVL.cXP;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].dcTime := stTrack[k].tScanTime;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].id := stTrack[k].nHallID;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].on := stTrack[k].bEdgeToCompare;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
+			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
+			
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_GetCurDcTaskTime64();
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
+			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
+		END_IF
+		
+	END_IF
+	//Compare current sequence with recorded sequence. Update position if match. Negative direction.
+	IF stAxis[GVL.cXP].axisRef.status.NegativeDirection AND stAxis[GVL.cXP].stHall[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].nSeq = stTrack[k].nSeqToCompare AND
+			stAxis[GVL.cXP].stHall[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].bEdge = stTrack[k].bEdgeToCompare AND (NOT bGoNextSeq) THEN
+		stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount];
+		stAxis[GVL.cXP].nTripCount := stAxis[GVL.cXP].nTripCount - 1;		
+		//track difference between hall sensor and encoder data at trip point
+		stAxis[GVL.cXP].fPosDiffAtTrip := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - stAxis[GVL.cXP].fHallPosAct;
+		stAxis[GVL.cXP].bTrackedFlag:=TRUE;
+		bGoNextSeq:=TRUE;
+		
+		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
+			nAxisID:= GVL.cXP;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].dcTime := stTrack[k].tScanTime;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].id := stTrack[k].nHallID;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].on := stTrack[k].bEdgeToCompare;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
+			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
+			
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_GetCurDcTaskTime64();
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
+			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
+		END_IF
+		
+	END_IF
+END_IF
+
+//Hall sensors position tracking for axis XM
+IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
+	//Compare current sequence with recorded sequence. Update position if match. Positive direction.
+	IF stAxis[GVL.cXM].axisRef.status.PositiveDirection AND stAxis[GVL.cXM].stHall[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].nSeq = stTrack[k].nSeqToCompare AND
+			stAxis[GVL.cXM].stHall[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].bEdge = stTrack[k].bEdgeToCompare AND (NOT bGoNextSeq) THEN
+		stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXM].nTripCount];
+		stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount - 1;	
+		//track difference between hall sensor and encoder data at trip point
+		stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
+		stAxis[GVL.cXM].bTrackedFlag:=TRUE;
+		bGoNextSeq:=TRUE;
+		
+		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
+			nAxisID:= GVL.cXM;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].dcTime := stTrack[k].tScanTime;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].id := stTrack[k].nHallID;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].on := stTrack[k].bEdgeToCompare;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
+			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
+			
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_GetCurDcTaskTime64();
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
+			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
+		END_IF
+		
+	END_IF
+	//Compare current sequence with recorded sequence. Update position if match. Negative direction.
+	IF stAxis[GVL.cXM].axisRef.status.NegativeDirection AND stAxis[GVL.cXM].stHall[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].nSeq = stTrack[k].nSeqToCompare AND
+			stAxis[GVL.cXM].stHall[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].bEdge = stTrack[k].bEdgeToCompare AND (NOT bGoNextSeq) THEN
+		stAxis[GVL.cXM].fHallPosAct := stAxis[GVL.cXM].fHallPosCal[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount];
+		stAxis[GVL.cXM].nTripCount := stAxis[GVL.cXM].nTripCount + 1;	
+		//track difference between hall sensor and encoder data at trip point
+		stAxis[GVL.cXM].fPosDiffAtTrip := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - stAxis[GVL.cXM].fHallPosAct;
+		stAxis[GVL.cXM].bTrackedFlag:=TRUE;
+		bGoNextSeq:=TRUE;
+		
+		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
+			nAxisID:= GVL.cXM;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].dcTime := stTrack[k].tScanTime;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].id := stTrack[k].nHallID;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].on := stTrack[k].bEdgeToCompare;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
+			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
+			
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_GetCurDcTaskTime64();
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
+			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
+		END_IF
+		
+	END_IF
+END_IF]]></ST>
+      </Implementation>
+    </Action>
     <LineIds Name="FB_Tracking">
-      <LineId Id="1021" Count="1" />
-      <LineId Id="1024" Count="6" />
-      <LineId Id="1818" Count="0" />
-      <LineId Id="1288" Count="3" />
-      <LineId Id="1294" Count="5" />
-      <LineId Id="1544" Count="0" />
-      <LineId Id="1815" Count="0" />
-      <LineId Id="1822" Count="0" />
-      <LineId Id="1816" Count="0" />
-      <LineId Id="1819" Count="0" />
-      <LineId Id="1835" Count="6" />
-      <LineId Id="1820" Count="0" />
-      <LineId Id="1824" Count="0" />
-      <LineId Id="1817" Count="0" />
-      <LineId Id="1826" Count="0" />
-      <LineId Id="1842" Count="6" />
-      <LineId Id="1827" Count="0" />
-      <LineId Id="1825" Count="0" />
-      <LineId Id="1347" Count="0" />
-      <LineId Id="1852" Count="1" />
-      <LineId Id="1855" Count="2" />
-      <LineId Id="1311" Count="0" />
-      <LineId Id="1313" Count="0" />
-      <LineId Id="1425" Count="0" />
-      <LineId Id="1550" Count="0" />
-      <LineId Id="1543" Count="0" />
-      <LineId Id="1814" Count="0" />
-      <LineId Id="1670" Count="0" />
-      <LineId Id="1551" Count="0" />
-      <LineId Id="1859" Count="1" />
-      <LineId Id="1421" Count="0" />
-      <LineId Id="1507" Count="0" />
-      <LineId Id="1426" Count="0" />
-      <LineId Id="1287" Count="0" />
-      <LineId Id="1031" Count="0" />
-      <LineId Id="1141" Count="0" />
-      <LineId Id="1032" Count="3" />
-      <LineId Id="1462" Count="0" />
-      <LineId Id="1468" Count="0" />
-      <LineId Id="1471" Count="0" />
-      <LineId Id="1036" Count="1" />
-      <LineId Id="1472" Count="0" />
-      <LineId Id="1038" Count="19" />
-      <LineId Id="1459" Count="1" />
-      <LineId Id="1059" Count="5" />
-      <LineId Id="1315" Count="0" />
-      <LineId Id="1338" Count="0" />
-      <LineId Id="1380" Count="0" />
-      <LineId Id="1717" Count="0" />
-      <LineId Id="1388" Count="1" />
-      <LineId Id="1381" Count="0" />
-      <LineId Id="1386" Count="0" />
-      <LineId Id="1385" Count="0" />
-      <LineId Id="1390" Count="0" />
-      <LineId Id="1378" Count="0" />
-      <LineId Id="1340" Count="0" />
-      <LineId Id="1316" Count="0" />
-      <LineId Id="1065" Count="2" />
-      <LineId Id="1463" Count="0" />
-      <LineId Id="1068" Count="5" />
-      <LineId Id="1317" Count="0" />
-      <LineId Id="1391" Count="9" />
-      <LineId Id="1337" Count="0" />
-      <LineId Id="1318" Count="0" />
-      <LineId Id="1074" Count="6" />
-      <LineId Id="1464" Count="0" />
-      <LineId Id="1081" Count="3" />
-      <LineId Id="1142" Count="0" />
-      <LineId Id="1085" Count="0" />
-      <LineId Id="1319" Count="0" />
-      <LineId Id="1401" Count="9" />
-      <LineId Id="1336" Count="0" />
-      <LineId Id="1320" Count="0" />
-      <LineId Id="1086" Count="2" />
-      <LineId Id="1465" Count="0" />
-      <LineId Id="1089" Count="3" />
-      <LineId Id="1143" Count="0" />
-      <LineId Id="1093" Count="0" />
-      <LineId Id="1335" Count="0" />
-      <LineId Id="1411" Count="9" />
-      <LineId Id="1321" Count="1" />
-      <LineId Id="1094" Count="14" />
-      <LineId Id="1334" Count="0" />
-      <LineId Id="1324" Count="0" />
-      <LineId Id="1109" Count="7" />
-      <LineId Id="1333" Count="0" />
-      <LineId Id="1326" Count="0" />
-      <LineId Id="1117" Count="10" />
-      <LineId Id="1332" Count="0" />
-      <LineId Id="1328" Count="0" />
-      <LineId Id="1128" Count="7" />
-      <LineId Id="1329" Count="2" />
-      <LineId Id="1136" Count="2" />
-      <LineId Id="9" Count="0" />
-      <LineId Id="236" Count="1" />
-      <LineId Id="240" Count="3" />
+      <LineId Id="1927" Count="1" />
+      <LineId Id="1932" Count="2" />
+      <LineId Id="2414" Count="0" />
+      <LineId Id="2419" Count="0" />
+      <LineId Id="1935" Count="23" />
+      <LineId Id="2593" Count="0" />
+      <LineId Id="2659" Count="8" />
+      <LineId Id="2620" Count="6" />
+      <LineId Id="2632" Count="0" />
+      <LineId Id="2634" Count="0" />
+      <LineId Id="2641" Count="0" />
+      <LineId Id="2649" Count="0" />
+      <LineId Id="2597" Count="0" />
+      <LineId Id="2493" Count="0" />
+      <LineId Id="2486" Count="4" />
+      <LineId Id="1959" Count="0" />
+      <LineId Id="2481" Count="0" />
+      <LineId Id="2474" Count="1" />
+      <LineId Id="2477" Count="1" />
+      <LineId Id="2491" Count="1" />
+      <LineId Id="2476" Count="0" />
+      <LineId Id="2480" Count="0" />
+      <LineId Id="2541" Count="0" />
+      <LineId Id="1965" Count="0" />
+      <LineId Id="2542" Count="0" />
+      <LineId Id="1966" Count="5" />
+      <LineId Id="1974" Count="5" />
+      <LineId Id="2252" Count="0" />
+      <LineId Id="2255" Count="5" />
+      <LineId Id="2398" Count="0" />
+      <LineId Id="2291" Count="0" />
+      <LineId Id="2294" Count="0" />
+      <LineId Id="2298" Count="0" />
+      <LineId Id="2293" Count="0" />
+      <LineId Id="2297" Count="0" />
+      <LineId Id="2300" Count="0" />
+      <LineId Id="2292" Count="0" />
+      <LineId Id="2299" Count="0" />
+      <LineId Id="2287" Count="0" />
+      <LineId Id="2289" Count="0" />
+      <LineId Id="2724" Count="0" />
+      <LineId Id="2290" Count="0" />
+      <LineId Id="2325" Count="1" />
+      <LineId Id="2391" Count="0" />
+      <LineId Id="2271" Count="0" />
+      <LineId Id="2336" Count="0" />
+      <LineId Id="2328" Count="1" />
+      <LineId Id="2331" Count="0" />
+      <LineId Id="2333" Count="1" />
+      <LineId Id="2726" Count="0" />
+      <LineId Id="2341" Count="0" />
+      <LineId Id="2330" Count="0" />
+      <LineId Id="2272" Count="0" />
+      <LineId Id="2727" Count="1" />
+      <LineId Id="2273" Count="0" />
+      <LineId Id="2421" Count="1" />
+      <LineId Id="2424" Count="1" />
+      <LineId Id="2404" Count="0" />
+      <LineId Id="2302" Count="0" />
+      <LineId Id="2382" Count="0" />
+      <LineId Id="2417" Count="0" />
+      <LineId Id="2304" Count="0" />
+      <LineId Id="2407" Count="2" />
+      <LineId Id="2720" Count="0" />
+      <LineId Id="2722" Count="0" />
+      <LineId Id="2698" Count="1" />
+      <LineId Id="2712" Count="0" />
+      <LineId Id="2716" Count="0" />
+      <LineId Id="2700" Count="0" />
+      <LineId Id="2681" Count="0" />
+      <LineId Id="2701" Count="0" />
+      <LineId Id="2713" Count="0" />
+      <LineId Id="2717" Count="0" />
+      <LineId Id="2702" Count="2" />
+      <LineId Id="2714" Count="0" />
+      <LineId Id="2718" Count="0" />
+      <LineId Id="2705" Count="2" />
+      <LineId Id="2715" Count="0" />
+      <LineId Id="2719" Count="0" />
+      <LineId Id="2708" Count="0" />
+      <LineId Id="2274" Count="0" />
+      <LineId Id="2721" Count="0" />
+      <LineId Id="2276" Count="5" />
+      <LineId Id="2674" Count="0" />
+      <LineId Id="2742" Count="0" />
+      <LineId Id="2004" Count="1" />
+      <LineId Id="2225" Count="0" />
+      <LineId Id="2221" Count="0" />
+      <LineId Id="2008" Count="0" />
+      <LineId Id="2427" Count="0" />
+      <LineId Id="2235" Count="0" />
+      <LineId Id="2237" Count="0" />
+      <LineId Id="2428" Count="0" />
+      <LineId Id="2238" Count="2" />
+      <LineId Id="2236" Count="0" />
+      <LineId Id="2343" Count="0" />
+      <LineId Id="2400" Count="2" />
+      <LineId Id="2116" Count="1" />
+      <LineId Id="1907" Count="0" />
       <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Tracking.ACT_TrackingDoubleNegative">
+      <LineId Id="2" Count="0" />
+      <LineId Id="27" Count="7" />
+      <LineId Id="104" Count="0" />
+      <LineId Id="35" Count="2" />
+      <LineId Id="39" Count="15" />
+      <LineId Id="79" Count="7" />
+      <LineId Id="105" Count="0" />
+      <LineId Id="87" Count="2" />
+      <LineId Id="91" Count="12" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Tracking.ACT_TrackingDoublePositive">
+      <LineId Id="54" Count="8" />
+      <LineId Id="154" Count="0" />
+      <LineId Id="63" Count="2" />
+      <LineId Id="67" Count="11" />
+      <LineId Id="103" Count="0" />
+      <LineId Id="125" Count="10" />
+      <LineId Id="155" Count="0" />
+      <LineId Id="136" Count="2" />
+      <LineId Id="140" Count="13" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Tracking.ACT_TrackingSingle">
+      <LineId Id="2" Count="8" />
+      <LineId Id="104" Count="0" />
+      <LineId Id="11" Count="2" />
+      <LineId Id="15" Count="19" />
+      <LineId Id="105" Count="0" />
+      <LineId Id="35" Count="2" />
+      <LineId Id="39" Count="23" />
+      <LineId Id="106" Count="0" />
+      <LineId Id="63" Count="2" />
+      <LineId Id="67" Count="19" />
+      <LineId Id="107" Count="0" />
+      <LineId Id="87" Count="2" />
+      <LineId Id="91" Count="12" />
+      <LineId Id="1" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

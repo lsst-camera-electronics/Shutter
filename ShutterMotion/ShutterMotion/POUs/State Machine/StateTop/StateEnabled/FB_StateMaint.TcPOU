@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
   <POU Name="FB_StateMaint" Id="{37b42c71-d02c-4f0b-9d4a-8f4651b67341}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_StateMaint
 VAR_IN_OUT
@@ -30,6 +30,7 @@ VAR
 	//state-machine
 	eCurrentState	: E_StatesMaint;
 	eNextState		: E_StatesMaint;
+	fbHoming		: FB_Homing;
 	fbCalibrating	: FB_StateCalibrating;
 	fbMoving		: FB_StateMoving;
 	fbStill			: FB_StateStill;
@@ -37,6 +38,8 @@ VAR
 
 	//other var
 	eCopyCommand	: E_Commands;
+	fbCalibRtrig	: R_TRIG;
+	bCalibRestart : BOOL;
 	
 	//testVar
 	a, b, c : INT;
@@ -59,6 +62,7 @@ bMotionDone := FALSE;
 CASE eCurrentState OF
 	
 	E_StatesMaint.Still:
+		bCalibRestart := TRUE;
 		fbStill(
 			stAxis				:= stAxis, 
 			bTopEntry			:= bLowerEntry, 
@@ -70,7 +74,7 @@ CASE eCurrentState OF
 			stDisableAllAxes	:= stDisableAllAxes,
 			stEnableAllAxes		:= stEnableAllAxes);
 		IF eCommand <> E_Commands.noCommand THEN (*checks if there is a new command*)
-			IF eCommand = E_Commands.calibrate AND (stAxis[GVL.cXP].axisRef.Status.Homed AND stAxis[GVL.cXM].axisRef.Status.Homed) THEN
+			IF eCommand = E_Commands.calibrate THEN
 				eNextState := E_StatesMaint.Calibrating;
 			ELSIF eCommand = E_Commands.closeShutter OR_ELSE
 				eCommand = E_Commands.homeAxis OR_ELSE
@@ -83,9 +87,14 @@ CASE eCurrentState OF
 		a := a+1;
 	
 	E_StatesMaint.Calibrating:
-		fbCalibrating(stAxis:=stAxis, bTopEntry:=bLowerEntry, stOutCalibDone=>stOutCalibDone);
-		bCalibDone := fbCalibrating.bCalibDone;
-		IF fbCalibrating.bCalibDone THEN
+		bCalibDone := FALSE;
+		fbHoming(stAxis:=stAxis, bTopEntry:=bLowerEntry);
+		fbCalibRtrig(CLK:=(stAxis[GVL.cXP].axisRef.Status.Homed AND stAxis[GVL.cXM].axisRef.Status.Homed AND NOT fbHoming.bBusy));
+		IF fbCalibRtrig.Q THEN
+			bLowerEntry:=TRUE;
+		END_IF
+		fbCalibrating(stAxis:=stAxis, bTopEntry:=bLowerEntry, bCalibDone:=bCalibDone, bInterrupted:=bCalibRestart, stOutCalibDone=>stOutCalibDone);
+		IF bCalibDone THEN
 			eNextState := E_StatesMaint.Still;
 		END_IF
 		b:=b+1;
@@ -117,6 +126,7 @@ END_CASE
       <LineId Id="163" Count="0" />
       <LineId Id="162" Count="0" />
       <LineId Id="75" Count="0" />
+      <LineId Id="552" Count="0" />
       <LineId Id="31" Count="0" />
       <LineId Id="37" Count="0" />
       <LineId Id="277" Count="1" />
@@ -134,8 +144,11 @@ END_CASE
       <LineId Id="395" Count="0" />
       <LineId Id="350" Count="0" />
       <LineId Id="76" Count="0" />
+      <LineId Id="503" Count="0" />
+      <LineId Id="500" Count="0" />
+      <LineId Id="550" Count="0" />
+      <LineId Id="547" Count="2" />
       <LineId Id="34" Count="0" />
-      <LineId Id="457" Count="0" />
       <LineId Id="38" Count="0" />
       <LineId Id="59" Count="1" />
       <LineId Id="399" Count="0" />
