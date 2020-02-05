@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <POU Name="FB_StateProd" Id="{40a07a3a-fb23-4dc3-b994-cc6c85e7bf0e}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_StateProd
 VAR_IN_OUT
@@ -43,8 +43,6 @@ VAR
 	bTakingExposure	: BOOL;
 	fbExpoTimer		:  TON;
 	
-	//test Var
-	a,b,c,d,e,f,g,h : INT;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -56,12 +54,10 @@ IF bTopEntry = TRUE THEN
 	IF (stAxis[GVL.cXP].axisRef.NcToPlc.ActPos<1) AND (stAxis[GVL.cXM].axisRef.NcToPlc.ActPos<1) THEN
 		nRet := GVL.cXP;
 		nExt := GVL.cXM;
-		a := a+1;
 	END_IF
 	IF (stAxis[GVL.cXP].axisRef.NcToPlc.ActPos>750) AND (stAxis[GVL.cXM].axisRef.NcToPlc.ActPos>750) THEN
 		nRet := GVL.cXM;
 		nExt := GVL.cXP;
-		b := b+1;
 	END_IF
 	bLowerEntry := TRUE;
 END_IF	
@@ -88,10 +84,6 @@ nSMState := eCurrentState;
 fbExpoTimer(IN:=bTakingExposure, PT:=stTakeExposure.exposureTime);
 bMotionDone := FALSE;
 
-IF eCommand = E_Commands.takeExposure THEN
-	h := h+1;
-END_IF
-
 CASE eCurrentState OF
 	
 	E_StatesProd.Closed:
@@ -103,7 +95,6 @@ CASE eCurrentState OF
 			END_IF
 			eNextState := E_StatesProd.Opening;
 		END_IF
-		c := c+1;
 
 	E_StatesProd.Opening:
 		fbOpening(stAxis:=stAxis, bTopEntry:=bLowerEntry, fSpeed:=fSpeed, fAccel:=fAccel, fJerk:=fJerk, nRet:=nRet);
@@ -115,7 +106,6 @@ CASE eCurrentState OF
 			eNextState := E_StatesProd.Traveling;
 			stOutTimer.sequence:=stOutTimer.sequence+1;
 		END_IF
-		d := d+1;
 	
 	E_StatesProd.Opened:
 		fbOpened(stAxis:=stAxis, bTopEntry:=bLowerEntry);
@@ -126,7 +116,6 @@ CASE eCurrentState OF
 			eNextState := E_StatesProd.Closing;
 			(*add error code or warning if timer is active and closeShutter command is issued*)
 		END_IF
-		e := e+1;
 		
 	E_StatesProd.Closing:
 		fbClosing(stAxis:=stAxis, bTopEntry:=bLowerEntry, nExt:=nExt, fSpeed:=fSpeed, fAccel:=fAccel, fJerk:=fJerk);
@@ -134,7 +123,6 @@ CASE eCurrentState OF
 			bMotionDone := TRUE;
 			eNextState := E_StatesProd.Closed;
 		END_IF
-		f := f+1;
 	
 	E_StatesProd.Traveling:
 		fbTravelling(stAxis:=stAxis, bTopEntry:=bLowerEntry, nExt:=nExt, nRet:=nRet, fSpeed:=fspeed, fAccel:=fAccel, fJerk:=fJerk);
@@ -142,7 +130,6 @@ CASE eCurrentState OF
 			bMotionDone := TRUE;
 			eNextState := E_StatesProd.Closing;
 		END_IF
-		g := g+1;
 	
 END_CASE]]></ST>
     </Implementation>
@@ -153,9 +140,8 @@ END_CASE]]></ST>
       <LineId Id="312" Count="0" />
       <LineId Id="317" Count="1" />
       <LineId Id="328" Count="0" />
-      <LineId Id="319" Count="3" />
+      <LineId Id="320" Count="2" />
       <LineId Id="329" Count="0" />
-      <LineId Id="323" Count="0" />
       <LineId Id="313" Count="0" />
       <LineId Id="60" Count="0" />
       <LineId Id="544" Count="13" />
@@ -166,9 +152,6 @@ END_CASE]]></ST>
       <LineId Id="13" Count="0" />
       <LineId Id="215" Count="0" />
       <LineId Id="386" Count="0" />
-      <LineId Id="335" Count="0" />
-      <LineId Id="337" Count="1" />
-      <LineId Id="336" Count="0" />
       <LineId Id="19" Count="1" />
       <LineId Id="217" Count="0" />
       <LineId Id="21" Count="0" />
@@ -179,7 +162,6 @@ END_CASE]]></ST>
       <LineId Id="116" Count="0" />
       <LineId Id="79" Count="0" />
       <LineId Id="332" Count="0" />
-      <LineId Id="80" Count="0" />
       <LineId Id="23" Count="2" />
       <LineId Id="385" Count="0" />
       <LineId Id="83" Count="2" />
@@ -187,26 +169,22 @@ END_CASE]]></ST>
       <LineId Id="470" Count="0" />
       <LineId Id="168" Count="0" />
       <LineId Id="330" Count="0" />
-      <LineId Id="169" Count="0" />
       <LineId Id="26" Count="2" />
       <LineId Id="427" Count="2" />
       <LineId Id="119" Count="0" />
       <LineId Id="384" Count="0" />
       <LineId Id="267" Count="0" />
       <LineId Id="331" Count="0" />
-      <LineId Id="121" Count="0" />
       <LineId Id="127" Count="0" />
       <LineId Id="30" Count="1" />
       <LineId Id="383" Count="0" />
       <LineId Id="123" Count="1" />
       <LineId Id="333" Count="0" />
-      <LineId Id="125" Count="0" />
       <LineId Id="32" Count="1" />
       <LineId Id="170" Count="0" />
       <LineId Id="382" Count="0" />
       <LineId Id="171" Count="1" />
       <LineId Id="334" Count="0" />
-      <LineId Id="173" Count="0" />
       <LineId Id="34" Count="0" />
       <LineId Id="9" Count="0" />
     </LineIds>

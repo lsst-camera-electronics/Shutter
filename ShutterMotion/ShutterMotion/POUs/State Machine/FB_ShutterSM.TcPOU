@@ -44,8 +44,6 @@ VAR
 	//used in homeShutter Action
 	fbHomeDelay : TON;
 
-	//test variables
-	a,b : INT;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[(* Top state of the shutter state machine *)
@@ -65,9 +63,7 @@ CASE eCurrentState OF
 			stAxis 		:= stAxis, 
 			btopEntry	:=bLowerEntry,
 			nSMState	=> nSMState);
-		a := a+1;
 
-			
 	E_StatesTop.Enabled:
 		fbEnabled(
 			//inputs
@@ -95,9 +91,6 @@ CASE eCurrentState OF
 			stOutCalibDone		=> stOutCalibDone,
 			stOutTimer			=> stOutTimer,
 			nSMState			=> nSMState);
-		b:=b+1;
-
-			
 END_CASE
 
 ]]></ST>
@@ -112,8 +105,6 @@ END_CASE
       <LineId Id="1104" Count="0" />
       <LineId Id="1367" Count="2" />
       <LineId Id="1416" Count="0" />
-      <LineId Id="1108" Count="0" />
-      <LineId Id="1117" Count="0" />
       <LineId Id="1110" Count="2" />
       <LineId Id="1274" Count="0" />
       <LineId Id="1261" Count="2" />
@@ -126,8 +117,6 @@ END_CASE
       <LineId Id="1280" Count="0" />
       <LineId Id="1276" Count="0" />
       <LineId Id="1417" Count="0" />
-      <LineId Id="1305" Count="0" />
-      <LineId Id="1121" Count="1" />
       <LineId Id="1105" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="1295" Count="0" />

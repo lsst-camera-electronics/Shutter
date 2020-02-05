@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <POU Name="MAIN" Id="{f71d400f-d229-45a7-bebf-e505112d31c1}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
@@ -11,6 +11,7 @@ VAR
 	
 	//external input...... need to link
 	bAuxElxPermit AT %I*	: BOOL;
+	bFesPermit AT %Q*		: BOOL;
 	fMotorTemp				: LREAL;
 
 	//other function block
@@ -60,14 +61,6 @@ VAR
 	stError_rtrig		: R_TRIG;
 	stExpoTimer_rtrig	: R_TRIG;
 	stCalibDone_rtrig	: R_TRIG;
-	
-	//TestVar
-	a,b,c,d,e,f,g, h: INT;
-	num : ARRAY [0..14] OF INT;
-	i : int;
-	fbEL1259Read : FB_EcCoESdoRead;
-	testInt : INT;
-	tTimeTest : T_DCTIME64;
 	
 END_VAR
 VAR CONSTANT
@@ -409,6 +402,16 @@ fbTracking(
 	inMoveAxisRelative	:= inMoveAxisRelative,
 	stOutMotionDone		=>outMotionDone);
 
+(*When shutter is in motion, remove permit for Filter Changer*)	
+IF (Main.outShutterStatus.smState=E_StatesMaint.Still OR Main.outShutterStatus.smState=E_StatesProd.Closed OR 
+	Main.outShutterStatus.smState=E_StatesProd.Opened OR Main.outShutterStatus.smState=E_StatesTop.Disabled) THEN
+		bFesPermit := TRUE;
+ELSE
+		bFesPermit := FALSE;
+END_IF
+
+	
+	
 (*
 //write persistent data to file every second
 IF fbWriteDelay.Q THEN
@@ -421,7 +424,16 @@ END_IF
 ]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
-      <LineId Id="2480" Count="328" />
+      <LineId Id="2480" Count="318" />
+      <LineId Id="2888" Count="0" />
+      <LineId Id="2799" Count="0" />
+      <LineId Id="2891" Count="0" />
+      <LineId Id="2893" Count="1" />
+      <LineId Id="2897" Count="1" />
+      <LineId Id="2895" Count="1" />
+      <LineId Id="2892" Count="0" />
+      <LineId Id="2890" Count="0" />
+      <LineId Id="2800" Count="8" />
       <LineId Id="324" Count="0" />
     </LineIds>
   </POU>

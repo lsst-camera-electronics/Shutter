@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <POU Name="FB_Tracking" Id="{462a5933-fe60-42d4-a574-27170521c4c5}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_Tracking
 VAR_IN_OUT
@@ -40,15 +40,13 @@ VAR
 	i, j, k, m		: INT := 0;
 	nTPC	: INT; //Trip Per Cycle
 	
+	(*
 	//TestVar
 	testRtrig : R_TRIG;
 	testRtrig2 : R_TRIG;
 	testInt: INT;
-	testInt2: INT;
 	testInt3: INT;
 	testInt4: INT;
-	testInt5: INT;
-	testInt6: INT;
 	testLREAL : LREAL;
 	testTemp : ARRAY[0 .. 4] OF ST_Track;
 	testTime : ARRAY[0 .. 4] OF T_DCTIME64;
@@ -56,7 +54,7 @@ VAR
 	testDCTime	: ARRAY[0 .. 4] OF T_DCTIME64;
 	nMask2	 : ULINT := 16#0000_0000_FFFF_FFFF;
 	a, b : INT;
-	
+	*)
 	
 	
 END_VAR
@@ -70,8 +68,11 @@ END_VAR
 stAxis[GVL.cXP].bTrackedFlag:=FALSE;
 stAxis[GVL.cXM].bTrackedFlag:=FALSE;
 nTPC:=0;
+
+(* variable for debugging
 testInt3:=0;
 testInt4:=0;
+*)
 
 fbMoving_Rtrig[GVL.cXP](CLK:=stAxis[GVL.cXP].axisRef.Status.Moving);
 IF fbMoving_Rtrig[GVL.cXP].Q THEN
@@ -167,7 +168,6 @@ FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
 		stTrack[nTPC].tScanTime := (F_GetCurDcTaskTime64() AND nMask) + GVL.nInputEventTime[stTrack[nTPC].nHallID];
 		IF stTrack[nTPC].tScanTime > F_GetCurDcTaskTime64() THEN
 			stTrack[nTPC].tScanTIME := stTrack[nTPC].tScanTime - 16#1_0000_0000;
-			testInt5:=testInt5+1;
 		END_IF
 		//increment the index
 		nTPC:=nTPC+1;
@@ -179,12 +179,11 @@ FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
 						stTrackTemp := stTrack[j];
 						stTrack[j] := stTrack[j-1];
 						stTrack[j-1] := stTrackTemp;
-						testInt6 := testInt6+1;
 				END_IF
 			END_FOR
 		END_IF
 
-		
+(*
 		//For debugging only: To see the highest number of trip per cycle
 		testRTrig2(CLK:=(nTPC>=2));
 		IF testRTrig2.Q THEN
@@ -199,34 +198,35 @@ FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
 			m:= nTPC;
 		END_IF
 		
-
-			IF ((F_GetCurDcTaskTime64() - stTrack[0].tScanTime)>2000000) AND nTPC=1 THEN
-				testTime[0]	:= F_GetCurDcTaskTime64() - stTrack[0].tScanTime;
-				teststTrack[0] := stTrack[0].tScanTime;
-				 testDCTime[0] := F_GetCurDcTaskTime64();
-			END_IF
-			IF ((F_GetCurDcTaskTime64() - stTrack[1].tScanTime)>2000000) AND nTPC=2 THEN
-				testTime[1]	:= F_GetCurDcTaskTime64() - stTrack[1].tScanTime;
-				teststTrack[1] := stTrack[1].tScanTime;
-				testDCTime[1] := F_GetCurDcTaskTime64();
-			END_IF
-			IF ((F_GetCurDcTaskTime64() - stTrack[2].tScanTime)>2000000) AND nTPC=3 THEN
-				testTime[2]	:= F_GetCurDcTaskTime64() - stTrack[2].tScanTime;
-				teststTrack[2] := stTrack[2].tScanTime;
-				testDCTime[2] := F_GetCurDcTaskTime64();
-			END_IF
-			IF ((F_GetCurDcTaskTime64() - stTrack[3].tScanTime)>2000000) AND nTPC=4 THEN
-				testTime[3]	:= F_GetCurDcTaskTime64() - stTrack[3].tScanTime;
-				teststTrack[3] := stTrack[3].tScanTime;
-				testDCTime[3] := F_GetCurDcTaskTime64();
-			END_IF
+		//For debugging only: To see the highest number of trip per cycle
+		IF ((F_GetCurDcTaskTime64() - stTrack[0].tScanTime)>2000000) AND nTPC=1 THEN
+			testTime[0]	:= F_GetCurDcTaskTime64() - stTrack[0].tScanTime;
+			teststTrack[0] := stTrack[0].tScanTime;
+			 testDCTime[0] := F_GetCurDcTaskTime64();
+		END_IF
+		IF ((F_GetCurDcTaskTime64() - stTrack[1].tScanTime)>2000000) AND nTPC=2 THEN
+			testTime[1]	:= F_GetCurDcTaskTime64() - stTrack[1].tScanTime;
+			teststTrack[1] := stTrack[1].tScanTime;
+			testDCTime[1] := F_GetCurDcTaskTime64();
+		END_IF
+		IF ((F_GetCurDcTaskTime64() - stTrack[2].tScanTime)>2000000) AND nTPC=3 THEN
+			testTime[2]	:= F_GetCurDcTaskTime64() - stTrack[2].tScanTime;
+			teststTrack[2] := stTrack[2].tScanTime;
+			testDCTime[2] := F_GetCurDcTaskTime64();
+		END_IF
+		IF ((F_GetCurDcTaskTime64() - stTrack[3].tScanTime)>2000000) AND nTPC=4 THEN
+			testTime[3]	:= F_GetCurDcTaskTime64() - stTrack[3].tScanTime;
+			teststTrack[3] := stTrack[3].tScanTime;
+			testDCTime[3] := F_GetCurDcTaskTime64();
+		END_IF
+	*)
 	END_IF
-	
+(*
 	//For debugging - checks to see if the same hall switch is tripped twice in one cycle
 	IF GVL.nNumOfInputs[i]=2 THEN
 		testInt:=testint+1;
 	END_IF
-	
+*)
 END_FOR
 
 
@@ -244,9 +244,6 @@ IF nTPC>0 THEN
 			ACT_TrackingSingle();
 		END_IF
 		bGoNextSeq:=FALSE;
-		IF nTPC=2 THEN
-			testInt2:=testInt2+1;
-		END_IF
 	END_FOR
 END_IF
 ]]></ST>
@@ -481,8 +478,12 @@ END_IF]]></ST>
       <LineId Id="1927" Count="1" />
       <LineId Id="1932" Count="2" />
       <LineId Id="2414" Count="0" />
+      <LineId Id="2806" Count="0" />
+      <LineId Id="2805" Count="0" />
       <LineId Id="2419" Count="0" />
-      <LineId Id="1935" Count="23" />
+      <LineId Id="1935" Count="0" />
+      <LineId Id="2807" Count="0" />
+      <LineId Id="1936" Count="22" />
       <LineId Id="2593" Count="0" />
       <LineId Id="2659" Count="8" />
       <LineId Id="2620" Count="6" />
@@ -519,7 +520,6 @@ END_IF]]></ST>
       <LineId Id="2287" Count="0" />
       <LineId Id="2289" Count="0" />
       <LineId Id="2724" Count="0" />
-      <LineId Id="2290" Count="0" />
       <LineId Id="2325" Count="1" />
       <LineId Id="2391" Count="0" />
       <LineId Id="2271" Count="0" />
@@ -528,7 +528,6 @@ END_IF]]></ST>
       <LineId Id="2331" Count="0" />
       <LineId Id="2333" Count="1" />
       <LineId Id="2726" Count="0" />
-      <LineId Id="2341" Count="0" />
       <LineId Id="2330" Count="0" />
       <LineId Id="2272" Count="0" />
       <LineId Id="2727" Count="1" />
@@ -559,6 +558,7 @@ END_IF]]></ST>
       <LineId Id="2719" Count="0" />
       <LineId Id="2708" Count="0" />
       <LineId Id="2274" Count="0" />
+      <LineId Id="2814" Count="0" />
       <LineId Id="2721" Count="0" />
       <LineId Id="2276" Count="5" />
       <LineId Id="2674" Count="0" />
@@ -574,8 +574,8 @@ END_IF]]></ST>
       <LineId Id="2238" Count="2" />
       <LineId Id="2236" Count="0" />
       <LineId Id="2343" Count="0" />
-      <LineId Id="2400" Count="2" />
-      <LineId Id="2116" Count="1" />
+      <LineId Id="2811" Count="0" />
+      <LineId Id="2117" Count="0" />
       <LineId Id="1907" Count="0" />
       <LineId Id="2" Count="0" />
     </LineIds>

@@ -1,10 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <DUT Name="ST_Error" Id="{cd8a347a-3362-4f35-b32c-8197d8809a60}">
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
 TYPE ST_Error EXTENDS ST_MsgToCCS:
 STRUCT
+	errors	: UDINT;
 END_STRUCT
-END_TYPE]]></Declaration>
+END_TYPE
+
+(*
+TYPE E_Error:
+(
+    MOTION_VETOED 	:= 2#1,				//1,
+    BRAKE_SET 		:= 2#10,			//2,
+    HALL_DIFF 		:= 2#100,			//4,
+    SHORT_EXPOSURE 	:= 2#1000,			//8,
+    NOT_HOMED 		:= 2#10000,			//16,
+    HOME_LIMIT 		:= 2#100000,		//32,
+    DEPLOYED_LIMIT 	:= 2#1000000,		//64,
+    UNSAFE_MOVE 	:= 2#10000000,		//128,
+    TOO_FAST 		:= 2#100000000,		//256,
+    AXIS_DISABLED 	:= 2#1000000000,	//512
+) UDINT;
+END_TYPE
+
+*)]]></Declaration>
   </DUT>
 </TcPlcObject>

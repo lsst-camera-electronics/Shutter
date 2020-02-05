@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <POU Name="FB_StateEnabled" Id="{b94d2bdc-9aa0-4455-a0cd-476d7bce246d}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_StateEnabled
 VAR_IN_OUT
@@ -49,8 +49,6 @@ VAR
 	bResetEntry		: BOOL;
 	bStopping		: BOOL;
 	
-	//Test Var
-	a,b : int;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -98,7 +96,6 @@ CASE eCurrentState OF
 		IF bShutterReady AND eCommand = E_Commands.goToProd THEN
 			eNextState := E_StatesEnabled.Prod;
 		END_IF
-		a:=a+1;
 	
 	E_StatesEnabled.Prod:
 		fbProd(
@@ -114,7 +111,6 @@ CASE eCurrentState OF
 			bMotionDone		=> bMotionDone,
 			nSMState		=> nSMState,
 			stOutTimer		=> stOutTimer);
-	b:=b+1;	
 
 END_CASE
 
@@ -130,13 +126,7 @@ IF bResetting THEN
 END_IF
 
 
-//bShutterReady
-(*
-bShutterReady := (stAxis[GVL.cXP].bBrake AND stAxis[GVL.cXM].bBrake) AND
-	((stAxis[GVL.cXP].bLimitHome AND stAxis[GVL.cXM].bLimitDeployed) OR (stAxis[GVL.cXP].bLimitDeployed AND stAxis[GVL.cXM].bLimitHome)) AND
-	(stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated);
-*)
-//this is the temp bShutterReady. Delete once all keyance switches are installed///////////////////////////////////////////////////////////////////////////////////
+//Status for when shutter is ready to be put into prod mode.
 bShutterReady := (stAxis[GVL.cXP].bBrake AND stAxis[GVL.cXM].bBrake) AND (stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated) AND
 	(
 		((stAxis[GVL.cXP].axisRef.NcToPlc.ActPos<1) AND (stAxis[GVL.cXM].axisRef.NcToPlc.ActPos<1)) OR 
@@ -176,7 +166,6 @@ bShutterReady := (stAxis[GVL.cXP].bBrake AND stAxis[GVL.cXM].bBrake) AND (stAxis
       <LineId Id="300" Count="0" />
       <LineId Id="79" Count="1" />
       <LineId Id="481" Count="0" />
-      <LineId Id="81" Count="0" />
       <LineId Id="40" Count="0" />
       <LineId Id="38" Count="0" />
       <LineId Id="44" Count="0" />
@@ -189,7 +178,6 @@ bShutterReady := (stAxis[GVL.cXP].bBrake AND stAxis[GVL.cXM].bBrake) AND (stAxis
       <LineId Id="355" Count="0" />
       <LineId Id="625" Count="0" />
       <LineId Id="482" Count="0" />
-      <LineId Id="357" Count="0" />
       <LineId Id="39" Count="0" />
       <LineId Id="36" Count="0" />
       <LineId Id="184" Count="2" />
@@ -200,11 +188,6 @@ bShutterReady := (stAxis[GVL.cXP].bBrake AND stAxis[GVL.cXM].bBrake) AND (stAxis
       <LineId Id="183" Count="0" />
       <LineId Id="413" Count="0" />
       <LineId Id="483" Count="0" />
-      <LineId Id="414" Count="1" />
-      <LineId Id="493" Count="0" />
-      <LineId Id="484" Count="0" />
-      <LineId Id="487" Count="0" />
-      <LineId Id="485" Count="0" />
       <LineId Id="501" Count="0" />
       <LineId Id="512" Count="0" />
       <LineId Id="514" Count="0" />

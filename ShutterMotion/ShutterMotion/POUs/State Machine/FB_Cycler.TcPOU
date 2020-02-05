@@ -23,6 +23,7 @@ END_VAR
     <Implementation>
       <ST><![CDATA[///////////////////////////////////////////////////////
 //Performs open/close motion until commanded to stop.//
+//Only USED ON PROTOTYPE							 //
 ///////////////////////////////////////////////////////
 IF bTopEntry = TRUE THEN
 	bTopEntry := FALSE;
@@ -97,7 +98,9 @@ END_CASE
 ]]></ST>
     </Implementation>
     <LineIds Name="FB_Cycler">
-      <LineId Id="310" Count="14" />
+      <LineId Id="310" Count="1" />
+      <LineId Id="403" Count="0" />
+      <LineId Id="312" Count="12" />
       <LineId Id="326" Count="54" />
       <LineId Id="382" Count="2" />
       <LineId Id="9" Count="0" />
