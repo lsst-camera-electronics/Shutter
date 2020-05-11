@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
   <POU Name="FB_StateMaint" Id="{37b42c71-d02c-4f0b-9d4a-8f4651b67341}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_StateMaint
 VAR_IN_OUT
@@ -42,7 +42,7 @@ VAR
 	bCalibRestart : BOOL;
 	
 	//testVar
-	a, b, c : INT;
+	//a, b, c : INT;
 	
 END_VAR
 ]]></Declaration>
@@ -84,7 +84,7 @@ CASE eCurrentState OF
 					eNextState := E_StatesMaint.Moving;
 			END_IF
 		END_IF
-		a := a+1;
+		//a := a+1;
 	
 	E_StatesMaint.Calibrating:
 		bCalibDone := FALSE;
@@ -97,7 +97,7 @@ CASE eCurrentState OF
 		IF bCalibDone THEN
 			eNextState := E_StatesMaint.Still;
 		END_IF
-		b:=b+1;
+		//b:=b+1;
 		
 	E_StatesMaint.Moving:
 		fbMoving(
@@ -110,7 +110,7 @@ CASE eCurrentState OF
 			eNextState := E_StatesMaint.Still;
 			bMotionDone := TRUE;
 		END_IF
-		c:=c+1;
+		//c:=c+1;
 END_CASE
 ]]></ST>
     </Implementation>

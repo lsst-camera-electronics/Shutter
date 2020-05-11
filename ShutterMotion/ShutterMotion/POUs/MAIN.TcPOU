@@ -12,7 +12,7 @@ VAR
 	//external input...... need to link
 	bAuxElxPermit AT %I*	: BOOL;
 	bFesPermit AT %Q*		: BOOL;
-	fMotorTemp				: LREAL;
+	fMotorTemp				: ARRAY [0..1] OF LREAL;
 
 	//other function block
 	fbPower		: FB_Power;
@@ -61,6 +61,9 @@ VAR
 	stError_rtrig		: R_TRIG;
 	stExpoTimer_rtrig	: R_TRIG;
 	stCalibDone_rtrig	: R_TRIG;
+	
+	//Read COE
+	fbRead		: ARRAY [0..1] OF FB_EcCoeSdoRead;
 	
 END_VAR
 VAR CONSTANT
@@ -370,7 +373,7 @@ IF fbOutTimer.Q THEN
 	outShutterStatus.axis[GVL.cXP].highLimit := stAxis[GVL.cXP].bLimitDeployed;
 	outShutterStatus.axis[GVL.cXP].lowLimit := stAxis[GVL.cXP].bLimitHome;
 	outShutterStatus.axis[GVL.cXP].isHomed := stAxis[GVL.cXP].axisRef.Status.Homed;
-	outShutterStatus.axis[GVL.cXP].motorTemp := fMotorTemp;
+	outShutterStatus.axis[GVL.cXP].motorTemp := fMotorTemp[0];
 	
 	(*shutter status update, axis XM specific*)
 	outShutterStatus.axis[GVL.cXM].actPos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
@@ -384,7 +387,7 @@ IF fbOutTimer.Q THEN
 	outShutterStatus.axis[GVL.cXM].highLimit := stAxis[GVL.cXM].bLimitHome;
 	outShutterStatus.axis[GVL.cXM].lowLimit := stAxis[GVL.cXM].bLimitDeployed;
 	outShutterStatus.axis[GVL.cXM].isHomed := stAxis[GVL.cXM].axisRef.Status.Homed;
-	outShutterStatus.axis[GVL.cXM].motorTemp := fMotorTemp;
+	outShutterStatus.axis[GVL.cXM].motorTemp := fMotorTemp[1];
 	
 END_IF
 
@@ -410,7 +413,26 @@ ELSE
 		bFesPermit := FALSE;
 END_IF
 
-	
+(* Read Motor Temperature *)
+//Axmis XP temp
+fbRead[0](
+	bExecute := TRUE,
+	sNetId		:= '5.54.106.120.2.1',
+	nSlaveAddr	:= 1001,
+	nIndex		:= 16#8012,
+	nSubIndex	:= 16#11,
+	pDstBuf		:= ADR(fMotorTemp),
+	cbBufLen 	:= SIZEOF(fMotorTemp[0]));
+//Axis XM temp
+fbRead[1](
+	bExecute := TRUE,
+	sNetId		:= '5.54.106.120.2.1',
+	nSlaveAddr	:= 1005,
+	nIndex		:= 16#8012,
+	nSubIndex	:= 16#11,
+	pDstBuf		:= ADR(fMotorTemp),
+	cbBufLen 	:= SIZEOF(fMotorTemp[1]));
+
 	
 (*
 //write persistent data to file every second
@@ -432,6 +454,16 @@ END_IF
       <LineId Id="2897" Count="1" />
       <LineId Id="2895" Count="1" />
       <LineId Id="2892" Count="0" />
+      <LineId Id="3018" Count="0" />
+      <LineId Id="2987" Count="0" />
+      <LineId Id="2992" Count="0" />
+      <LineId Id="3003" Count="1" />
+      <LineId Id="2993" Count="1" />
+      <LineId Id="2996" Count="1" />
+      <LineId Id="3009" Count="0" />
+      <LineId Id="3011" Count="6" />
+      <LineId Id="3010" Count="0" />
+      <LineId Id="2978" Count="0" />
       <LineId Id="2890" Count="0" />
       <LineId Id="2800" Count="8" />
       <LineId Id="324" Count="0" />

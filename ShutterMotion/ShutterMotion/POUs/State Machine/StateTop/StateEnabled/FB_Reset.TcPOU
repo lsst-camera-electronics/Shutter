@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
   <POU Name="FB_Reset" Id="{899b01f2-f2a5-415e-96f0-f718ca072402}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_Reset
 VAR_IN_OUT
@@ -10,7 +10,7 @@ END_VAR
 VAR
 	nCurrentState 	: INT;
 	nNextState		: INT := 100;
-	a,b,c,d,e : INT;
+	//a,b,c,d,e : INT;
 	fbResetTimer	: TON ;
 END_VAR]]></Declaration>
     <Implementation>
@@ -30,7 +30,7 @@ CASE nCurrentstate OF
 			stAxis[GVL.cXM].mcReset(axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
 			nNextState := 100;
 		END_IF
-		e := e+1;
+		//e := e+1;
 		
 	100:
 		stAxis[GVL.cXP].mcStop(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
@@ -41,7 +41,7 @@ CASE nCurrentstate OF
 			nNextState:=200;
 		END_IF
 		//nNextState := 200;
-		a := a+1;
+		//a := a+1;
 		
 	200:
 		stAxis[GVL.cXP].mcStop(Axis:=stAxis[GVL.cXP].axisRef, Execute:=TRUE);
@@ -50,9 +50,9 @@ CASE nCurrentstate OF
 			stAxis[GVL.cXP].mcStop(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
 			stAxis[GVL.cXM].mcStop(Axis:=stAxis[GVL.cXM].axisRef, Execute:=FALSE);
 			nNextState := 300;
-			b := b+1;
+			//b := b+1;
 		END_IF
-		c := c+1;
+		//c := c+1;
 	
 	300:
 		stAxis[GVL.cXP].mcMoveAbs(Axis:=stAxis[GVL.cXP].axisRef, Execute:=FALSE);
@@ -72,7 +72,7 @@ CASE nCurrentstate OF
 			bResetting := FALSE;
 			nNextState := 100;
 		END_IF
-		d := d+1;
+		//d := d+1;
 
 END_CASE
 
