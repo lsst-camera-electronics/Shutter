@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
   <Visu Name="Visualization" Id="{f582b681-f1ff-4fd0-9241-dc5537cf3bfd}">
     <XmlArchive>
       <Data>
@@ -111,10 +111,13 @@
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Standard"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">12</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Font-Default-Color"</v>
@@ -145,6 +148,10 @@
                     <o>
                       <v n="Id">2597686782L</v>
                       <v n="Value">true</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                   </l>
                 </o>
@@ -268,10 +275,13 @@
                           <l n="Value" t="ArrayList" cet="NamedStyleFont">
                             <o>
                               <v n="FontStyle">0</v>
+                              <v n="AdditionalFontStyle" t="UInt16">0</v>
                               <v n="ExplicitColor">-16777216</v>
                               <v n="CanonicalName">"Font-Heading"</v>
                               <v n="FontName">"Arial"</v>
                               <v n="FontSize">20</v>
+                              <v n="ScriptIdentification">0</v>
+                              <v n="DoubleFontSize" t="Double">0</v>
                               <o n="NamedColor" t="NamedStyleColor">
                                 <v n="Color">-16777216</v>
                                 <v n="CanonicalName">"Font-Default-Color"</v>
@@ -300,6 +310,10 @@
                           <v n="Value">""</v>
                         </o>
                         <o>
+                          <v n="Id">3719097617L</v>
+                          <v n="Value">0</v>
+                        </o>
+                        <o>
                           <v n="Id">823443203L</v>
                           <v n="Value">"26"</v>
                         </o>
@@ -325,6 +339,9 @@
                           <v n="TextOutputVariableInitialized">true</v>
                           <v n="OtherVarConversion">""</v>
                           <v n="Format">"%7.1f"</v>
+                          <v n="DialogPosition" t="DialogPositionSetting">UseGlobalSetting</v>
+                          <v n="DialogXPos">""</v>
+                          <v n="DialogYPos">""</v>
                         </o>
                       </a>
                     </d>
@@ -438,10 +455,13 @@
                           <l n="Value" t="ArrayList" cet="NamedStyleFont">
                             <o>
                               <v n="FontStyle">0</v>
+                              <v n="AdditionalFontStyle" t="UInt16">0</v>
                               <v n="ExplicitColor">-16777216</v>
                               <v n="CanonicalName">"Font-Heading"</v>
                               <v n="FontName">"Arial"</v>
                               <v n="FontSize">20</v>
+                              <v n="ScriptIdentification">0</v>
+                              <v n="DoubleFontSize" t="Double">0</v>
                               <o n="NamedColor" t="NamedStyleColor">
                                 <v n="Color">-16777216</v>
                                 <v n="CanonicalName">"Font-Default-Color"</v>
@@ -476,6 +496,10 @@
                         <o>
                           <v n="Id">2477733581L</v>
                           <v n="Value">"MAIN.inMoveAxisAbsolute.speed"</v>
+                        </o>
+                        <o>
+                          <v n="Id">3719097617L</v>
+                          <v n="Value">0</v>
                         </o>
                         <o>
                           <v n="Id">823443203L</v>
@@ -600,10 +624,13 @@
                           <l n="Value" t="ArrayList" cet="NamedStyleFont">
                             <o>
                               <v n="FontStyle">0</v>
+                              <v n="AdditionalFontStyle" t="UInt16">0</v>
                               <v n="ExplicitColor">-16777216</v>
                               <v n="CanonicalName">"Font-Heading"</v>
                               <v n="FontName">"Arial"</v>
                               <v n="FontSize">20</v>
+                              <v n="ScriptIdentification">0</v>
+                              <v n="DoubleFontSize" t="Double">0</v>
                               <o n="NamedColor" t="NamedStyleColor">
                                 <v n="Color">-16777216</v>
                                 <v n="CanonicalName">"Font-Default-Color"</v>
@@ -632,6 +659,10 @@
                           <v n="Value">""</v>
                         </o>
                         <o>
+                          <v n="Id">3719097617L</v>
+                          <v n="Value">0</v>
+                        </o>
+                        <o>
                           <v n="Id">823443203L</v>
                           <v n="Value">"50"</v>
                         </o>
@@ -657,6 +688,9 @@
                           <v n="TextOutputVariableInitialized">true</v>
                           <v n="OtherVarConversion">""</v>
                           <v n="Format">"%7.1f"</v>
+                          <v n="DialogPosition" t="DialogPositionSetting">UseGlobalSetting</v>
+                          <v n="DialogXPos">""</v>
+                          <v n="DialogYPos">""</v>
                         </o>
                       </a>
                     </d>
@@ -770,10 +804,13 @@
                           <l n="Value" t="ArrayList" cet="NamedStyleFont">
                             <o>
                               <v n="FontStyle">0</v>
+                              <v n="AdditionalFontStyle" t="UInt16">0</v>
                               <v n="ExplicitColor">-16777216</v>
                               <v n="CanonicalName">"Font-Heading"</v>
                               <v n="FontName">"Arial"</v>
                               <v n="FontSize">20</v>
+                              <v n="ScriptIdentification">0</v>
+                              <v n="DoubleFontSize" t="Double">0</v>
                               <o n="NamedColor" t="NamedStyleColor">
                                 <v n="Color">-16777216</v>
                                 <v n="CanonicalName">"Font-Default-Color"</v>
@@ -808,6 +845,10 @@
                         <o>
                           <v n="Id">2477733581L</v>
                           <v n="Value">"MAIN.inMoveAxisAbsolute.position"</v>
+                        </o>
+                        <o>
+                          <v n="Id">3719097617L</v>
+                          <v n="Value">0</v>
                         </o>
                         <o>
                           <v n="Id">823443203L</v>
@@ -926,10 +967,13 @@
                           <l n="Value" t="ArrayList" cet="NamedStyleFont">
                             <o>
                               <v n="FontStyle">0</v>
+                              <v n="AdditionalFontStyle" t="UInt16">0</v>
                               <v n="ExplicitColor">-16777216</v>
                               <v n="CanonicalName">"Font-Standard"</v>
                               <v n="FontName">"Arial"</v>
                               <v n="FontSize">12</v>
+                              <v n="ScriptIdentification">0</v>
+                              <v n="DoubleFontSize" t="Double">0</v>
                               <o n="NamedColor" t="NamedStyleColor">
                                 <v n="Color">-16777216</v>
                                 <v n="CanonicalName">"Element-Button-FontColor"</v>
@@ -972,6 +1016,10 @@
                         <o>
                           <v n="Id">2496894244L</v>
                           <v n="Value">""</v>
+                        </o>
+                        <o>
+                          <v n="Id">3719097617L</v>
+                          <v n="Value">0</v>
                         </o>
                         <o>
                           <v n="Id">823443203L</v>
@@ -1098,10 +1146,13 @@
                           <l n="Value" t="ArrayList" cet="NamedStyleFont">
                             <o>
                               <v n="FontStyle">0</v>
+                              <v n="AdditionalFontStyle" t="UInt16">0</v>
                               <v n="ExplicitColor">-16777216</v>
                               <v n="CanonicalName">"Font-Standard"</v>
                               <v n="FontName">"Arial"</v>
                               <v n="FontSize">12</v>
+                              <v n="ScriptIdentification">0</v>
+                              <v n="DoubleFontSize" t="Double">0</v>
                               <o n="NamedColor" t="NamedStyleColor">
                                 <v n="Color">-16777216</v>
                                 <v n="CanonicalName">"Element-Button-FontColor"</v>
@@ -1144,6 +1195,10 @@
                         <o>
                           <v n="Id">2496894244L</v>
                           <v n="Value">""</v>
+                        </o>
+                        <o>
+                          <v n="Id">3719097617L</v>
+                          <v n="Value">0</v>
                         </o>
                       </l>
                     </o>
@@ -1265,10 +1320,13 @@
                           <l n="Value" t="ArrayList" cet="NamedStyleFont">
                             <o>
                               <v n="FontStyle">0</v>
+                              <v n="AdditionalFontStyle" t="UInt16">0</v>
                               <v n="ExplicitColor">-16777216</v>
                               <v n="CanonicalName">"Font-Standard"</v>
                               <v n="FontName">"Arial"</v>
                               <v n="FontSize">12</v>
+                              <v n="ScriptIdentification">0</v>
+                              <v n="DoubleFontSize" t="Double">0</v>
                               <o n="NamedColor" t="NamedStyleColor">
                                 <v n="Color">-16777216</v>
                                 <v n="CanonicalName">"Element-Button-FontColor"</v>
@@ -1311,6 +1369,10 @@
                         <o>
                           <v n="Id">2496894244L</v>
                           <v n="Value">""</v>
+                        </o>
+                        <o>
+                          <v n="Id">3719097617L</v>
+                          <v n="Value">0</v>
                         </o>
                       </l>
                     </o>
@@ -1451,10 +1513,13 @@
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Standard"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">12</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Font-Default-Color"</v>
@@ -1485,6 +1550,10 @@
                     <o>
                       <v n="Id">2597686782L</v>
                       <v n="Value">false</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -1603,10 +1672,13 @@
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Standard"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">12</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Element-Button-FontColor"</v>
@@ -1649,6 +1721,10 @@
                     <o>
                       <v n="Id">2496894244L</v>
                       <v n="Value">""</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -1784,6 +1860,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <v n="Id">977183128L</v>
                       <v n="Value">"ANISOTROPIC"</v>
                     </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
+                    </o>
                   </l>
                 </o>
                 <v n="VisualElementName">"Lamp1"</v>
@@ -1903,10 +1983,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Standard"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">12</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Font-Default-Color"</v>
@@ -1941,6 +2024,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">2597686782L</v>
                       <v n="Value">false</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -2065,10 +2152,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Standard"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">12</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Font-Default-Color"</v>
@@ -2103,6 +2193,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">2597686782L</v>
                       <v n="Value">false</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -2221,10 +2315,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Heading"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">20</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Element-Button-FontColor"</v>
@@ -2267,6 +2364,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">2496894244L</v>
                       <v n="Value">""</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -2392,10 +2493,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Heading"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">20</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-1</v>
                             <v n="CanonicalName">"Element-Potentiometer-ScaleColor"</v>
@@ -2438,6 +2542,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">2597686782L</v>
                       <v n="Value">false</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -2569,10 +2677,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Heading"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">20</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Font-Default-Color"</v>
@@ -2607,6 +2718,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">2477733581L</v>
                       <v n="Value">"MAIN.outShutterStatus.smState"</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -2725,10 +2840,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Heading"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">20</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Element-Button-FontColor"</v>
@@ -2771,6 +2889,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">2597686782L</v>
                       <v n="Value">false</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -2902,10 +3024,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Heading"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">20</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Font-Default-Color"</v>
@@ -2934,6 +3059,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <v n="Value">""</v>
                     </o>
                     <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
+                    </o>
+                    <o>
                       <v n="Id">823443203L</v>
                       <v n="Value">"51"</v>
                     </o>
@@ -2959,6 +3088,9 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <v n="TextOutputVariableInitialized">true</v>
                       <v n="OtherVarConversion">""</v>
                       <v n="Format">"%b"</v>
+                      <v n="DialogPosition" t="DialogPositionSetting">UseGlobalSetting</v>
+                      <v n="DialogXPos">""</v>
+                      <v n="DialogYPos">""</v>
                     </o>
                   </a>
                 </d>
@@ -3072,10 +3204,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Heading"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">20</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Font-Default-Color"</v>
@@ -3110,6 +3245,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">2477733581L</v>
                       <v n="Value">"MAIN.inMoveAxisAbsolute.axisIndex"</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -3204,6 +3343,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">743958181L</v>
                       <v n="Value">"MAIN.stAxis[0].axisRef.Status.Homed and MAIN.stAxis[1].axisRef.Status.Homed"</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                   </l>
                 </o>
@@ -3318,10 +3461,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Heading"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">20</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Element-Button-FontColor"</v>
@@ -3364,6 +3510,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">2496894244L</v>
                       <v n="Value">""</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -3489,10 +3639,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Standard"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">12</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Element-Button-FontColor"</v>
@@ -3535,6 +3688,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">2496894244L</v>
                       <v n="Value">""</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -3672,10 +3829,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Heading"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">20</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Element-Button-FontColor"</v>
@@ -3718,6 +3878,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">2496894244L</v>
                       <v n="Value">""</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -3819,6 +3983,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">743958181L</v>
                       <v n="Value">"MAIN.bAuxElxPermit"</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                   </l>
                 </o>
@@ -3933,10 +4101,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Heading"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">20</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Element-Button-FontColor"</v>
@@ -3979,6 +4150,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">2496894244L</v>
                       <v n="Value">""</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -4104,10 +4279,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Standard"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">12</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Element-Button-FontColor"</v>
@@ -4150,6 +4328,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">2496894244L</v>
                       <v n="Value">""</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -4275,10 +4457,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Standard"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">12</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Element-Button-FontColor"</v>
@@ -4321,6 +4506,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">2496894244L</v>
                       <v n="Value">""</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -4446,10 +4635,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Standard"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">12</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Element-Button-FontColor"</v>
@@ -4492,6 +4684,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">2496894244L</v>
                       <v n="Value">""</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -4617,10 +4813,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Standard"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">12</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Element-Button-FontColor"</v>
@@ -4663,6 +4862,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">2496894244L</v>
                       <v n="Value">""</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -4794,10 +4997,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Heading"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">20</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Font-Default-Color"</v>
@@ -4832,6 +5038,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">2477733581L</v>
                       <v n="Value">"MAIN.inReset.speed"</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -4956,10 +5166,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Heading"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">20</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Font-Default-Color"</v>
@@ -4988,6 +5201,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <v n="Value">""</v>
                     </o>
                     <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
+                    </o>
+                    <o>
                       <v n="Id">823443203L</v>
                       <v n="Value">"65"</v>
                     </o>
@@ -5013,6 +5230,9 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <v n="TextOutputVariableInitialized">true</v>
                       <v n="OtherVarConversion">""</v>
                       <v n="Format">"%7.1f"</v>
+                      <v n="DialogPosition" t="DialogPositionSetting">UseGlobalSetting</v>
+                      <v n="DialogXPos">""</v>
+                      <v n="DialogYPos">""</v>
                     </o>
                   </a>
                 </d>
@@ -5126,10 +5346,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Heading"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">20</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Font-Default-Color"</v>
@@ -5158,6 +5381,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <v n="Value">""</v>
                     </o>
                     <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
+                    </o>
+                    <o>
                       <v n="Id">823443203L</v>
                       <v n="Value">"66"</v>
                     </o>
@@ -5183,6 +5410,9 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <v n="TextOutputVariableInitialized">true</v>
                       <v n="OtherVarConversion">""</v>
                       <v n="Format">"%7.1f"</v>
+                      <v n="DialogPosition" t="DialogPositionSetting">UseGlobalSetting</v>
+                      <v n="DialogXPos">""</v>
+                      <v n="DialogYPos">""</v>
                     </o>
                   </a>
                 </d>
@@ -5296,10 +5526,13 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <l n="Value" t="ArrayList" cet="NamedStyleFont">
                         <o>
                           <v n="FontStyle">0</v>
+                          <v n="AdditionalFontStyle" t="UInt16">0</v>
                           <v n="ExplicitColor">-16777216</v>
                           <v n="CanonicalName">"Font-Heading"</v>
                           <v n="FontName">"Arial"</v>
                           <v n="FontSize">20</v>
+                          <v n="ScriptIdentification">0</v>
+                          <v n="DoubleFontSize" t="Double">0</v>
                           <o n="NamedColor" t="NamedStyleColor">
                             <v n="Color">-16777216</v>
                             <v n="CanonicalName">"Font-Default-Color"</v>
@@ -5334,6 +5567,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">2477733581L</v>
                       <v n="Value">"MAIN.inTakeExposure.exposureTime"</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                     <o>
                       <v n="Id">823443203L</v>
@@ -5429,6 +5666,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <v n="Id">743958181L</v>
                       <v n="Value">"MAIN.stAxis[0].bIsCalibrated and MAIN.stAxis[1].bIsCalibrated;"</v>
                     </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
+                    </o>
                   </l>
                 </o>
                 <v n="VisualElementName">"Lamp1"</v>
@@ -5518,6 +5759,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">743958181L</v>
                       <v n="Value">"MAIN.outShutterStatus.axis[0].enabled and MAIN.outShutterStatus.axis[1].enabled;"</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                   </l>
                 </o>
@@ -5609,6 +5854,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <v n="Id">743958181L</v>
                       <v n="Value">"MAIN.stAxis[0].bLimitHome;"</v>
                     </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
+                    </o>
                   </l>
                 </o>
                 <v n="VisualElementName">"Lamp1"</v>
@@ -5698,6 +5947,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                     <o>
                       <v n="Id">743958181L</v>
                       <v n="Value">"MAIN.stAxis[1].bLimitDeployed;"</v>
+                    </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
                     </o>
                   </l>
                 </o>
@@ -5789,6 +6042,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <v n="Id">743958181L</v>
                       <v n="Value">"MAIN.stAxis[0].bLimitDeployed;"</v>
                     </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
+                    </o>
                   </l>
                 </o>
                 <v n="VisualElementName">"Lamp1"</v>
@@ -5879,6 +6136,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                       <v n="Id">743958181L</v>
                       <v n="Value">"MAIN.stAxis[1].bLimitHome;"</v>
                     </o>
+                    <o>
+                      <v n="Id">3719097617L</v>
+                      <v n="Value">0</v>
+                    </o>
                   </l>
                 </o>
                 <v n="VisualElementName">"Lamp1"</v>
@@ -5912,65 +6173,63 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
             <o n="GeneratedVisuFbDescription" t="GenericFbDescription">
               <d n="FbMethods" t="CaseInsensitiveHashtable" ckt="String" cvt="Guid">
                 <v>GetUpdateRects</v>
-                <v>ebe3358c-ce50-4706-86e7-f9190c19f883</v>
+                <v>a6943143-1a02-4e63-8e44-84d1893b6781</v>
                 <v>ContainsPoint</v>
-                <v>46053c69-bb88-4f0e-a60b-6de785e0bf3e</v>
-                <v>SetStaticState</v>
-                <v>de9e0a1b-c723-4f20-a765-58d64993bf49</v>
-                <v>HasInputAccessIntern</v>
-                <v>5cd6990c-580d-4f7b-b561-c5c81be8ff73</v>
-                <v>GetTooltip</v>
-                <v>8a33075f-0246-48ce-ac58-cad9223a8b8b</v>
-                <v>GetNamespace</v>
-                <v>76f12345-0d3a-4ce4-86a6-38a6d5965be9</v>
-                <v>GetTranslator</v>
-                <v>d2b39c94-ed74-4a79-a53f-22b0b45d9a32</v>
-                <v>Update</v>
-                <v>b70a0ffe-fe4e-496b-9426-769cf42e3e2e</v>
-                <v>SetClientData</v>
-                <v>6d4ae719-0556-45a8-926c-e20f194aa93c</v>
-                <v>GetClientData</v>
-                <v>055c37c7-b77a-4ac8-b075-b6f8c54200cb</v>
-                <v>Paint</v>
-                <v>42d09cd1-4f71-4ba9-a148-9683ffb0389c</v>
-                <v>HasVisibilityAccess</v>
-                <v>479af501-9d63-4129-90ea-b8536523b4e7</v>
-                <v>GetElementArray</v>
-                <v>70a8f9c2-038b-477c-9acd-8ed54f39692c</v>
-                <v>SetVisuFlagsInternal</v>
-                <v>cfdbdb87-ca65-497e-b48a-b24dc4741bae</v>
-                <v>GetText</v>
-                <v>8ca0889e-3e56-4cee-849f-4e040729fb53</v>
-                <v>GetTextProperties</v>
-                <v>6018ee58-e564-4e1c-8eb3-36da1a6853e1</v>
-                <v>Initialize</v>
-                <v>705729ee-09f5-4947-871f-12c1376d964b</v>
-                <v>HasInputAccess</v>
-                <v>4f23712a-807e-4037-b0a2-80c40cf34cda</v>
-                <v>HasVisibilityAccessIntern</v>
-                <v>9faac451-54eb-4e5f-9af8-d78bb1c74664</v>
-                <v>GetSurroundingRect</v>
-                <v>996ece69-d3c3-4696-a20b-ca6367a92b9a</v>
-                <v>ElementInfo</v>
-                <v>4e87b309-d1ba-41ce-a651-e276948039e1</v>
-                <v>GetLocalUsergroup</v>
-                <v>16191edf-4785-4a77-9371-24a259ca4d6f</v>
-                <v>GetName</v>
-                <v>7c332ad2-3288-4d76-8fcb-491f9bb0e7cf</v>
-                <v>GetSize</v>
-                <v>2624dc51-4f3a-4273-b4da-4f7ab236d40b</v>
+                <v>e050781e-7973-4104-a063-e96902367496</v>
                 <v>FB_Reinit</v>
-                <v>10a2771a-84b6-403d-842f-aa91a7d0405b</v>
-                <v>FB_Exit</v>
-                <v>3d281a48-c850-4d68-8322-97c3774d6f2a</v>
-                <v>GetInitializeVersion</v>
-                <v>27536ce9-85c4-4ab2-956d-d3bee2c5a43f</v>
-                <v>GetElementIdArray</v>
-                <v>f5a15c52-75b6-4a2a-8264-cc3dd4aecc9f</v>
-                <v>HandleInput</v>
-                <v>f554bc69-f6d9-4532-947d-23c41884684b</v>
+                <v>edf18d29-42dd-4cda-9a47-8d84ef8ed77b</v>
+                <v>SetStaticState</v>
+                <v>228ea61a-2b09-48ea-a4fe-fae764eca80c</v>
+                <v>Update</v>
+                <v>2a166155-8758-4d83-85ef-a5801cb6846b</v>
+                <v>GetTooltip</v>
+                <v>33257ab9-9b46-4681-a0f8-6fd9f41bd530</v>
+                <v>GetNamespace</v>
+                <v>fc8a01dd-c03d-492d-b694-fd44095a236c</v>
+                <v>GetTranslator</v>
+                <v>c41e69be-083c-4bc0-aa92-b9bb40ea396e</v>
+                <v>SetClientData</v>
+                <v>443f14bd-1c23-4234-af65-a9ab02f255c7</v>
+                <v>GetClientData</v>
+                <v>97c4a33d-9210-48ea-93c7-2034dc2d0b4c</v>
+                <v>Paint</v>
+                <v>91e95058-1381-42ab-aa4f-8b316f832277</v>
+                <v>HasVisibilityAccess</v>
+                <v>bb8c32ab-b539-4e5f-ba11-f7f3ced9fcff</v>
+                <v>GetElementArray</v>
+                <v>e3aa8349-1fd3-402d-a520-36e683d01553</v>
+                <v>SetVisuFlagsInternal</v>
+                <v>a717358c-8f04-48a9-9043-eb04cd0aad4f</v>
+                <v>GetText</v>
+                <v>251715e8-3538-4388-8824-c6e48e5055a3</v>
+                <v>GetTextProperties</v>
+                <v>61f58fbb-4599-4e6a-949c-7c1b707cd4fc</v>
+                <v>IsAntialiasingInactive</v>
+                <v>13a812b8-54b3-4595-9671-d404aa29363d</v>
+                <v>Initialize</v>
+                <v>5494c4e6-f639-4310-a11a-de831406f1d4</v>
+                <v>HasInputAccess</v>
+                <v>6df1f308-3d08-4aa3-b6d2-0786300c6b2a</v>
+                <v>GetSurroundingRect</v>
+                <v>b172aa7a-ed1f-4724-87fa-b148c0bc559e</v>
+                <v>GetLocalUsergroup</v>
+                <v>777770c2-1415-4b9f-b900-e8aed380b2ac</v>
+                <v>GetName</v>
+                <v>9b241d98-0b7a-4981-9005-a2ad207fbe37</v>
+                <v>GetSize</v>
+                <v>4b69bf69-f053-48de-a2c8-951ac5b7b28d</v>
                 <v>Destruct</v>
-                <v>8058d8f6-6c18-47a3-a220-504ed59d2bfa</v>
+                <v>84e359f8-6729-4b9c-91b5-b6467e62ae07</v>
+                <v>FB_Exit</v>
+                <v>44c762e4-c795-4b0d-ad3f-5670ae30fe4e</v>
+                <v>GetInitializeVersion</v>
+                <v>06e8b9db-9b26-49a2-ae68-812e399eb027</v>
+                <v>GetElementIdArray</v>
+                <v>1cb3612e-db63-4636-91dc-15106493328d</v>
+                <v>HandleInput</v>
+                <v>fb5e46d2-6eb7-4aec-8e5d-35cfc28de316</v>
+                <v>ElementInfo</v>
+                <v>c5946c67-2a51-434d-bcce-d381a2b4af47</v>
               </d>
               <v n="FbName">"NotImportant"</v>
               <v n="FbGuid">{f582b681-f1ff-4fd0-9241-dc5537cf3bfd}</v>
@@ -5983,10 +6242,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
               <d n="FbMethods" t="CaseInsensitiveHashtable" ckt="String" cvt="Guid">
                 <v>FB_Init</v>
                 <v>a34fda68-ea57-451d-84ba-f64a41fb0235</v>
-                <v>FB_Exit</v>
-                <v>1b57cff7-6f15-436e-b02d-adbc5df6fce8</v>
                 <v>FB_Reinit</v>
                 <v>310ce281-f150-4cc8-979e-5925ca8ebdd9</v>
+                <v>FB_Exit</v>
+                <v>1b57cff7-6f15-436e-b02d-adbc5df6fce8</v>
               </d>
               <v n="FbName">"NotImportant"</v>
               <v n="FbGuid">{8b25fc7b-31d2-4d93-aeae-0948edd1ad10}</v>
@@ -6063,6 +6322,7 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
             <v n="IdStep">1048576L</v>
             <l2 n="Inputs" />
           </o>
+          <n n="VisuSizeManager" />
         </o>
       </Data>
       <TypeList>
@@ -6071,6 +6331,8 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
         <Type n="Boolean">System.Boolean</Type>
         <Type n="CaseInsensitiveHashtable">{7df88604-7ac5-4e36-91c4-55e4fdad3e68}</Type>
         <Type n="ComplexInput">{1de566f6-72a7-494c-9353-9a418172c96e}</Type>
+        <Type n="DialogPositionSetting">{16f3f59a-37ad-4991-a1af-cc2926974e08}</Type>
+        <Type n="Double">System.Double</Type>
         <Type n="GeneratedLanguageModelEntriesData">{703465dc-4679-4ff2-bcc3-c57d0a204da3}</Type>
         <Type n="GenericFbDescription">{40d6dd8d-dfd0-493a-8e29-c9a35e1e6539}</Type>
         <Type n="GenericVisualElem">{f86c2928-8614-4cca-824b-e819ac4d58c4}</Type>
@@ -6078,7 +6340,7 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
         <Type n="Hashtable">System.Collections.Hashtable</Type>
         <Type n="HotkeyConfiguration">{6b108d46-58af-4e41-a3f4-174d8f160cc4}</Type>
         <Type n="InputBoxInputAction">{e8e7e747-f76f-4dee-ab1c-b9637e41ac26}</Type>
-        <Type n="InputBoxInputAction[]">_3S.CoDeSys.VisualElem.InputBoxInputAction[], VisualElem.plugin, Version=3.5.10.31, Culture=neutral, PublicKeyToken=null</Type>
+        <Type n="InputBoxInputAction[]">_3S.CoDeSys.VisualElem.InputBoxInputAction[], VisualElem.plugin, Version=3.5.13.30, Culture=neutral, PublicKeyToken=null</Type>
         <Type n="Int16">System.Int16</Type>
         <Type n="Int32">System.Int32</Type>
         <Type n="Int64">System.Int64</Type>
@@ -6086,9 +6348,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
         <Type n="NamedStyleFont">{9e842eb2-1463-4af2-b605-4fbb17044f94}</Type>
         <Type n="String">System.String</Type>
         <Type n="STSnippetInputAction">{6302d3fe-6ea5-4c42-819a-a9734a133b3d}</Type>
-        <Type n="STSnippetInputAction[]">_3S.CoDeSys.VisualElem.STSnippetInputAction[], VisualElem.plugin, Version=3.5.10.31, Culture=neutral, PublicKeyToken=null</Type>
+        <Type n="STSnippetInputAction[]">_3S.CoDeSys.VisualElem.STSnippetInputAction[], VisualElem.plugin, Version=3.5.13.30, Culture=neutral, PublicKeyToken=null</Type>
         <Type n="TextDocument">{f3878285-8e4f-490b-bb1b-9acbb7eb04db}</Type>
         <Type n="TextLine">{a5de0b0b-1cb5-4913-ac21-9d70293ec00d}</Type>
+        <Type n="UInt16">System.UInt16</Type>
         <Type n="UInt32">System.UInt32</Type>
         <Type n="VisualElemCollection">{ef9d0b20-c96e-48db-b361-2ded4063150e}</Type>
         <Type n="VisualElemList">{f285c9a3-7019-446b-b98c-ccec3a0af8fa}</Type>

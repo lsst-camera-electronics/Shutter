@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmItem" TcSmVersion="1.0" TcVersion="3.1.4022.29" ClassName="CDevEtherCATDef" SubType="111">
+<?xml version="1.0"?>
+<TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.7" ClassName="CDevEtherCATDef" SubType="111">
 	<DataTypes>
 		<DataType>
 			<Name GUID="{18071995-0000-0000-0000-002000000002}" IecBaseType="true" BitType="true" AutoDeleteType="true" HideSubItems="true">ARRAY [0..1] OF BIT</Name>
@@ -20,7 +20,7 @@
 			</ArrayInfo>
 		</DataType>
 		<DataType>
-			<Name GUID="{18071995-0000-0000-0000-002000000003}" IecBaseType="true" BitType="true" AutoDeleteType="true" HideSubItems="true">ARRAY [0..2] OF BIT</Name>
+			<Name GUID="{18071995-0000-0000-0000-002000000003}" IecBaseType="true" AutoDeleteType="true" HideSubItems="true">ARRAY [0..2] OF BIT</Name>
 			<BitSize>3</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000010}">BIT</BaseType>
 			<ArrayInfo>
@@ -47,7 +47,7 @@
 			</ArrayInfo>
 		</DataType>
 		<DataType>
-			<Name GUID="{18071995-0000-0000-0000-002000000004}" IecBaseType="true" BitType="true" AutoDeleteType="true" HideSubItems="true">ARRAY [0..3] OF BIT</Name>
+			<Name GUID="{18071995-0000-0000-0000-002000000004}" IecBaseType="true" AutoDeleteType="true" HideSubItems="true">ARRAY [0..3] OF BIT</Name>
 			<BitSize>4</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000010}">BIT</BaseType>
 			<ArrayInfo>
@@ -221,19 +221,16 @@
 		<Image Id="1" AddrType="9" ImageType="3">
 			<Name>Image</Name>
 		</Image>
-		<Image Id="4" AddrType="10" ImageType="3">
-			<Name>Image-2</Name>
-		</Image>
-		<Box BoxType="9099" Id="1">
+		<Box Id="1" BoxType="9099">
 			<Name>Term 1 (EK1200)</Name>
 			<ImageId>1000</ImageId>
 			<EtherCAT PdiType="#x0100" CycleMBoxPollingTime="0" VendorId="#x00000002" ProductCode="#x04b02c52" RevisionNo="#x00001388" InfoDataState="false" PortPhys="49" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EK1200-5000 EtherCAT Power supply (2A E-Bus)" Desc="EK1200" PortABoxInfo="#x00ffffff"/>
-			<Box BoxType="9099" Id="8">
+			<Box Id="8" BoxType="9099">
 				<Name>Term 8 (EL9570)</Name>
 				<ImageId>1001</ImageId>
 				<EtherCAT CycleMBoxPollingTime="0" VendorId="#x00000002" ProductCode="#x25623050" InfoDataState="false" PortPhys="51" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EL9570 Buffer capacitor terminal" Desc="EL9570" PortABoxInfo="#x01000001"/>
 			</Box>
-			<Box BoxType="9099" Id="2">
+			<Box Id="2" BoxType="9099">
 				<Name>Term 2 (EL7047)</Name>
 				<ImageId>1002</ImageId>
 				<EtherCAT SlaveType="2" PdiType="#x0405" MboxDataLinkLayer="true" StateMBoxPolling="true" CycleMBoxPollingTime="0" CoeType="39" FoeType="1" VendorId="#x00000002" ProductCode="#x1b873052" RevisionNo="#x00130000" InfoDataAddr="true" InfoDataSoeDS401="true" InfoDataDcTimes="true" RepeatSupport="true" TimeoutMailbox2="2000" CheckRevisionNoType="3" PortPhys="51" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EL7047 1Ch. Stepper motor output stage (50V, 5A)" Desc="EL7047" PortABoxInfo="#x01000001">
@@ -252,6 +249,7 @@
 					<MBoxUserCmdData>020003000a0000000f00000003000000000000000000000000000000000000002010800302000000c0124e6f6d696e616c20766f6c7461676500</MBoxUserCmdData>
 					<MBoxUserCmdData>020003000a000000150000000300000000000000000000000000000000000000201080040200000024004d6f746f7220636f696c20726573697374616e636500</MBoxUserCmdData>
 					<MBoxUserCmdData>02000300090000000d0000000300000000000000000000000000000000000000201280080100000000466565646261636b207479706500</MBoxUserCmdData>
+					<MBoxUserCmdData>020003000900000012000000030000000000000000000000000000000000000020128011010000006553656c65637420696e666f2064617461203100</MBoxUserCmdData>
 					<Pdo Name="ENC Status compact" Index="#x1a00" Flags="#x0010" SyncMan="3">
 						<ExcludePdo>#x1a01</ExcludePdo>
 						<Entry Name="Status__Latch C valid" Index="#x6000" Sub="#x01" Flags="#x00000020">
@@ -664,12 +662,12 @@
 					<CoeProfile ProfileNo="46142345" DisplayName="Positioning interfa"/>
 				</EtherCAT>
 			</Box>
-			<Box BoxType="9099" Id="6">
+			<Box Id="6" BoxType="9099">
 				<Name>Term 6 (EL9184)</Name>
 				<ImageId>1001</ImageId>
 				<EtherCAT CycleMBoxPollingTime="0" VendorId="#x00000002" ProductCode="#x23e03050" InfoDataState="false" PortPhys="51" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EL9184 Potential Connection, 8 x 24V, 8 x Ground" Desc="EL9184" PortABoxInfo="#x01000002"/>
 			</Box>
-			<Box BoxType="9099" BoxFlags="#x00000020" Id="9">
+			<Box Id="9" BoxType="9099" BoxFlags="#x00000020">
 				<Name>Term 9 (EL1259)</Name>
 				<ImageId>7</ImageId>
 				<EtherCAT SlaveType="2" PdiType="#x0405" MboxDataLinkLayer="true" StateMBoxPolling="true" CfgModeSafeOp="true" CycleMBoxPollingTime="0" CoeType="39" FoeType="1" VendorId="#x00000002" ProductCode="#x04eb3052" RevisionNo="#x00120000" InfoDataAddr="true" InfoDataDcTimes="true" TimeoutMailbox2="2000" CheckRevisionNoType="3" PortPhys="51" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EL1259 8Ch. Dig Input 24V/8Ch. Dig. Output 24V with Multi-Time-Stamp" Desc="EL1259" PortABoxInfo="#x01000002">
@@ -4881,7 +4879,7 @@
 					<CoeProfile ProfileNo="7934857"/>
 				</EtherCAT>
 			</Box>
-			<Box BoxType="9099" Id="12">
+			<Box Id="12" BoxType="9099">
 				<Name>Term 12 (EL1259)</Name>
 				<ImageId>7</ImageId>
 				<EtherCAT SlaveType="2" PdiType="#x0405" MboxDataLinkLayer="true" StateMBoxPolling="true" CfgModeSafeOp="true" CycleMBoxPollingTime="0" CoeType="39" FoeType="1" VendorId="#x00000002" ProductCode="#x04eb3052" RevisionNo="#x00110000" InfoDataAddr="true" InfoDataDcTimes="true" TimeoutMailbox2="2000" CheckRevisionNoType="3" PortPhys="51" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EL1259 8Ch. Dig Input 24V/8Ch. Dig. Output 24V with Multi-Time-Stamp" Desc="EL1259" PortABoxInfo="#x01000009">
@@ -9093,7 +9091,7 @@
 					<CoeProfile ProfileNo="7934857"/>
 				</EtherCAT>
 			</Box>
-			<Box BoxType="9099" BoxFlags="#x00000020" Id="3">
+			<Box Id="3" BoxType="9099" BoxFlags="#x00000020">
 				<Name>Term 3 (EL3214)</Name>
 				<ImageId>1003</ImageId>
 				<EtherCAT SlaveType="2" PdiType="#x0005" MboxDataLinkLayer="true" StateMBoxPolling="true" CycleMBoxPollingTime="0" CoeType="3" FoeType="1" VendorId="#x00000002" ProductCode="#x0c8e3052" RevisionNo="#x00110000" InfoDataAddr="true" RepeatSupport="true" TimeoutMailbox2="2000" CheckRevisionNoType="3" PortPhys="51" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EL3214 4Ch. Ana. Input PT100 (RTD)" Desc="EL3214" PortABoxInfo="#x0100000c">
@@ -9214,12 +9212,12 @@
 					<CoeProfile ProfileNo="20976521"/>
 				</EtherCAT>
 			</Box>
-			<Box BoxType="9099" Id="7">
+			<Box Id="7" BoxType="9099">
 				<Name>Term 7 (EL9570)</Name>
 				<ImageId>1001</ImageId>
 				<EtherCAT CycleMBoxPollingTime="0" VendorId="#x00000002" ProductCode="#x25623050" InfoDataState="false" PortPhys="51" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EL9570 Buffer capacitor terminal" Desc="EL9570" PortABoxInfo="#x01000003"/>
 			</Box>
-			<Box BoxType="9099" Id="4">
+			<Box Id="4" BoxType="9099">
 				<Name>Term 4 (EL7047)</Name>
 				<ImageId>1002</ImageId>
 				<EtherCAT SlaveType="2" PdiType="#x0405" MboxDataLinkLayer="true" StateMBoxPolling="true" CycleMBoxPollingTime="0" CoeType="39" FoeType="1" VendorId="#x00000002" ProductCode="#x1b873052" RevisionNo="#x00130000" InfoDataAddr="true" InfoDataSoeDS401="true" RepeatSupport="true" TimeoutMailbox2="2000" CheckRevisionNoType="3" PortPhys="51" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EL7047 1Ch. Stepper motor output stage (50V, 5A)" Desc="EL7047" PortABoxInfo="#x01000003">
@@ -9238,6 +9236,7 @@
 					<MBoxUserCmdData>020003000a0000000f00000003000000000000000000000000000000000000002010800302000000c0124e6f6d696e616c20766f6c7461676500</MBoxUserCmdData>
 					<MBoxUserCmdData>020003000a000000150000000300000000000000000000000000000000000000201080040200000024004d6f746f7220636f696c20726573697374616e636500</MBoxUserCmdData>
 					<MBoxUserCmdData>02000300090000000d0000000300000000000000000000000000000000000000201280080100000000466565646261636b207479706500</MBoxUserCmdData>
+					<MBoxUserCmdData>020003000900000012000000030000000000000000000000000000000000000020128011010000006553656c65637420696e666f2064617461203100</MBoxUserCmdData>
 					<Pdo Name="ENC Status compact" Index="#x1a00" Flags="#x0010" SyncMan="3">
 						<ExcludePdo>#x1a01</ExcludePdo>
 						<Entry Name="Status__Latch C valid" Index="#x6000" Sub="#x01">
@@ -9650,7 +9649,7 @@
 					<CoeProfile ProfileNo="46142345" DisplayName="Positioning interfa"/>
 				</EtherCAT>
 			</Box>
-			<Box BoxType="9099" Id="5">
+			<Box Id="5" BoxType="9099">
 				<Name>Term 5 (EL2622)</Name>
 				<ImageId>1004</ImageId>
 				<EtherCAT SlaveType="1" PdiType="#x0104" CycleMBoxPollingTime="0" VendorId="#x00000002" ProductCode="#x0a3e3052" RevisionNo="#x00120000" RepeatSupport="true" PortPhys="51" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EL2622 2Ch. Relay Output, NO (230V AC / 30V DC)" Desc="EL2622" PortABoxInfo="#x01000004">
@@ -9668,7 +9667,7 @@
 					</Pdo>
 				</EtherCAT>
 			</Box>
-			<Box BoxType="9099" Id="18">
+			<Box Id="18" BoxType="9099">
 				<Name>Term 18 (EL6688)</Name>
 				<ImageId>1005</ImageId>
 				<EtherCAT SlaveType="2" PdiType="#x0c08" MboxDataLinkLayer="true" StateMBoxPolling="true" CycleMBoxPollingTime="0" CoeType="39" FoeType="1" VendorId="#x00000002" ProductCode="#x1a203052" RevisionNo="#x00160000" InfoDataAddr="true" InfoDataDcTimes="true" DcPotentialRefClock="true" RepeatSupport="true" TimeoutMailbox2="2000" CheckRevisionNoType="3" PortPhys="51" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EL6688 - External Synchronisation Interface (IEEE1588)" Desc="EL6688" PortABoxInfo="#x01000005">
@@ -9785,7 +9784,7 @@
 					<CoeProfile ProfileNo="5001"/>
 				</EtherCAT>
 			</Box>
-			<Box BoxType="9099" Id="20">
+			<Box Id="20" BoxType="9099">
 				<Name>Term 20 (EL9011)</Name>
 				<ImageId>1006</ImageId>
 				<EtherCAT CycleMBoxPollingTime="0" VendorId="#x00000002" ProductCode="#x23333050" InfoDataState="false" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EL9011 End Terminal" Desc="EL9011" PortABoxInfo="#x01000012"/>
