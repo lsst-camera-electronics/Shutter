@@ -20,28 +20,29 @@ VAR
 	fbTracking	: FB_Tracking;
 
 	//Timing test vars
-	fbInputRtrig		: R_trig;
-	fbInputFtrig		: F_trig;
+	fbInputRtrig	: R_trig;
+	fbInputFtrig	: F_trig;
 	
 	//
 	eCommand		: E_Commands;
 	
 	//communication IN
-	inCalibrate, ackCalibrate				: ST_Calibrate;
-	inChangeAxisEnable, ackChangeAxisEnable	: ST_ChangeAxisEnable;
-	inChangeBrakeState, ackChangeBrakeState	: ST_ChangeBrakeState;
-	inClearAllFaults, ackClearAllFaults		: ST_ClearAllFaults;
-	inClearAxisFaults, ackClearAxisFaults	: ST_ClearAxisFaults;
-	inCloseShutter, ackCloseShutter			: ST_CloseShutter;
-	inDisableAllAxes, ackDisableAllAxes		: ST_DisableAllAxes;
-	inEnableAllAxes, ackEnableAllAxes		: ST_EnableAllAxes;
-	inGoToProd, ackGoToProd					: ST_GoToProd;
-	inHomeAxis, ackHomeAxis					: ST_HomeAxis;
-	inMoveAxisAbsolute, ackMoveAxisAbsolute	: ST_MoveAxisAbsolute;
-	inMoveAxisRelative, ackMoveAxisRelative	: ST_MoveAxisRelative;
-	inOpenShutter, ackOpenShutter			: ST_OpenShutter;
-	inReset, ackReset						: ST_Reset;
-	inTakeExposure, ackTakeExposure			: ST_TakeExposure;
+	inCalibrate, 		ackCalibrate		: ST_Calibrate;
+	inChangeAxisEnable,	ackChangeAxisEnable	: ST_ChangeAxisEnable;
+	inChangeBrakeState,	ackChangeBrakeState	: ST_ChangeBrakeState;
+	inClearAllFaults,	ackClearAllFaults	: ST_ClearAllFaults;
+	inClearAxisFaults,	ackClearAxisFaults	: ST_ClearAxisFaults;
+	inCloseShutter,		ackCloseShutter		: ST_CloseShutter;
+	inDisableAllAxes,	ackDisableAllAxes	: ST_DisableAllAxes;
+	inEnableAllAxes,	ackEnableAllAxes	: ST_EnableAllAxes;
+	inGoToProd,			ackGoToProd			: ST_GoToProd;
+	inHomeAxis,			ackHomeAxis			: ST_HomeAxis;
+	inMoveAxisAbsolute,	ackMoveAxisAbsolute	: ST_MoveAxisAbsolute;
+	inMoveAxisRelative,	ackMoveAxisRelative	: ST_MoveAxisRelative;
+	inOpenShutter,		ackOpenShutter		: ST_OpenShutter;
+	inReset,			ackReset			: ST_Reset;
+	inTakeExposure,		ackTakeExposure		: ST_TakeExposure;
+	inTurnSafetyOff,	ackTurnSafetyOff	: ST_TurnSafetyOff;
 	
 	//communication OUT
 	fbOutTimer			: TON;
@@ -69,7 +70,7 @@ END_VAR
 VAR CONSTANT
 	//Will change later once motionProfile and version are decided
 	nMotionProfile	: DINT := 0;
-	nVersion		: DINT := 1;
+	nVersion		: DINT := 2;
 	tUpdateTimer	: TIME := T#2S;
 END_VAR
 
@@ -99,7 +100,7 @@ IF F_HaveDifferentIDs(inCalibrate, ackCalibrate) THEN
 	IF ackCalibrate.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState<>E_StatesMaint.Still AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState<>E_StatesMaint.Still THEN//AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -111,7 +112,7 @@ ELSIF F_HaveDifferentIDs(inChangeAxisEnable, ackChangeAxisEnable) THEN
 	IF ackChangeAxisEnable.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -123,7 +124,7 @@ ELSIF F_HaveDifferentIDs(inChangeBrakeState, ackChangeBrakeState) THEN
 	IF ackChangeBrakeState.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -135,7 +136,7 @@ ELSIF F_HaveDifferentIDs(inClearAllFaults, ackClearAllFaults) THEN
 	IF ackClearAllFaults.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -147,7 +148,7 @@ ELSIF F_HaveDifferentIDs(inClearAxisFaults, ackClearAxisFaults) THEN
 	IF ackClearAxisFaults.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -159,7 +160,7 @@ ELSIF F_HaveDifferentIDs(inCloseShutter, ackCloseShutter) THEN
 	IF ackCloseShutter.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesProd.Opened AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesProd.Opened THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -171,7 +172,7 @@ ELSIF F_HaveDifferentIDs(inDisableAllAxes, ackDisableAllAxes) THEN
 	IF ackDisableAllAxes.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -183,7 +184,7 @@ ELSIF F_HaveDifferentIDs( inEnableAllAxes, ackEnableAllAxes) THEN
 	IF ackEnableAllAxes.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -195,7 +196,7 @@ ELSIF F_HaveDifferentIDs( inGoToProd, ackGoToProd) THEN
 	IF ackGoToProd.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -207,7 +208,7 @@ ELSIF F_HaveDifferentIDs( inHomeAxis, ackHomeAxis) THEN
 	IF ackHomeAxis.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -219,7 +220,7 @@ ELSIF F_HaveDifferentIDs( inMoveAxisAbsolute, ackMoveAxisAbsolute) THEN
 	IF ackMoveAxisAbsolute.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -231,7 +232,7 @@ ELSIF F_HaveDifferentIDs( inMoveAxisRelative, ackMoveAxisRelative) THEN
 	IF ackMoveAxisRelative.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -243,7 +244,7 @@ ELSIF F_HaveDifferentIDs(inOpenShutter, ackOpenShutter) THEN
 	IF ackOpenShutter.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesProd.Closed AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesProd.Closed THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -252,7 +253,7 @@ ELSIF F_HaveDifferentIDs(inOpenShutter, ackOpenShutter) THEN
 	
 ELSIF F_HaveDifferentIDs(inReset, ackReset) THEN
 	ackReset := inReset;	
-	IF ackClearAxisFaults.version <> nVersion THEN
+	IF ackReset.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF NOT bAuxElxPermit THEN
@@ -267,18 +268,32 @@ ELSIF F_HaveDifferentIDs(inTakeExposure, ackTakeExposure) THEN
 	IF ackTakeExposure.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesProd.Closed AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesProd.Closed THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
 		eCommand := E_Commands.takeExposure;
 	END_IF
+	
+ELSIF F_HaveDifferentIDs(inTurnSafetyOff, ackTurnSafetyOff) THEN
+	ackTurnSafetyOff := inTurnSafetyOff;	
+	IF ackTurnSafetyOff.version <> nVersion THEN
+		outIgnored.reason := 0; (*wrong version*)
+		outIgnored.sequence := outIgnored.sequence + 1;
+	ELSIF fbShutterSM.nSMState <> E_StatesProd.Closed THEN
+		outIgnored.reason := 1; (*ignored by state machine*)
+		outIgnored.sequence := outIgnored.sequence + 1;
+	ELSE
+		eCommand := E_Commands.turnSafetyOff;
+		outShutterStatus.isSafetyOn := NOT outShutterStatus.isSafetyOn;
+		outShutterStatus.sequence := outShutterStatus.sequence + 1;
+	END_IF
+	
 END_IF
 
 ////////////////////////////////////////////////////////////////////
 (*shutter protection module*)
 ////////////////////////////////////////////////////////////////////
-
 fbProtect(
 	stAxis 				:= stAxis, 
 	bAuxElxPermit 		:= bAuxElxPermit, 
@@ -311,19 +326,21 @@ fbShutterSM(
 	stOpenShutter		:= inOpenShutter,
 	stReset				:= inReset,
 	stTakeExposure		:= inTakeExposure);
+	
 ////////////////////////////////////////////////////////////////////
 //PLC to CCS
 ////////////////////////////////////////////////////////////////////
 (*Set version*)
 IF NOT bVersionSet THEN
-	bVersionSet := TRUE;
-	outShutterStatus.version := nVersion;
-	outDisable.version := nVersion;
-	outEnable.version := nVersion;
-	outError.version := nVersion;
-	outIgnored.version := nVersion;
-	outTimer.version := nVersion;
-	outCalibDone.version := nVersion;
+	bVersionSet 				:= TRUE;
+	outShutterStatus.version 	:= nVersion;
+	outDisable.version 			:= nVersion;
+	outEnable.version 			:= nVersion;
+	outError.version 			:= nVersion;
+	outIgnored.version 			:= nVersion;
+	outTimer.version 			:= nVersion;
+	outCalibDone.version 		:= nVersion;
+	outMotionDone.version		:= nVersion;
 END_IF
 
 //updates upon changes---------------------------------------------
@@ -347,7 +364,6 @@ IF stCalibDone_rtrig.Q THEN
 	outCalibDone.sequence := outCalibDone.sequence + 1;
 END_IF
 
-
 //Periodic updates---------------------------------------------
 fbOutTimer(IN:=TRUE, PT:=tUpdateTimer);
 IF fbOutTimer.Q THEN
@@ -355,12 +371,12 @@ IF fbOutTimer.Q THEN
 	
 	(*increment sequence*)
 	outShutterStatus.sequence := outShutterStatus.sequence +1;
-	
-	(*shutter status update*)
+
+	(*shutter status update, common*)
 	outShutterStatus.motionProfile := nMotionProfile;
 	outShutterStatus.isCalibrated := (stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated);
 	outShutterStatus.smState := fbShutterSM.nSMState;
-
+	
 	(*shutter status update, axis XP specific*)
 	outShutterStatus.axis[GVL.cXP].actPos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 	outShutterStatus.axis[GVL.cXP].actVel := stAxis[GVL.cXP].axisRef.NcToPlc.ActVelo;
@@ -392,7 +408,7 @@ IF fbOutTimer.Q THEN
 END_IF
 
 ////////////////////////////////////////////////////////////////////
-//Other (protection, tracking, etc.
+//Other (tracking, temperature, etc.)
 ////////////////////////////////////////////////////////////////////
 
 (*track motion of both blades*)
@@ -446,7 +462,23 @@ END_IF
 ]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
-      <LineId Id="2480" Count="318" />
+      <LineId Id="2480" Count="187" />
+      <LineId Id="3130" Count="0" />
+      <LineId Id="3133" Count="10" />
+      <LineId Id="3237" Count="0" />
+      <LineId Id="3131" Count="1" />
+      <LineId Id="2668" Count="4" />
+      <LineId Id="2674" Count="31" />
+      <LineId Id="3101" Count="0" />
+      <LineId Id="2706" Count="12" />
+      <LineId Id="3102" Count="0" />
+      <LineId Id="2719" Count="21" />
+      <LineId Id="2742" Count="7" />
+      <LineId Id="3149" Count="0" />
+      <LineId Id="3151" Count="2" />
+      <LineId Id="2755" Count="0" />
+      <LineId Id="3150" Count="0" />
+      <LineId Id="2756" Count="42" />
       <LineId Id="2888" Count="0" />
       <LineId Id="2799" Count="0" />
       <LineId Id="2891" Count="0" />

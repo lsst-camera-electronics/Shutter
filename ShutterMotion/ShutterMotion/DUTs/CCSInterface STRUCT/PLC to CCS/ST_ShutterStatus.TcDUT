@@ -1,13 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
   <DUT Name="ST_ShutterStatus" Id="{92b4458d-b7e8-4988-b98b-43af5ff05814}">
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
 TYPE ST_ShutterStatus EXTENDS ST_MsgToCCS:
 STRUCT
-    motionProfile: DINT; (* Motion profile index. *)
-    isCalibrated: BOOL;
-    smState: DINT;
-    axis: ARRAY [0..1] OF AxisStatus;
+    motionProfile	: DINT; (* Motion profile index. *)
+    isCalibrated	: BOOL;
+    smState			: DINT;
+    axis			: ARRAY [0..1] OF AxisStatus;
+	isSafetyOn		: BOOL;
+	temperature 	: ARRAY [0..2] OF INT;
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

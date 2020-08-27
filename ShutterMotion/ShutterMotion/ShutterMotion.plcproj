@@ -69,6 +69,9 @@
     <Compile Include="DUTs\CCSInterface STRUCT\CCS to PLC\ST_TakeExposure.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\CCSInterface STRUCT\CCS to PLC\ST_TurnSafetyOff.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\CCSInterface STRUCT\PLC to CCS\AxisStatus.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -151,55 +154,55 @@
     <Compile Include="POUs\MAIN.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\State Machine\FB_Cycler.TcPOU">
+    <Compile Include="POUs\StateMachine\FB_Cycler.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\State Machine\FB_ShutterSM.TcPOU">
+    <Compile Include="POUs\StateMachine\FB_ShutterSM.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\State Machine\FB_Tracking.TcPOU">
+    <Compile Include="POUs\StateMachine\FB_Tracking.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\State Machine\StateTop\FB_StateDisabled.TcPOU">
+    <Compile Include="POUs\StateMachine\StateTop\FB_StateDisabled.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\State Machine\StateTop\FB_StateEnabled.TcPOU">
+    <Compile Include="POUs\StateMachine\StateTop\FB_StateEnabled.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\State Machine\StateTop\StateEnabled\FB_Reset.TcPOU">
+    <Compile Include="POUs\StateMachine\StateTop\StateEnabled\FB_Reset.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\State Machine\StateTop\StateEnabled\FB_StateMaint.TcPOU">
+    <Compile Include="POUs\StateMachine\StateTop\StateEnabled\FB_StateMaint.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\State Machine\StateTop\StateEnabled\FB_StateProd.TcPOU">
+    <Compile Include="POUs\StateMachine\StateTop\StateEnabled\FB_StateProd.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateMaint\FB_Homing.TcPOU">
+    <Compile Include="POUs\StateMachine\StateTop\StateEnabled\StateMaint\FB_Homing.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateMaint\FB_StateCalibrating.TcPOU">
+    <Compile Include="POUs\StateMachine\StateTop\StateEnabled\StateMaint\FB_StateCalibrating.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateMaint\FB_StateMoving.TcPOU">
+    <Compile Include="POUs\StateMachine\StateTop\StateEnabled\StateMaint\FB_StateMoving.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateMaint\FB_StateStill.TcPOU">
+    <Compile Include="POUs\StateMachine\StateTop\StateEnabled\StateMaint\FB_StateStill.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateProd\FB_StateClosed.TcPOU">
+    <Compile Include="POUs\StateMachine\StateTop\StateEnabled\StateProd\FB_StateClosed.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateProd\FB_StateClosing.TcPOU">
+    <Compile Include="POUs\StateMachine\StateTop\StateEnabled\StateProd\FB_StateClosing.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateProd\FB_StateOpened.TcPOU">
+    <Compile Include="POUs\StateMachine\StateTop\StateEnabled\StateProd\FB_StateOpened.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateProd\FB_StateOpening.TcPOU">
+    <Compile Include="POUs\StateMachine\StateTop\StateEnabled\StateProd\FB_StateOpening.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\State Machine\StateTop\StateEnabled\StateProd\FB_StateTravelling.TcPOU">
+    <Compile Include="POUs\StateMachine\StateTop\StateEnabled\StateProd\FB_StateTravelling.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Visualization Manager.TcVMO">
@@ -219,11 +222,11 @@
     <Folder Include="DUTs\ENUM\State ENUM" />
     <Folder Include="GVLs" />
     <Folder Include="DUTs" />
-    <Folder Include="POUs\State Machine" />
-    <Folder Include="POUs\State Machine\StateTop" />
-    <Folder Include="POUs\State Machine\StateTop\StateEnabled" />
-    <Folder Include="POUs\State Machine\StateTop\StateEnabled\StateProd" />
-    <Folder Include="POUs\State Machine\StateTop\StateEnabled\StateMaint" />
+    <Folder Include="POUs\StateMachine" />
+    <Folder Include="POUs\StateMachine\StateTop" />
+    <Folder Include="POUs\StateMachine\StateTop\StateEnabled" />
+    <Folder Include="POUs\StateMachine\StateTop\StateEnabled\StateProd" />
+    <Folder Include="POUs\StateMachine\StateTop\StateEnabled\StateMaint" />
     <Folder Include="VISUs" />
     <Folder Include="POUs" />
   </ItemGroup>
@@ -323,8 +326,8 @@
   <ProjectExtensions>
     <PlcProjectOptions>
       <XmlArchive>
-  <Data>
-    <o xml:space="preserve" t="OptionKey">
+        <Data>
+          <o xml:space="preserve" t="OptionKey">
       <v n="Name">"&lt;ProjectRoot&gt;"</v>
       <d n="SubKeys" t="Hashtable" ckt="String" cvt="OptionKey">
         <v>{8F99A816-E488-41E4-9FA3-846536012284}</v>
@@ -384,14 +387,14 @@
       </d>
       <d n="Values" t="Hashtable" />
     </o>
-  </Data>
-  <TypeList>
-    <Type n="Hashtable">System.Collections.Hashtable</Type>
-    <Type n="Int32">System.Int32</Type>
-    <Type n="OptionKey">{54dd0eac-a6d8-46f2-8c27-2f43c7e49861}</Type>
-    <Type n="String">System.String</Type>
-  </TypeList>
-</XmlArchive>
+        </Data>
+        <TypeList>
+          <Type n="Hashtable">System.Collections.Hashtable</Type>
+          <Type n="Int32">System.Int32</Type>
+          <Type n="OptionKey">{54dd0eac-a6d8-46f2-8c27-2f43c7e49861}</Type>
+          <Type n="String">System.String</Type>
+        </TypeList>
+      </XmlArchive>
     </PlcProjectOptions>
   </ProjectExtensions>
 </Project>

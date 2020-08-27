@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
   <DUT Name="ST_AxisGroup" Id="{2b563dca-bb77-4e19-946f-8445edcd73f2}">
     <Declaration><![CDATA[TYPE ST_AxisGroup :
 STRUCT
