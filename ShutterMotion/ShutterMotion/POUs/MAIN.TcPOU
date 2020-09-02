@@ -4,15 +4,25 @@
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
 	//Axis
+	{attribute 'TcLinkTo' := '	[0].bLimitHome		:= TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-00 (EL7047)^STM Status^Status^Digital input 1;
+								[0].bLimitDeployed	:= TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-00 (EL7047)^STM Status^Status^Digital input 2;
+								[0].bBrake			:= TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MRE-01 (EL2622)^Channel 1^Output;
+								[1].bLimitHome		:= TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-01 (EL7047)^STM Status^Status^Digital input 1;
+								[1].bLimitDeployed	:= TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-01 (EL7047)^STM Status^Status^Digital input 2;
+								[1].bBrake			:= TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MRE-01 (EL2622)^Channel 2^Output'}
 	stAxis		: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;
 	
 	//state machine function block
 	fbShutterSM	: FB_ShutterSM;
 	
-	//external input...... need to link
+	//external input
+	{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 8^Status^Input state'}
 	bAuxElxPermit AT %I*	: BOOL;
+	{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTO Outputs 2x Channel 1^Outputs^Output event state 1'}
 	bFesPermit AT %Q*		: BOOL;
-	fMotorTemp				: ARRAY [0..1] OF LREAL;
+	{attribute 'TcLinkTo' := '	[0] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-00 (EL7047)^STM Synchron info data^Info data 1;
+								[1] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-01 (EL7047)^STM Synchron info data^Info data 1'}
+	fMotorTemp	AT %Q*		: ARRAY [0..1] OF UINT;  //temp in 1 degree C per increment
 
 	//other function block
 	fbPower		: FB_Power;
@@ -285,8 +295,6 @@ ELSIF F_HaveDifferentIDs(inTurnSafetyOff, ackTurnSafetyOff) THEN
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
 		eCommand := E_Commands.turnSafetyOff;
-		outShutterStatus.isSafetyOn := NOT outShutterStatus.isSafetyOn;
-		outShutterStatus.sequence := outShutterStatus.sequence + 1;
 	END_IF
 	
 END_IF
@@ -428,27 +436,6 @@ IF (Main.outShutterStatus.smState=E_StatesMaint.Still OR Main.outShutterStatus.s
 ELSE
 		bFesPermit := FALSE;
 END_IF
-
-(* Read Motor Temperature *)
-//Axmis XP temp
-fbRead[0](
-	bExecute := TRUE,
-	sNetId		:= '5.54.106.120.2.1',
-	nSlaveAddr	:= 1001,
-	nIndex		:= 16#8012,
-	nSubIndex	:= 16#11,
-	pDstBuf		:= ADR(fMotorTemp),
-	cbBufLen 	:= SIZEOF(fMotorTemp[0]));
-//Axis XM temp
-fbRead[1](
-	bExecute := TRUE,
-	sNetId		:= '5.54.106.120.2.1',
-	nSlaveAddr	:= 1005,
-	nIndex		:= 16#8012,
-	nSubIndex	:= 16#11,
-	pDstBuf		:= ADR(fMotorTemp),
-	cbBufLen 	:= SIZEOF(fMotorTemp[1]));
-
 	
 (*
 //write persistent data to file every second
@@ -464,8 +451,7 @@ END_IF
     <LineIds Name="MAIN">
       <LineId Id="2480" Count="187" />
       <LineId Id="3130" Count="0" />
-      <LineId Id="3133" Count="10" />
-      <LineId Id="3237" Count="0" />
+      <LineId Id="3133" Count="9" />
       <LineId Id="3131" Count="1" />
       <LineId Id="2668" Count="4" />
       <LineId Id="2674" Count="31" />
@@ -484,18 +470,7 @@ END_IF
       <LineId Id="2891" Count="0" />
       <LineId Id="2893" Count="1" />
       <LineId Id="2897" Count="1" />
-      <LineId Id="2895" Count="1" />
-      <LineId Id="2892" Count="0" />
-      <LineId Id="3018" Count="0" />
-      <LineId Id="2987" Count="0" />
-      <LineId Id="2992" Count="0" />
-      <LineId Id="3003" Count="1" />
-      <LineId Id="2993" Count="1" />
-      <LineId Id="2996" Count="1" />
-      <LineId Id="3009" Count="0" />
-      <LineId Id="3011" Count="6" />
-      <LineId Id="3010" Count="0" />
-      <LineId Id="2978" Count="0" />
+      <LineId Id="2895" Count="0" />
       <LineId Id="2890" Count="0" />
       <LineId Id="2800" Count="8" />
       <LineId Id="324" Count="0" />

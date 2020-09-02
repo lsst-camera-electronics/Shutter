@@ -757,6 +757,15 @@ External Setpoint Generation:
 			</ArrayInfo>
 		</DataType>
 		<DataType>
+			<Name GUID="{11F20A4A-90D4-35C7-DB3B-0E8659E05E5D}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..1] OF UINT</Name>
+			<BitSize>32</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
+			<ArrayInfo>
+				<LBound>0</LBound>
+				<Elements>2</Elements>
+			</ArrayInfo>
+		</DataType>
+		<DataType>
 			<Name GUID="{875D2B22-B7EB-497E-B933-0C004593CCF3}" Namespace="MC" TcBaseType="true" HideType="true" IecDeclaration="DWORD;">PLCTONC_AXIS_REF_CTRL</Name>
 			<BitSize>32</BitSize>
 			<SubItem>
@@ -943,7 +952,7 @@ External Setpoint Generation:
 				<Name>PlcTaskMain Inputs</Name>
 				<Var>
 					<Name>MAIN.bAuxElxPermit</Name>
-					<Comment><![CDATA[external input...... need to link]]></Comment>
+					<Comment><![CDATA[external input]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
@@ -998,6 +1007,11 @@ External Setpoint Generation:
 				<Var>
 					<Name>MAIN.bFesPermit</Name>
 					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fMotorTemp</Name>
+					<Comment><![CDATA[temp in 1 degree C per increment]]></Comment>
+					<Type GUID="{11F20A4A-90D4-35C7-DB3B-0E8659E05E5D}">ARRAY [0..1] OF UINT</Type>
 				</Var>
 				<Var>
 					<Name>MAIN.stAxis[0].axisRef.PlcToNc</Name>
@@ -1161,67 +1175,70 @@ External Setpoint Generation:
 	</Project>
 	<Mappings>
 		<OwnerA Name="ShutterMotion Instance">
-			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 12 (EL1259)">
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[10]" VarB="MTI Inputs 2x Channel 3^Inputs^Input event state 1" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[11]" VarB="MTI Inputs 2x Channel 4^Inputs^Input event state 1" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[12]" VarB="MTI Inputs 2x Channel 5^Inputs^Input event state 1" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[13]" VarB="MTI Inputs 2x Channel 6^Inputs^Input event state 1" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[14]" VarB="MTI Inputs 2x Channel 7^Inputs^Input event state 1" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[8]" VarB="MTI Inputs 2x Channel 1^Inputs^Input event state 1" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[9]" VarB="MTI Inputs 2x Channel 2^Inputs^Input event state 1" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[10]" VarB="MTI Inputs 2x Channel 3^Input event time 1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[11]" VarB="MTI Inputs 2x Channel 4^Input event time 1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[12]" VarB="MTI Inputs 2x Channel 5^Input event time 1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[13]" VarB="MTI Inputs 2x Channel 6^Input event time 1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[14]" VarB="MTI Inputs 2x Channel 7^Input event time 1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[8]" VarB="MTI Inputs 2x Channel 1^Input event time 1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[9]" VarB="MTI Inputs 2x Channel 2^Input event time 1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[10]" VarB="MTI Inputs 2x Channel 3^Status^No of input events"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[11]" VarB="MTI Inputs 2x Channel 4^Status^No of input events"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[12]" VarB="MTI Inputs 2x Channel 5^Status^No of input events"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[13]" VarB="MTI Inputs 2x Channel 6^Status^No of input events"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[14]" VarB="MTI Inputs 2x Channel 7^Status^No of input events"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[8]" VarB="MTI Inputs 2x Channel 1^Status^No of input events"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[9]" VarB="MTI Inputs 2x Channel 2^Status^No of input events"/>
-				<Link VarA="PlcTaskMain Inputs^MAIN.bAuxElxPermit" VarB="MTI Inputs 2x Channel 8^Status^Input state" Size="1"/>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-00 (EL7047)">
+				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[0].bLimitDeployed" VarB="STM Status^Status^Digital input 2" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[0].bLimitHome" VarB="STM Status^Status^Digital input 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Outputs^MAIN.fMotorTemp[0]" VarB="STM Synchron info data^Info data 1" AutoLink="true"/>
 			</OwnerB>
-			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 2 (EL7047)">
-				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[0].bLimitDeployed" VarB="STM Status^Status^Digital input 2" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[0].bLimitHome" VarB="STM Status^Status^Digital input 1" Size="1"/>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-01 (EL7047)">
+				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].bLimitDeployed" VarB="STM Status^Status^Digital input 2" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].bLimitHome" VarB="STM Status^Status^Digital input 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Outputs^MAIN.fMotorTemp[1]" VarB="STM Synchron info data^Info data 1" AutoLink="true"/>
 			</OwnerB>
-			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 4 (EL7047)">
-				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].bLimitDeployed" VarB="STM Status^Status^Digital input 2" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].bLimitHome" VarB="STM Status^Status^Digital input 1" Size="1"/>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)">
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[0]" VarB="MTI Inputs 2x Channel 1^Inputs^Input event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[1]" VarB="MTI Inputs 2x Channel 2^Inputs^Input event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[2]" VarB="MTI Inputs 2x Channel 3^Inputs^Input event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[3]" VarB="MTI Inputs 2x Channel 4^Inputs^Input event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[4]" VarB="MTI Inputs 2x Channel 5^Inputs^Input event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[5]" VarB="MTI Inputs 2x Channel 6^Inputs^Input event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[6]" VarB="MTI Inputs 2x Channel 7^Inputs^Input event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[7]" VarB="MTI Inputs 2x Channel 8^Inputs^Input event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[0]" VarB="MTI Inputs 2x Channel 1^Input event time 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[1]" VarB="MTI Inputs 2x Channel 2^Input event time 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[2]" VarB="MTI Inputs 2x Channel 3^Input event time 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[3]" VarB="MTI Inputs 2x Channel 4^Input event time 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[4]" VarB="MTI Inputs 2x Channel 5^Input event time 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[5]" VarB="MTI Inputs 2x Channel 6^Input event time 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[6]" VarB="MTI Inputs 2x Channel 7^Input event time 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[7]" VarB="MTI Inputs 2x Channel 8^Input event time 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[0]" VarB="MTI Inputs 2x Channel 1^Status^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[1]" VarB="MTI Inputs 2x Channel 2^Status^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[2]" VarB="MTI Inputs 2x Channel 3^Status^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[3]" VarB="MTI Inputs 2x Channel 4^Status^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[4]" VarB="MTI Inputs 2x Channel 5^Status^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[5]" VarB="MTI Inputs 2x Channel 6^Status^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[6]" VarB="MTI Inputs 2x Channel 7^Status^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[7]" VarB="MTI Inputs 2x Channel 8^Status^No of input events" AutoLink="true"/>
 			</OwnerB>
-			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 5 (EL2622)">
-				<Link VarA="PlcTaskMain Outputs^MAIN.stAxis[0].bBrake" VarB="Channel 1^Output" Size="1"/>
-				<Link VarA="PlcTaskMain Outputs^MAIN.stAxis[1].bBrake" VarB="Channel 2^Output" Size="1"/>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)">
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[10]" VarB="MTI Inputs 2x Channel 3^Inputs^Input event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[11]" VarB="MTI Inputs 2x Channel 4^Inputs^Input event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[12]" VarB="MTI Inputs 2x Channel 5^Inputs^Input event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[13]" VarB="MTI Inputs 2x Channel 6^Inputs^Input event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[14]" VarB="MTI Inputs 2x Channel 7^Inputs^Input event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[8]" VarB="MTI Inputs 2x Channel 1^Inputs^Input event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[9]" VarB="MTI Inputs 2x Channel 2^Inputs^Input event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[10]" VarB="MTI Inputs 2x Channel 3^Input event time 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[11]" VarB="MTI Inputs 2x Channel 4^Input event time 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[12]" VarB="MTI Inputs 2x Channel 5^Input event time 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[13]" VarB="MTI Inputs 2x Channel 6^Input event time 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[14]" VarB="MTI Inputs 2x Channel 7^Input event time 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[8]" VarB="MTI Inputs 2x Channel 1^Input event time 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[9]" VarB="MTI Inputs 2x Channel 2^Input event time 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[10]" VarB="MTI Inputs 2x Channel 3^Status^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[11]" VarB="MTI Inputs 2x Channel 4^Status^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[12]" VarB="MTI Inputs 2x Channel 5^Status^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[13]" VarB="MTI Inputs 2x Channel 6^Status^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[14]" VarB="MTI Inputs 2x Channel 7^Status^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[8]" VarB="MTI Inputs 2x Channel 1^Status^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[9]" VarB="MTI Inputs 2x Channel 2^Status^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^MAIN.bAuxElxPermit" VarB="MTI Inputs 2x Channel 8^Status^Input state" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Outputs^MAIN.bFesPermit" VarB="MTO Outputs 2x Channel 1^Outputs^Output event state 1" AutoLink="true" Size="1"/>
 			</OwnerB>
-			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 9 (EL1259)">
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[0]" VarB="MTI Inputs 2x Channel 1^Inputs^Input event state 1" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[1]" VarB="MTI Inputs 2x Channel 2^Inputs^Input event state 1" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[2]" VarB="MTI Inputs 2x Channel 3^Inputs^Input event state 1" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[3]" VarB="MTI Inputs 2x Channel 4^Inputs^Input event state 1" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[4]" VarB="MTI Inputs 2x Channel 5^Inputs^Input event state 1" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[5]" VarB="MTI Inputs 2x Channel 6^Inputs^Input event state 1" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[6]" VarB="MTI Inputs 2x Channel 7^Inputs^Input event state 1" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[7]" VarB="MTI Inputs 2x Channel 8^Inputs^Input event state 1" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[0]" VarB="MTI Inputs 2x Channel 1^Input event time 1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[1]" VarB="MTI Inputs 2x Channel 2^Input event time 1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[2]" VarB="MTI Inputs 2x Channel 3^Input event time 1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[3]" VarB="MTI Inputs 2x Channel 4^Input event time 1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[4]" VarB="MTI Inputs 2x Channel 5^Input event time 1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[5]" VarB="MTI Inputs 2x Channel 6^Input event time 1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[6]" VarB="MTI Inputs 2x Channel 7^Input event time 1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[7]" VarB="MTI Inputs 2x Channel 8^Input event time 1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[0]" VarB="MTI Inputs 2x Channel 1^Status^No of input events"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[1]" VarB="MTI Inputs 2x Channel 2^Status^No of input events"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[2]" VarB="MTI Inputs 2x Channel 3^Status^No of input events"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[3]" VarB="MTI Inputs 2x Channel 4^Status^No of input events"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[4]" VarB="MTI Inputs 2x Channel 5^Status^No of input events"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[5]" VarB="MTI Inputs 2x Channel 6^Status^No of input events"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[6]" VarB="MTI Inputs 2x Channel 7^Status^No of input events"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[7]" VarB="MTI Inputs 2x Channel 8^Status^No of input events"/>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MRE-01 (EL2622)">
+				<Link VarA="PlcTaskMain Outputs^MAIN.stAxis[0].bBrake" VarB="Channel 1^Output" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Outputs^MAIN.stAxis[1].bBrake" VarB="Channel 2^Output" AutoLink="true" Size="1"/>
 			</OwnerB>
 			<OwnerB Name="TINC^NC-Task 1 SAF^Axes^XM">
 				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].axisRef.NcToPlc" VarB="Outputs^ToPlc"/>

@@ -56,8 +56,56 @@ VAR_GLOBAL
 
 	//Hall Switches
 	nHallSequence 			: WORD;
+	
+	{attribute 'TcLinkTo' := '	[0]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 1^Input event time 1;
+								[1]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 2^Input event time 1;
+								[2]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 3^Input event time 1;
+								[3]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 4^Input event time 1;
+								[4]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 5^Input event time 1;
+								[5]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 6^Input event time 1;
+								[6]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 7^Input event time 1;
+								[7]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 8^Input event time 1;
+								[8]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 1^Input event time 1;
+								[9]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 2^Input event time 1;
+								[10]	:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 3^Input event time 1;
+								[11]	:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 4^Input event time 1;
+								[12]	:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 5^Input event time 1;
+								[13]	:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 6^Input event time 1;
+								[14]	:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 7^Input event time 1'}
 	nInputEventTime	AT %I*	: ARRAY [cHallLower .. cHallUpper] OF UDINT; //unit in nanosecond 
+	
+	{attribute 'TcLinkTo' := '	[0]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 1^Status^No of input events;
+								[1]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 2^Status^No of input events;
+								[2]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 3^Status^No of input events;
+								[3]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 4^Status^No of input events;
+								[4]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 5^Status^No of input events;
+								[5]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 6^Status^No of input events;
+								[6]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 7^Status^No of input events;
+								[7]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 8^Status^No of input events;
+								[8]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 1^Status^No of input events;
+								[9]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 2^Status^No of input events;
+								[10]	:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 3^Status^No of input events;
+								[11]	:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 4^Status^No of input events;
+								[12]	:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 5^Status^No of input events;
+								[13]	:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 6^Status^No of input events;
+								[14]	:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 7^Status^No of input events;'}
 	nNumOfInputs AT %I*		: ARRAY [cHallLower .. cHallUpper] OF USINT;
+	
+	{attribute 'TcLinkTo' := '	[0]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 1^Inputs^Input event state 1;
+								[1]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 2^Inputs^Input event state 1;
+								[2]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 3^Inputs^Input event state 1;
+								[3]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 4^Inputs^Input event state 1;
+								[4]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 5^Inputs^Input event state 1;
+								[5]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 6^Inputs^Input event state 1;
+								[6]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 7^Inputs^Input event state 1;
+								[7]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 8^Inputs^Input event state 1;
+								[8]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 1^Inputs^Input event state 1;
+								[9]		:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 2^Inputs^Input event state 1;
+								[10]	:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 3^Inputs^Input event state 1;
+								[11]	:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 4^Inputs^Input event state 1;
+								[12]	:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 5^Inputs^Input event state 1;
+								[13]	:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 6^Inputs^Input event state 1;
+								[14]	:=	TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 7^Inputs^Input event state 1;'}
 	bInputEventState AT %I*	: ARRAY [cHallLower .. cHallUpper] OF BOOL;
 
 	//Timer
