@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
   <POU Name="FB_StateCalibrating" Id="{7d0dc74d-1ee4-41a4-99a9-54fce7fd062a}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_StateCalibrating
 VAR_IN_OUT
@@ -21,7 +21,7 @@ VAR
 	nTripCountXM	: INT;
 	
 	//test var
-	a, b, c : INT;
+	//a, b, c : INT;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -111,9 +111,9 @@ CASE nCurrentState OF
 		
 	8060: //slowly home back to limit switch
 		stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXP].axisRef, Mode := MC_JOGMODE_CONTINOUS, Velocity := GVL.cHomeVel, JogBackwards := NOT stAxis[GVL.cXP].bLimitHome);
-		a := a +1;
+		//a := a +1;
 		IF stAxis[GVL.cXP].bLimitHome THEN
-			b := b+1;
+			//b := b+1;
 			stAxis[GVL.cXP].mcJog(Axis := stAxis[GVL.cXP].axisRef, Mode := MC_JOGMODE_CONTINOUS, JogBackwards := FALSE);
 			IF nTripCountXP = 0 THEN	
 				stAxis[GVL.cXP].bIsCalibrated := TRUE; //should signal a warning to indicate bad calibration... Can be added later.

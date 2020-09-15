@@ -1,0 +1,306 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+  <POU Name="FB_ProtectionA" Id="{c9f611d7-5ee7-465f-b1ca-c69ee56fc15b}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ProtectionA
+VAR_IN_OUT
+	stAxis  			: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;
+	eCommand 			: E_Commands;
+	//communication IN
+	inCalibrate 		: ST_Calibrate;			// no protection needed
+	inChangeAxisEnable	: ST_ChangeAxisEnable;	// no protection needed
+	inChangeBrakeState	: ST_ChangeBrakeState;	// no protection needed
+	inClearAllFaults	: ST_ClearAllFaults;	// no protection needed
+	inClearAxisFaults	: ST_ClearAxisFaults;	// no protection needed
+	inCloseShutter		: ST_CloseShutter;		
+	inDisableAllAxes	: ST_DisableAllAxes;
+	inEnableAllAxes		: ST_EnableAllAxes;
+	inGoToProd			: ST_GoToProd;
+	inHomeAxis			: ST_HomeAxis;
+	inMoveAxisAbsolute	: ST_MoveAxisAbsolute;
+	inMoveAxisRelative	: ST_MoveAxisRelative;
+	inOpenShutter		: ST_OpenShutter;
+	inReset				: ST_Reset;
+	inTakeExposure		: ST_TakeExposure;
+	inTurnSafetyOff		: ST_TurnSafetyOff;
+END_VAR
+VAR_INPUT
+	bAuxElxPermit	: BOOL;	
+	nState : DINT;
+END_VAR
+VAR_OUTPUT
+	nShutterError	: UINT;
+END_VAR
+VAR
+	checkHomed_TON 	: TON;
+	
+	//for use end of travel protection
+	fEotDistTravel	: ARRAY [GVL.cXP .. GVL.cXM, cLmHome .. cLmDeploy] OF LREAL;
+	fEotDistStart	: ARRAY [GVL.cXP .. GVL.cXM, cLmHome .. cLmDeploy] OF LREAL;
+	fbEotRtrig		: ARRAY [GVL.cXP .. GVL.cXM, cLmHome .. cLmDeploy] OF R_Trig;
+	
+	//other Var
+	i	: INT;
+	bBadHall : BOOL;
+END_VAR
+
+VAR CONSTANT
+	cLmHome 		: INT 	:= 0;
+	cLmDeploy		: INT 	:= 1;
+	cEotTravelLm	: LREAL := 1.5;
+	cDiffLimit 		: LREAL	:= 5;
+	cPosError		: LREAL	:= 0.3;
+	cExpoTimer		: TIME	:= T#100MS;
+	cMaxVelocity	: LREAL := 1668.355556;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(*
+This function block contains the logic for the shutter system protection. 
+*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(*Reset Errors*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+IF (eCommand=E_Commands.reset) THEN
+	stAxis[GVL.cXP].fPosDiffAtTrip 		:= 0;
+	stAxis[GVL.cXM].fPosDiffAtTrip 		:= 0;
+	fEotDistStart[GVL.cXP,cLmHome] 		:= stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
+	fEotDistStart[GVL.cXP,cLmDeploy] 	:= stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
+	fEotDistStart[GVL.cXM,cLmHome] 		:= stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
+	fEotDistStart[GVL.cXM,cLmDeploy] 	:= stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
+	nShutterError 						:= 0;
+END_IF
+IF (eCommand=E_Commands.calibrate) THEN
+	bBadHall := FALSE;
+END_IF
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(*Checks permit from auxiliary electronic subsystem*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+IF NOT bAuxElxPermit THEN
+	//////// --set error here-- //////////////////////////////////////////////////////////////////////////////////////////
+	nShutterError.0 := 1;
+ELSE
+	nShutterError.0 := 0;
+END_IF
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(*Check brake status - prevents motion if motion is commanded while brake is engaged*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+IF stAxis[GVL.cXP].bBrake = GVL.cBrakeOn OR stAxis[GVL.cXM].bBrake = GVL.cBrakeOn THEN
+	IF stAxis[GVL.cXP].axisRef.Status.Moving OR stAxis[GVL.cXM].axisRef.Status.Moving THEN
+		//////// --set error here-- //////////////////////////////////////////////////////////////////////////////////////////
+		nShutterError.1 := 1;
+	ELSE
+		nShutterError.1 := 0;
+	END_IF
+END_IF
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(*Check position differences - Compare hall switch and motor encoder position. Stop motion if greater than diffLimit.*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+IF stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated THEN
+	IF ABS(stAxis[GVL.cXP].fPosDiffAtTrip)>cDiffLimit OR ABS(stAxis[GVL.cXM].fPosDiffAtTrip)>cDiffLimit THEN
+		//////// --set error here-- /////////////////////////////////////////////////////////////////////////////////
+		nShutterError.2 := 1;
+	ELSE
+		nShutterError.2 := 0;
+	END_IF
+END_IF
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(*Check exposure time - If less than 100 ms, prevent exposure command from running*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+IF (inTakeExposure.exposureTime<cExpoTimer AND eCommand=E_Commands.takeExposure) THEN
+	eCommand := E_Commands.noCommand;
+	//////// --set error here-- /////////////////////////////////////////////////////////////////////////////////
+	nShutterError.3 := 1;
+ELSE
+	nShutterError.3 := 0;
+END_IF
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(*Check home status - Prevents all other motion if not homed*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+IF NOT stAxis[GVL.cXP].axisRef.Status.Homed OR NOT stAxis[GVL.cXM].axisRef.Status.Homed THEN
+	IF eCommand=E_Commands.closeShutter OR eCommand=E_Commands.goToProd 
+		OR eCommand=E_Commands.moveAxisAbsolute OR eCommand=E_Commands.moveAxisRelative 
+		OR eCommand=E_Commands.openShutter OR eCommand=E_Commands.takeExposure THEN
+			//////// --set error here-- /////////////////////////////////////////////////////////////////////////////////
+			nShutterError.4 := 1;
+	END_IF
+ELSE
+	nShutterError.4 := 0;
+END_IF
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(*Check for NC errors. If any, disable movement for both motors*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+IF stAxis[GVL.cXP].axisRef.Status.Error OR stAxis[GVL.cXM].axisRef.Status.Error THEN
+	stAxis[GVL.cXP].mcPower(Axis := stAxis[GVL.cXP].axisRef, Enable_Positive := FALSE, Enable_Negative := FALSE);
+	stAxis[GVL.cXM].mcPower(Axis := stAxis[GVL.cXM].axisRef, Enable_Positive := FALSE, Enable_Negative := FALSE); 
+	stAxis[GVL.cXP].bBrake := GVL.cBrakeOn;
+	stAxis[GVL.cXM].bBrake := GVL.cBrakeOn;
+	//////// --set error here-- /////////////////////////////////////////////////////////////////////////////////
+	nShutterError.5 := 1;
+ELSE
+	nShutterError.5 := 0;
+END_IF
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(*Check calibration status - If one blade set is not calibrated, speed cannot be higher than 200 mms.*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+IF NOT stAxis[GVL.cXP].bIsCalibrated OR NOT stAxis[GVL.cXM].bIsCalibrated THEN
+	IF (inMoveAxisAbsolute.speed>200) THEN
+		inMoveAxisAbsolute.speed := 0;
+		//////// --set error here-- /////////////////////////////////////////////////////////////////////////////////
+		nShutterError.6 := 1;
+	END_IF
+ELSE
+	nShutterError.6:= 0;
+END_IF
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(*Check that one blade set cannot be commanded to pass limit*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+IF (eCommand=E_Commands.moveAxisAbsolute AND (stAxis[GVL.cXP].axisRef.Status.Homed AND stAxis[GVL.cXM].axisRef.Status.Homed)) THEN
+	IF (inMoveAxisAbsolute.position<(GVL.cPosStart-cPosError) OR inMoveAxisAbsolute.position>(GVL.cPosEnd+cPosError)) THEN
+		eCommand := E_Commands.noCommand;
+		//////// --set error here-- /////////////////////////////////////////////////////////////////////////////////
+		nShutterError.7 := 1;
+	END_IF
+END_IF
+IF (eCommand=E_Commands.moveAxisRelative AND (stAxis[GVL.cXP].axisRef.Status.Homed AND stAxis[GVL.cXM].axisRef.Status.Homed)) THEN
+	IF ((inMoveAxisRelative.distance+stAxis[inMoveAxisRelative.axisIndex].axisRef.NcToPlc.ActPos)<(GVL.cPosStart-cPosError) 
+		OR (inMoveAxisRelative.distance+stAxis[inMoveAxisRelative.axisIndex].axisRef.NcToPlc.ActPos)>(GVL.cPosEnd+cPosError)) THEN
+		eCommand := E_Commands.noCommand;
+		//////// --set error here-- /////////////////////////////////////////////////////////////////////////////////
+		nShutterError.7 := 1;
+	END_IF
+END_IF
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(*Check that one blade set cannot be commanded to pass the other blade set's position*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+IF (eCommand=E_Commands.moveAxisAbsolute) THEN
+	IF (inMoveAxisAbsolute.axisIndex=GVL.cXP AND inMoveAxisAbsolute.position>(stAxis[GVL.cXM].axisRef.NcToPlc.ActPos+cPosError)) THEN
+		eCommand := E_Commands.noCommand;
+		//////// --set error here-- /////////////////////////////////////////////////////////////////////////////////
+		nShutterError.8 := 1;
+	END_IF
+	IF (inMoveAxisAbsolute.axisIndex=GVL.cXM AND inMoveAxisAbsolute.position<(stAxis[GVL.cXP].axisRef.NcToPlc.ActPos-cPosError)) THEN
+		eCommand := E_Commands.noCommand;
+		//////// --set error here-- /////////////////////////////////////////////////////////////////////////////////
+		nShutterError.8 := 1;
+	END_IF
+END_IF
+
+IF (eCommand=E_Commands.moveAxisRelative) THEN
+	IF (inMoveAxisRelative.axisIndex=GVL.cXP AND (inMoveAxisRelative.distance+stAxis[GVL.cXP].axisRef.NcToPlc.ActPos)>(stAxis[GVL.cXM].axisRef.NcToPlc.ActPos+cPosError)) THEN
+		eCommand := E_Commands.noCommand;
+		//////// --set error here-- /////////////////////////////////////////////////////////////////////////////////
+		nShutterError.8 := 1;
+	END_IF
+	IF (inMoveAxisRelative.axisIndex=GVL.cXM AND (inMoveAxisRelative.distance+stAxis[GVL.cXM].axisRef.NcToPlc.ActPos)<(stAxis[GVL.cXP].axisRef.NcToPlc.ActPos-cPosError)) THEN
+		eCommand := E_Commands.noCommand;
+		//////// --set error here-- /////////////////////////////////////////////////////////////////////////////////
+		nShutterError.8 := 1;
+	END_IF
+END_IF
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(* Checks to see if blades have reach end of travel. If it has, stop further motion in that direction	*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//End of travel stop
+IF(stAxis[GVL.cXP].axisRef.Status.Homed AND stAxis[GVL.cXM].axisRef.Status.Homed) THEN
+	fbEotRtrig[GVL.cXP,cLmHome](CLK := stAxis[GVL.cXP].bLimitHome);
+	fbEotRtrig[GVL.cXP,cLmDeploy](CLK := stAxis[GVL.cXP].bLimitDeployed);
+	fbEotRtrig[GVL.cXM,cLmHome](CLK := stAxis[GVL.cXM].bLimitHome);
+	fbEotRtrig[GVL.cXM,cLmDeploy](CLK := stAxis[GVL.cXM].bLimitDeployed);
+	IF fbEotRtrig[GVL.cXP,cLmHome].Q THEN
+		fEotDistStart[GVL.cXP,cLmHome] := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
+	END_IF
+	IF fbEotRtrig[GVL.cXP,cLmDeploy].Q THEN
+		fEotDistStart[GVL.cXP,cLmDeploy] := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
+	END_IF
+	IF fbEotRtrig[GVL.cXM,cLmHome].Q THEN
+		fEotDistStart[GVL.cXM,cLmHome] := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
+	END_IF
+	IF fbEotRtrig[GVL.cXM,cLmDeploy].Q THEN
+		fEotDistStart[GVL.cXM,cLmDeploy] := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
+	END_IF									
+	
+	IF stAxis[GVL.cXP].bLimitHome THEN
+		fEotDistTravel[GVL.cXP,cLmHome] := fEotDistStart[GVL.cXP,cLmHome] - stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
+		IF fEotDistTravel[GVL.cXP,cLmHome] > cEotTravelLm THEN
+			stAxis[GVL.cXP].mcPower(Axis := stAxis[GVL.cXP].axisRef, Enable_Negative := FALSE);
+		END_IF
+	END_IF
+	
+	IF stAxis[GVL.cXP].bLimitDeployed THEN
+		fEotDistTravel[GVL.cXP,cLmDeploy] := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos - fEotDistStart[GVL.cXP,cLmDeploy];
+		IF fEotDistTravel[GVL.cXP,cLmHome] > cEotTravelLm THEN
+			stAxis[GVL.cXP].mcPower(Axis := stAxis[GVL.cXP].axisRef, Enable_Positive := FALSE);
+		END_IF
+	END_IF
+	
+	IF stAxis[GVL.cXM].bLimitHome THEN
+		fEotDistTravel[GVL.cXM,clmHome] := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos - fEotDistStart[GVL.cXM,cLmHome];
+		IF fEotDistTravel[GVL.cXM,cLmHome] > cEotTravelLm THEN
+			stAxis[GVL.cXM].mcPower(Axis := stAxis[GVL.cXM].axisRef, Enable_Positive := FALSE);
+		END_IF
+	END_IF
+	
+	IF stAxis[GVL.cXM].bLimitDeployed THEN
+		fEotDistTravel[GVL.cXM,cLmDeploy] := fEotDistStart[GVL.cXM,cLmDeploy] - stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
+		IF fEotDistTravel[GVL.cXM,cLmHome] > cEotTravelLm THEN
+			stAxis[GVL.cXM].mcPower(Axis := stAxis[GVL.cXM].axisRef, Enable_Negative := FALSE);
+		END_IF
+	END_IF
+END_IF
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(* if hall signal changes during no motion, system needs to recalibrate	*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
+	IF GVL.nNumOfInputs[i].0 AND ((NOT stAxis[GVL.cXP].axisRef.Status.Moving) AND (NOT stAxis[GVL.cXM].axisRef.Status.Moving)) THEN
+		bBadHall := TRUE;
+	END_IF
+END_FOR
+IF bBadHall THEN
+	IF eCommand=E_Commands.closeShutter OR eCommand=E_Commands.goToProd 
+		OR eCommand=E_Commands.moveAxisAbsolute OR eCommand=E_Commands.moveAxisRelative 
+		OR eCommand=E_Commands.openShutter OR eCommand=E_Commands.takeExposure THEN
+			nShutterError.13 := 1;
+	END_IF
+END_IF
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(* shutter system error handle	*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+IF (nShutterError.0 OR_ELSE nShutterError.1 OR_ELSE nShutterError.2 OR_ELSE nShutterError.3 OR_ELSE nShutterError.4 OR_ELSE nShutterError.5) THEN
+	stAxis[GVL.cXP].mcStop(Axis := stAxis[GVL.cXP].axisRef, Deceleration := 29630, Jerk := 263374.5, Execute := TRUE);
+	stAxis[GVL.cXM].mcStop(Axis := stAxis[GVL.cXM].axisRef, Deceleration := 29630, Jerk := 263374.5, Execute := TRUE);
+	//stAxis[GVL.cXP].mcPower(Axis := stAxis[GVL.cXP].axisRef, Enable_Positive := FALSE, Enable_Negative := FALSE);
+	//stAxis[GVL.cXM].mcPower(Axis := stAxis[GVL.cXM].axisRef, Enable_Positive := FALSE, Enable_Negative := FALSE); 
+	IF (nShutterError.0 OR_ELSE nShutterError.2 OR_ELSE nShutterError.3 OR_ELSE nShutterError.4 OR_ELSE nShutterError.5 OR_ELSE nShutterError.13) THEN
+		stAxis[GVL.cXP].bBrake := GVL.cBrakeOn;
+		stAxis[GVL.cXM].bBrake := GVL.cBrakeOn;
+	END_IF
+ELSE
+	stAxis[GVL.cXP].mcStop(Axis := stAxis[GVL.cXP].axisRef, Execute := FALSE);
+	stAxis[GVL.cXM].mcStop(Axis := stAxis[GVL.cXM].axisRef, Execute := FALSE);
+END_IF
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(* Other shutter protection	*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////]]></ST>
+    </Implementation>
+    <LineIds Name="FB_ProtectionA">
+      <LineId Id="46" Count="234" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="298" Count="0" />
+      <LineId Id="300" Count="1" />
+      <LineId Id="297" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

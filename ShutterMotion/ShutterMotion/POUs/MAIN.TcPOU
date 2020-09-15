@@ -27,6 +27,7 @@ VAR
 	//other function block
 	fbPower		: FB_Power;
 	fbProtect	: FB_Protection;
+	fbProtectA	: FB_ProtectionA;
 	fbTracking	: FB_Tracking;
 
 	//Timing test vars
@@ -311,6 +312,30 @@ fbProtect(
 	inMoveAxisRelative	:= inMoveAxisRelative,
 	eCommand 			:= eCommand);
 
+fbProtectA(
+	stAxis 				:= stAxis, 
+	bAuxElxPermit 		:= bAuxElxPermit, 
+	nState 				:= fbShutterSM.nSMState,
+	eCommand 			:= eCommand,
+	
+	inCalibrate			:= inCalibrate,
+	inChangeAxisEnable	:= inChangeAxisEnable,
+	inChangeBrakeState	:= inChangeBrakeState,
+	inClearAllFaults	:= inClearAllFaults,
+	inClearAxisFaults	:= inClearAxisFaults,
+	inCloseShutter		:= inCloseShutter,
+	inDisableAllAxes	:= inDisableAllAxes,
+	inEnableAllAxes		:= inEnableAllAxes,
+	inGoToProd			:= inGoToProd,
+	inHomeAxis			:= inHomeAxis,
+	inMoveAxisAbsolute	:= inMoveAxisAbsolute,
+	inMoveAxisRelative	:= inMoveAxisRelative,
+	inOpenShutter		:= inOpenShutter,
+	inReset				:= inReset,
+	inTakeExposure		:= inTakeExposure,
+	inTurnSafetyOff		:= inTurnSafetyOff);
+	
+	
 ////////////////////////////////////////////////////////////////////
 //Shutter State Machine
 ////////////////////////////////////////////////////////////////////
@@ -454,7 +479,15 @@ END_IF
       <LineId Id="3133" Count="9" />
       <LineId Id="3131" Count="1" />
       <LineId Id="2668" Count="4" />
-      <LineId Id="2674" Count="31" />
+      <LineId Id="2674" Count="7" />
+      <LineId Id="3247" Count="0" />
+      <LineId Id="3251" Count="3" />
+      <LineId Id="3307" Count="0" />
+      <LineId Id="3306" Count="0" />
+      <LineId Id="2682" Count="0" />
+      <LineId Id="3260" Count="14" />
+      <LineId Id="3248" Count="1" />
+      <LineId Id="2683" Count="22" />
       <LineId Id="3101" Count="0" />
       <LineId Id="2706" Count="12" />
       <LineId Id="3102" Count="0" />

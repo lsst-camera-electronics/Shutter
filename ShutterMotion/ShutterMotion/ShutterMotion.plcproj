@@ -148,6 +148,9 @@
     <Compile Include="POUs\FB_Protection.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\FB_ProtectionA.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\F_HaveDifferentIDs.TcPOU">
       <SubType>Code</SubType>
     </Compile>
