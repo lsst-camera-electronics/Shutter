@@ -1,17 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
-  <POU Name="FB_Protection" Id="{2dceb2c7-c1a1-4d57-b0b3-835d45fe31c4}" SpecialFunc="None">
+  <POU Name="FB_Protection" Id="{c9f611d7-5ee7-465f-b1ca-c69ee56fc15b}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_Protection
 VAR_IN_OUT
 	stAxis  			: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;
 	eCommand 			: E_Commands;
-	inTakeExposure		: ST_TakeExposure;
+	//communication IN
+	inCalibrate 		: ST_Calibrate;			// no protection needed
+	inChangeAxisEnable	: ST_ChangeAxisEnable;	// no protection needed
+	inChangeBrakeState	: ST_ChangeBrakeState;	// no protection needed
+	inClearAllFaults	: ST_ClearAllFaults;	// no protection needed
+	inClearAxisFaults	: ST_ClearAxisFaults;	// no protection needed
+	inCloseShutter		: ST_CloseShutter;		
+	inDisableAllAxes	: ST_DisableAllAxes;
+	inEnableAllAxes		: ST_EnableAllAxes;
+	inGoToProd			: ST_GoToProd;
+	inHomeAxis			: ST_HomeAxis;
 	inMoveAxisAbsolute	: ST_MoveAxisAbsolute;
 	inMoveAxisRelative	: ST_MoveAxisRelative;
+	inOpenShutter		: ST_OpenShutter;
+	inReset				: ST_Reset;
+	inTakeExposure		: ST_TakeExposure;
+	inToggleSafetyCheck	: ST_ToggleSafetyCheck;
 END_VAR
 VAR_INPUT
 	bAuxElxPermit	: BOOL;	
-	nState : DINT;
+	nState 			: DINT;
 END_VAR
 VAR_OUTPUT
 	nShutterError	: UINT;
@@ -36,6 +50,8 @@ VAR CONSTANT
 	cDiffLimit 		: LREAL	:= 5;
 	cPosError		: LREAL	:= 0.3;
 	cExpoTimer		: TIME	:= T#100MS;
+	cMaxVelocity	: LREAL	:= 1668.355556;
+	cMinVelocity	: LREAL	:= 0;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -274,149 +290,40 @@ IF (nShutterError.0 OR_ELSE nShutterError.1 OR_ELSE nShutterError.2 OR_ELSE nShu
 ELSE
 	stAxis[GVL.cXP].mcStop(Axis := stAxis[GVL.cXP].axisRef, Execute := FALSE);
 	stAxis[GVL.cXM].mcStop(Axis := stAxis[GVL.cXM].axisRef, Execute := FALSE);
-END_IF]]></ST>
+END_IF
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(* Other shutter protection	*)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//Min and Max speed for PROD
+IF (inReset.speed>cMaxVelocity) THEN
+	inReset.speed:=cMaxVelocity;
+ELSIF (inReset.speed<cMinVelocity) THEN
+	inReset.speed:=cMinVelocity;
+END_IF
+//Min and Max speed for move absolute
+IF (inMoveAxisAbsolute.speed>cMaxVelocity) THEN
+	inReset.speed:=cMaxVelocity;
+ELSIF (inMoveAxisAbsolute.speed<cMinVelocity) THEN
+	inReset.speed:=cMinVelocity;
+END_IF
+]]></ST>
     </Implementation>
     <LineIds Name="FB_Protection">
-      <LineId Id="178" Count="1" />
-      <LineId Id="177" Count="0" />
-      <LineId Id="585" Count="1" />
-      <LineId Id="583" Count="0" />
-      <LineId Id="596" Count="0" />
-      <LineId Id="584" Count="0" />
-      <LineId Id="587" Count="0" />
-      <LineId Id="592" Count="2" />
-      <LineId Id="840" Count="0" />
-      <LineId Id="566" Count="0" />
-      <LineId Id="544" Count="0" />
-      <LineId Id="1118" Count="2" />
-      <LineId Id="1117" Count="0" />
-      <LineId Id="386" Count="0" />
-      <LineId Id="326" Count="0" />
-      <LineId Id="545" Count="0" />
-      <LineId Id="729" Count="0" />
-      <LineId Id="740" Count="0" />
-      <LineId Id="460" Count="0" />
-      <LineId Id="820" Count="1" />
-      <LineId Id="747" Count="0" />
-      <LineId Id="726" Count="0" />
-      <LineId Id="65" Count="1" />
-      <LineId Id="547" Count="0" />
-      <LineId Id="67" Count="0" />
-      <LineId Id="72" Count="0" />
-      <LineId Id="741" Count="0" />
-      <LineId Id="461" Count="0" />
-      <LineId Id="836" Count="1" />
-      <LineId Id="462" Count="0" />
-      <LineId Id="721" Count="0" />
-      <LineId Id="548" Count="0" />
-      <LineId Id="401" Count="1" />
-      <LineId Id="549" Count="0" />
-      <LineId Id="403" Count="0" />
-      <LineId Id="563" Count="0" />
-      <LineId Id="743" Count="0" />
-      <LineId Id="463" Count="0" />
-      <LineId Id="838" Count="1" />
-      <LineId Id="464" Count="0" />
-      <LineId Id="827" Count="0" />
-      <LineId Id="550" Count="0" />
-      <LineId Id="411" Count="0" />
-      <LineId Id="400" Count="0" />
-      <LineId Id="551" Count="0" />
-      <LineId Id="659" Count="0" />
-      <LineId Id="668" Count="0" />
-      <LineId Id="744" Count="0" />
-      <LineId Id="652" Count="0" />
-      <LineId Id="828" Count="1" />
-      <LineId Id="716" Count="0" />
-      <LineId Id="706" Count="0" />
-      <LineId Id="795" Count="8" />
-      <LineId Id="805" Count="0" />
-      <LineId Id="830" Count="1" />
-      <LineId Id="808" Count="7" />
-      <LineId Id="818" Count="1" />
-      <LineId Id="816" Count="0" />
-      <LineId Id="832" Count="1" />
-      <LineId Id="807" Count="0" />
-      <LineId Id="707" Count="5" />
-      <LineId Id="794" Count="0" />
-      <LineId Id="713" Count="0" />
-      <LineId Id="1157" Count="0" />
-      <LineId Id="714" Count="0" />
-      <LineId Id="1158" Count="1" />
-      <LineId Id="423" Count="0" />
-      <LineId Id="945" Count="0" />
-      <LineId Id="947" Count="1" />
-      <LineId Id="946" Count="0" />
-      <LineId Id="951" Count="3" />
-      <LineId Id="1161" Count="0" />
-      <LineId Id="955" Count="0" />
-      <LineId Id="949" Count="0" />
-      <LineId Id="960" Count="1" />
-      <LineId Id="1017" Count="0" />
-      <LineId Id="962" Count="1" />
-      <LineId Id="1162" Count="0" />
-      <LineId Id="964" Count="0" />
-      <LineId Id="969" Count="0" />
-      <LineId Id="971" Count="0" />
-      <LineId Id="843" Count="3" />
-      <LineId Id="854" Count="0" />
-      <LineId Id="858" Count="0" />
-      <LineId Id="853" Count="0" />
-      <LineId Id="1163" Count="0" />
-      <LineId Id="850" Count="0" />
-      <LineId Id="855" Count="0" />
-      <LineId Id="859" Count="0" />
-      <LineId Id="856" Count="0" />
-      <LineId Id="1164" Count="0" />
-      <LineId Id="851" Count="0" />
-      <LineId Id="907" Count="0" />
-      <LineId Id="841" Count="0" />
-      <LineId Id="898" Count="3" />
-      <LineId Id="1165" Count="0" />
-      <LineId Id="902" Count="3" />
-      <LineId Id="1166" Count="0" />
-      <LineId Id="906" Count="0" />
-      <LineId Id="896" Count="0" />
-      <LineId Id="646" Count="2" />
-      <LineId Id="542" Count="0" />
-      <LineId Id="649" Count="0" />
-      <LineId Id="251" Count="3" />
-      <LineId Id="256" Count="0" />
-      <LineId Id="278" Count="10" />
-      <LineId Id="277" Count="0" />
-      <LineId Id="241" Count="1" />
-      <LineId Id="289" Count="0" />
-      <LineId Id="292" Count="1" />
-      <LineId Id="574" Count="0" />
-      <LineId Id="297" Count="6" />
-      <LineId Id="306" Count="0" />
-      <LineId Id="257" Count="0" />
-      <LineId Id="308" Count="4" />
-      <LineId Id="315" Count="6" />
-      <LineId Id="258" Count="0" />
-      <LineId Id="261" Count="0" />
-      <LineId Id="1100" Count="2" />
-      <LineId Id="1090" Count="2" />
-      <LineId Id="1098" Count="1" />
-      <LineId Id="1089" Count="0" />
-      <LineId Id="1106" Count="0" />
-      <LineId Id="1109" Count="1" />
-      <LineId Id="1107" Count="0" />
-      <LineId Id="1113" Count="0" />
-      <LineId Id="1112" Count="0" />
-      <LineId Id="1108" Count="0" />
-      <LineId Id="558" Count="0" />
-      <LineId Id="860" Count="1" />
-      <LineId Id="267" Count="0" />
-      <LineId Id="777" Count="0" />
-      <LineId Id="755" Count="3" />
-      <LineId Id="785" Count="0" />
-      <LineId Id="791" Count="2" />
-      <LineId Id="761" Count="0" />
-      <LineId Id="769" Count="0" />
-      <LineId Id="768" Count="0" />
-      <LineId Id="767" Count="0" />
-      <LineId Id="269" Count="0" />
+      <LineId Id="46" Count="234" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="298" Count="0" />
+      <LineId Id="300" Count="1" />
+      <LineId Id="297" Count="0" />
+      <LineId Id="360" Count="0" />
+      <LineId Id="359" Count="0" />
+      <LineId Id="353" Count="1" />
+      <LineId Id="357" Count="1" />
+      <LineId Id="355" Count="0" />
+      <LineId Id="362" Count="4" />
+      <LineId Id="361" Count="0" />
+      <LineId Id="385" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

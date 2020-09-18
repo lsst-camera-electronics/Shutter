@@ -24,10 +24,12 @@ VAR
 								[1] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-01 (EL7047)^STM Synchron info data^Info data 1'}
 	fMotorTemp	AT %Q*		: ARRAY [0..1] OF UINT;  //temp in 1 degree C per increment
 
-	//other function block
+	//other function block and var
 	fbPower		: FB_Power;
 	fbProtect	: FB_Protection;
-	fbProtectA	: FB_ProtectionA;
+	fbProtectA	: FB_Protection;
+	bSafetyOn	: BOOL := TRUE;
+	fSpeedRel	: LREAL;
 	fbTracking	: FB_Tracking;
 
 	//Timing test vars
@@ -38,22 +40,22 @@ VAR
 	eCommand		: E_Commands;
 	
 	//communication IN
-	inCalibrate, 		ackCalibrate		: ST_Calibrate;
-	inChangeAxisEnable,	ackChangeAxisEnable	: ST_ChangeAxisEnable;
-	inChangeBrakeState,	ackChangeBrakeState	: ST_ChangeBrakeState;
-	inClearAllFaults,	ackClearAllFaults	: ST_ClearAllFaults;
-	inClearAxisFaults,	ackClearAxisFaults	: ST_ClearAxisFaults;
-	inCloseShutter,		ackCloseShutter		: ST_CloseShutter;
-	inDisableAllAxes,	ackDisableAllAxes	: ST_DisableAllAxes;
-	inEnableAllAxes,	ackEnableAllAxes	: ST_EnableAllAxes;
-	inGoToProd,			ackGoToProd			: ST_GoToProd;
-	inHomeAxis,			ackHomeAxis			: ST_HomeAxis;
-	inMoveAxisAbsolute,	ackMoveAxisAbsolute	: ST_MoveAxisAbsolute;
-	inMoveAxisRelative,	ackMoveAxisRelative	: ST_MoveAxisRelative;
-	inOpenShutter,		ackOpenShutter		: ST_OpenShutter;
-	inReset,			ackReset			: ST_Reset;
-	inTakeExposure,		ackTakeExposure		: ST_TakeExposure;
-	inTurnSafetyOff,	ackTurnSafetyOff	: ST_TurnSafetyOff;
+	inCalibrate, 			ackCalibrate			: ST_Calibrate;
+	inChangeAxisEnable,		ackChangeAxisEnable		: ST_ChangeAxisEnable;
+	inChangeBrakeState,		ackChangeBrakeState		: ST_ChangeBrakeState;
+	inClearAllFaults,		ackClearAllFaults		: ST_ClearAllFaults;
+	inClearAxisFaults,		ackClearAxisFaults		: ST_ClearAxisFaults;
+	inCloseShutter,			ackCloseShutter			: ST_CloseShutter;
+	inDisableAllAxes,		ackDisableAllAxes		: ST_DisableAllAxes;
+	inEnableAllAxes,		ackEnableAllAxes		: ST_EnableAllAxes;
+	inGoToProd,				ackGoToProd				: ST_GoToProd;
+	inHomeAxis,				ackHomeAxis				: ST_HomeAxis;
+	inMoveAxisAbsolute,		ackMoveAxisAbsolute		: ST_MoveAxisAbsolute;
+	inMoveAxisRelative,		ackMoveAxisRelative		: ST_MoveAxisRelative;
+	inOpenShutter,			ackOpenShutter			: ST_OpenShutter;
+	inReset,				ackReset				: ST_Reset;
+	inTakeExposure,			ackTakeExposure			: ST_TakeExposure;
+	inToggleSafetyCheck,	ackToggleSafetyCheck	: ST_ToggleSafetyCheck;
 	
 	//communication OUT
 	fbOutTimer			: TON;
@@ -80,9 +82,10 @@ VAR
 END_VAR
 VAR CONSTANT
 	//Will change later once motionProfile and version are decided
-	nMotionProfile	: DINT := 0;
-	nVersion		: DINT := 2;
-	tUpdateTimer	: TIME := T#2S;
+	nMotionProfile		: DINT := 0;
+	nVersion			: DINT := 2;
+	tUpdateTimer		: TIME := T#2S;
+	cMaxSpeedSafetyOFF	: LREAL := 1;
 END_VAR
 
 (*
@@ -286,9 +289,9 @@ ELSIF F_HaveDifferentIDs(inTakeExposure, ackTakeExposure) THEN
 		eCommand := E_Commands.takeExposure;
 	END_IF
 	
-ELSIF F_HaveDifferentIDs(inTurnSafetyOff, ackTurnSafetyOff) THEN
-	ackTurnSafetyOff := inTurnSafetyOff;	
-	IF ackTurnSafetyOff.version <> nVersion THEN
+ELSIF F_HaveDifferentIDs(inToggleSafetyCheck, ackToggleSafetyCheck) THEN
+	ackToggleSafetyCheck := inToggleSafetyCheck;	
+	IF ackToggleSafetyCheck.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF fbShutterSM.nSMState <> E_StatesProd.Closed THEN
@@ -303,38 +306,52 @@ END_IF
 ////////////////////////////////////////////////////////////////////
 (*shutter protection module*)
 ////////////////////////////////////////////////////////////////////
-fbProtect(
-	stAxis 				:= stAxis, 
-	bAuxElxPermit 		:= bAuxElxPermit, 
-	nState 				:= fbShutterSM.nSMState, 
-	inTakeExposure		:= inTakeExposure,
-	inMoveAxisAbsolute	:= inMoveAxisAbsolute,
-	inMoveAxisRelative	:= inMoveAxisRelative,
-	eCommand 			:= eCommand);
+IF (eCommand = E_Commands.turnSafetyOff) THEN
+	bSafetyOn := NOT bSafetyOn;
+	outShutterStatus.isSafetyOn := bSafetyOn;
+	outShutterStatus.sequence := outShutterStatus.sequence +1;
+END_IF
+IF (fbTracking.bMotionDone) THEN
+	bSafetyOn := TRUE;
+END_IF
 
-fbProtectA(
-	stAxis 				:= stAxis, 
-	bAuxElxPermit 		:= bAuxElxPermit, 
-	nState 				:= fbShutterSM.nSMState,
-	eCommand 			:= eCommand,
+IF bSafetyOn THEN
+	fbProtect(
+		stAxis 				:= stAxis, 
+		bAuxElxPermit 		:= bAuxElxPermit, 
+		nState 				:= fbShutterSM.nSMState,
+		eCommand 			:= eCommand,
+		
+		inCalibrate			:= inCalibrate,
+		inChangeAxisEnable	:= inChangeAxisEnable,
+		inChangeBrakeState	:= inChangeBrakeState,
+		inClearAllFaults	:= inClearAllFaults,
+		inClearAxisFaults	:= inClearAxisFaults,
+		inCloseShutter		:= inCloseShutter,
+		inDisableAllAxes	:= inDisableAllAxes,
+		inEnableAllAxes		:= inEnableAllAxes,
+		inGoToProd			:= inGoToProd,
+		inHomeAxis			:= inHomeAxis,
+		inMoveAxisAbsolute	:= inMoveAxisAbsolute,
+		inMoveAxisRelative	:= inMoveAxisRelative,
+		inOpenShutter		:= inOpenShutter,
+		inReset				:= inReset,
+		inTakeExposure		:= inTakeExposure,
+		inToggleSafetyCheck	:= inToggleSafetyCheck);
+ELSE
+	IF (inReset.speed > cMaxSpeedSafetyOFF) THEN
+		inReset.speed := cMaxSpeedSafetyOFF;
+	END_IF
+	IF (inMoveAxisAbsolute.speed > cMaxSpeedSafetyOFF) THEN
+		inMoveAxisAbsolute.speed := cMaxSpeedSafetyOFF;
+	END_IF
 	
-	inCalibrate			:= inCalibrate,
-	inChangeAxisEnable	:= inChangeAxisEnable,
-	inChangeBrakeState	:= inChangeBrakeState,
-	inClearAllFaults	:= inClearAllFaults,
-	inClearAxisFaults	:= inClearAxisFaults,
-	inCloseShutter		:= inCloseShutter,
-	inDisableAllAxes	:= inDisableAllAxes,
-	inEnableAllAxes		:= inEnableAllAxes,
-	inGoToProd			:= inGoToProd,
-	inHomeAxis			:= inHomeAxis,
-	inMoveAxisAbsolute	:= inMoveAxisAbsolute,
-	inMoveAxisRelative	:= inMoveAxisRelative,
-	inOpenShutter		:= inOpenShutter,
-	inReset				:= inReset,
-	inTakeExposure		:= inTakeExposure,
-	inTurnSafetyOff		:= inTurnSafetyOff);
-	
+	fSpeedRel	:= (2*ABS(inMoveAxisRelative.distance)/(TIME_TO_LREAL(inMoveAxisRelative.moveTime)/1000));
+	if (fSpeedRel > cMaxSpeedSafetyOFF) THEN
+		fSpeedRel := cMaxSpeedSafetyOFF;
+		inMoveAxisRelative.moveTime := LREAL_TO_TIME(1000*2*ABS(inMoveAxisRelative.distance)/(fSpeedRel));
+	END_IF
+END_IF
 	
 ////////////////////////////////////////////////////////////////////
 //Shutter State Machine
@@ -479,13 +496,26 @@ END_IF
       <LineId Id="3133" Count="9" />
       <LineId Id="3131" Count="1" />
       <LineId Id="2668" Count="4" />
-      <LineId Id="2674" Count="7" />
-      <LineId Id="3247" Count="0" />
+      <LineId Id="3469" Count="0" />
+      <LineId Id="3471" Count="0" />
+      <LineId Id="3473" Count="1" />
+      <LineId Id="3472" Count="0" />
+      <LineId Id="3475" Count="2" />
+      <LineId Id="3467" Count="0" />
+      <LineId Id="3403" Count="0" />
       <LineId Id="3251" Count="3" />
       <LineId Id="3307" Count="0" />
       <LineId Id="3306" Count="0" />
       <LineId Id="2682" Count="0" />
       <LineId Id="3260" Count="14" />
+      <LineId Id="3412" Count="0" />
+      <LineId Id="3461" Count="2" />
+      <LineId Id="3413" Count="0" />
+      <LineId Id="3464" Count="2" />
+      <LineId Id="3420" Count="0" />
+      <LineId Id="3415" Count="0" />
+      <LineId Id="3423" Count="0" />
+      <LineId Id="3421" Count="1" />
       <LineId Id="3248" Count="1" />
       <LineId Id="2683" Count="22" />
       <LineId Id="3101" Count="0" />

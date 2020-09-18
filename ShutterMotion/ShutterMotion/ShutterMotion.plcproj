@@ -69,7 +69,7 @@
     <Compile Include="DUTs\CCSInterface STRUCT\CCS to PLC\ST_TakeExposure.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\CCSInterface STRUCT\CCS to PLC\ST_TurnSafetyOff.TcDUT">
+    <Compile Include="DUTs\CCSInterface STRUCT\CCS to PLC\ST_ToggleSafetyCheck.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\CCSInterface STRUCT\PLC to CCS\AxisStatus.TcDUT">
@@ -146,9 +146,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\FB_Protection.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="POUs\FB_ProtectionA.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\F_HaveDifferentIDs.TcPOU">
