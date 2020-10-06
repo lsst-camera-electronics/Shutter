@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
   <Visu Name="Visualization" Id="{f582b681-f1ff-4fd0-9241-dc5537cf3bfd}">
     <XmlArchive>
       <Data>
@@ -4167,7 +4167,7 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                 <v n="VisualElementIdentifier">"GenElemInst_67"</v>
                 <n n="VisualElementOfflinePaintCommands" />
                 <n n="VisualElementFrameInformation" />
-                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="STSnippetInputAction[]">
+                <d n="VisualElementInputActions" t="Hashtable" ckt="String" cvt="IInputAction[]">
                   <v>OnMouseUp</v>
                   <a cet="STSnippetInputAction">
                     <o>
@@ -6172,30 +6172,30 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
           <o n="GeneratedLMMDescriptions" t="GeneratedLanguageModelEntriesData">
             <o n="GeneratedVisuFbDescription" t="GenericFbDescription">
               <d n="FbMethods" t="CaseInsensitiveHashtable" ckt="String" cvt="Guid">
-                <v>GetUpdateRects</v>
-                <v>ccdfafc4-0a84-4485-b8c8-6aa2570a7575</v>
+                <v>HasVisibilityAccess</v>
+                <v>0940617f-9755-4ac9-9082-18314b92b585</v>
                 <v>ContainsPoint</v>
                 <v>1083bba7-f6d7-4548-b227-24639daee808</v>
-                <v>FB_Reinit</v>
-                <v>db1e17a2-50f6-4f28-ac74-4659dfa3076c</v>
-                <v>SetStaticState</v>
-                <v>9ce6fc2e-0e56-4fbe-8bf6-da79204bff1e</v>
-                <v>Update</v>
-                <v>6981b0a4-99c3-44a9-bd2a-9965067098e4</v>
+                <v>HasInputAccess</v>
+                <v>b090c962-92fe-4578-bff6-9945d90a1f1d</v>
+                <v>HasInputAccessIntern</v>
+                <v>387a1780-cdf9-4191-a447-36d160a5148f</v>
                 <v>GetTooltip</v>
                 <v>077bc2f1-dd4a-47e0-9fd5-f90ce3cdb834</v>
+                <v>GetUpdateRects</v>
+                <v>ccdfafc4-0a84-4485-b8c8-6aa2570a7575</v>
                 <v>GetNamespace</v>
                 <v>b8f29239-a6a0-45e8-ac69-88da4bb212f6</v>
                 <v>GetTranslator</v>
                 <v>23a7990b-bb8c-4dc7-9a79-30477dddbd3a</v>
+                <v>Update</v>
+                <v>6981b0a4-99c3-44a9-bd2a-9965067098e4</v>
                 <v>SetClientData</v>
                 <v>87fad78e-ca0b-4801-8cfa-53c7f41470f4</v>
                 <v>GetClientData</v>
                 <v>581136fe-eba7-4d29-a637-2c022265d7d9</v>
                 <v>Paint</v>
                 <v>937d9b65-3b02-43e1-aff1-5a0e3338955d</v>
-                <v>HasVisibilityAccess</v>
-                <v>0940617f-9755-4ac9-9082-18314b92b585</v>
                 <v>GetElementArray</v>
                 <v>6588accf-3f55-43f3-99fa-2752ccf9318c</v>
                 <v>SetVisuFlagsInternal</v>
@@ -6208,18 +6208,22 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                 <v>be9d2e4c-26d5-4a14-959c-d6ded14f0985</v>
                 <v>Initialize</v>
                 <v>fbe822e4-1017-4eab-ab76-147d2b729f4d</v>
-                <v>HasInputAccess</v>
-                <v>b090c962-92fe-4578-bff6-9945d90a1f1d</v>
+                <v>HasVisibilityAccessIntern</v>
+                <v>4cb8058e-d397-452b-a2f7-a3257dd2cc6f</v>
                 <v>GetSurroundingRect</v>
                 <v>e0c5f23c-882e-42ed-9b82-d51da926664a</v>
+                <v>ElementInfo</v>
+                <v>85798f00-1ff8-4b78-8a9a-10d371b37646</v>
+                <v>SetStaticState</v>
+                <v>9ce6fc2e-0e56-4fbe-8bf6-da79204bff1e</v>
                 <v>GetLocalUsergroup</v>
                 <v>f3f10edb-16b1-4ae3-b2dd-a6dad67fc847</v>
                 <v>GetName</v>
                 <v>91327c95-8dc1-42d3-a018-228887d8b165</v>
                 <v>GetSize</v>
                 <v>9908b883-5f51-4fbd-8f21-1cfeda8e7240</v>
-                <v>Destruct</v>
-                <v>1d735f21-5869-4117-b4a6-0bffc51f72f2</v>
+                <v>FB_Reinit</v>
+                <v>db1e17a2-50f6-4f28-ac74-4659dfa3076c</v>
                 <v>FB_Exit</v>
                 <v>33429e97-57d3-421d-b99f-b048a451d2fc</v>
                 <v>GetInitializeVersion</v>
@@ -6228,8 +6232,8 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
                 <v>e72625f2-94ba-421a-b522-fe058cda09d9</v>
                 <v>HandleInput</v>
                 <v>231c6a8a-3f50-4349-b620-b4ad2ac9f0c8</v>
-                <v>ElementInfo</v>
-                <v>85798f00-1ff8-4b78-8a9a-10d371b37646</v>
+                <v>Destruct</v>
+                <v>1d735f21-5869-4117-b4a6-0bffc51f72f2</v>
               </d>
               <v n="FbName">"NotImportant"</v>
               <v n="FbGuid">{f582b681-f1ff-4fd0-9241-dc5537cf3bfd}</v>
@@ -6242,10 +6246,10 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
               <d n="FbMethods" t="CaseInsensitiveHashtable" ckt="String" cvt="Guid">
                 <v>FB_Init</v>
                 <v>a34fda68-ea57-451d-84ba-f64a41fb0235</v>
-                <v>FB_Reinit</v>
-                <v>310ce281-f150-4cc8-979e-5925ca8ebdd9</v>
                 <v>FB_Exit</v>
                 <v>1b57cff7-6f15-436e-b02d-adbc5df6fce8</v>
+                <v>FB_Reinit</v>
+                <v>310ce281-f150-4cc8-979e-5925ca8ebdd9</v>
               </d>
               <v n="FbName">"NotImportant"</v>
               <v n="FbGuid">{8b25fc7b-31d2-4d93-aeae-0948edd1ad10}</v>
@@ -6322,7 +6326,21 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
             <v n="IdStep">1048576L</v>
             <l2 n="Inputs" />
           </o>
-          <n n="VisuSizeManager" />
+          <o n="VisuSizeManager" t="VisualObjectSizeManager">
+            <d2 n="Size" ckt="Int32" cvt="VisualObjectSize">
+              <v>0</v>
+              <o>
+                <v n="Width">841</v>
+                <v n="Height">590</v>
+              </o>
+              <v>1</v>
+              <o>
+                <v n="Width">841</v>
+                <v n="Height">590</v>
+              </o>
+            </d2>
+            <v n="Version">1</v>
+          </o>
         </o>
       </Data>
       <TypeList>
@@ -6339,6 +6357,7 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
         <Type n="Guid">System.Guid</Type>
         <Type n="Hashtable">System.Collections.Hashtable</Type>
         <Type n="HotkeyConfiguration">{6b108d46-58af-4e41-a3f4-174d8f160cc4}</Type>
+        <Type n="IInputAction[]">_3S.CoDeSys.VisualElem.IInputAction[], VisualElem, Version=3.5.13.0, Culture=neutral, PublicKeyToken=null</Type>
         <Type n="InputBoxInputAction">{e8e7e747-f76f-4dee-ab1c-b9637e41ac26}</Type>
         <Type n="InputBoxInputAction[]">_3S.CoDeSys.VisualElem.InputBoxInputAction[], VisualElem.plugin, Version=3.5.13.30, Culture=neutral, PublicKeyToken=null</Type>
         <Type n="Int16">System.Int16</Type>
@@ -6359,6 +6378,8 @@ MAIN.inChangeBrakeState.dtime := MAIN.inChangeBrakeState.dtime + 1;
         <Type n="VisualElemMemberCollection">{a4b83bea-3742-489c-9fe8-d96d68dba7ab}</Type>
         <Type n="VisualElemMemberList">{17e26cd1-bb9b-47fe-a3d5-18fcd63b9c96}</Type>
         <Type n="VisualObject">{f18bec89-9fef-401d-9953-2f11739a6808}</Type>
+        <Type n="VisualObjectSize">{6ad3e88f-aee2-4766-a7ea-a8790037ef51}</Type>
+        <Type n="VisualObjectSizeManager">{5f612b0e-b404-455f-8177-27864e9f5332}</Type>
       </TypeList>
     </XmlArchive>
   </Visu>

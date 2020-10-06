@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
   <POU Name="FB_StateEnabled" Id="{b94d2bdc-9aa0-4455-a0cd-476d7bce246d}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_StateEnabled
 VAR_IN_OUT
@@ -131,7 +131,8 @@ bShutterReady := (stAxis[GVL.cXP].bBrake AND stAxis[GVL.cXM].bBrake) AND (stAxis
 	(
 		((stAxis[GVL.cXP].axisRef.NcToPlc.ActPos<1) AND (stAxis[GVL.cXM].axisRef.NcToPlc.ActPos<1)) OR 
 		((stAxis[GVL.cXP].axisRef.NcToPlc.ActPos>750) AND (stAxis[GVL.cXM].axisRef.NcToPlc.ActPos>750))
-	);
+	)
+	AND GVL.bSafetyOn;
 
 ]]></ST>
     </Implementation>
@@ -192,7 +193,9 @@ bShutterReady := (stAxis[GVL.cXP].bBrake AND stAxis[GVL.cXM].bBrake) AND (stAxis
       <LineId Id="512" Count="0" />
       <LineId Id="514" Count="0" />
       <LineId Id="513" Count="0" />
-      <LineId Id="490" Count="1" />
+      <LineId Id="490" Count="0" />
+      <LineId Id="675" Count="0" />
+      <LineId Id="491" Count="0" />
       <LineId Id="200" Count="0" />
     </LineIds>
   </POU>

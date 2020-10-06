@@ -22,13 +22,15 @@ VAR
 	bFesPermit AT %Q*		: BOOL;
 	{attribute 'TcLinkTo' := '	[0] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-00 (EL7047)^STM Synchron info data^Info data 1;
 								[1] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-01 (EL7047)^STM Synchron info data^Info data 1'}
-	fMotorTemp	AT %Q*		: ARRAY [0..1] OF UINT;  //temp in 1 degree C per increment
+	fMotorTemp	AT %I*		: ARRAY [0..1] OF UINT;  //temp in 1 degree C per increment
+	{attribute 'TcLinkTo' := '	[0] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MTC-00 (EL3214)^RTD Inputs Channel 1^Value;
+								[1] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MTC-00 (EL3214)^RTD Inputs Channel 2^Value;
+								[2] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MTC-00 (EL3214)^RTD Inputs Channel 3^Value'}
+	fRtdTemp	AT %I*		: ARRAY [0..2] OF INT;
 
 	//other function block and var
 	fbPower		: FB_Power;
 	fbProtect	: FB_Protection;
-	fbProtectA	: FB_Protection;
-	bSafetyOn	: BOOL := TRUE;
 	fSpeedRel	: LREAL;
 	fbTracking	: FB_Tracking;
 
@@ -40,22 +42,22 @@ VAR
 	eCommand		: E_Commands;
 	
 	//communication IN
-	inCalibrate, 			ackCalibrate			: ST_Calibrate;
-	inChangeAxisEnable,		ackChangeAxisEnable		: ST_ChangeAxisEnable;
-	inChangeBrakeState,		ackChangeBrakeState		: ST_ChangeBrakeState;
-	inClearAllFaults,		ackClearAllFaults		: ST_ClearAllFaults;
-	inClearAxisFaults,		ackClearAxisFaults		: ST_ClearAxisFaults;
-	inCloseShutter,			ackCloseShutter			: ST_CloseShutter;
-	inDisableAllAxes,		ackDisableAllAxes		: ST_DisableAllAxes;
-	inEnableAllAxes,		ackEnableAllAxes		: ST_EnableAllAxes;
-	inGoToProd,				ackGoToProd				: ST_GoToProd;
-	inHomeAxis,				ackHomeAxis				: ST_HomeAxis;
-	inMoveAxisAbsolute,		ackMoveAxisAbsolute		: ST_MoveAxisAbsolute;
-	inMoveAxisRelative,		ackMoveAxisRelative		: ST_MoveAxisRelative;
-	inOpenShutter,			ackOpenShutter			: ST_OpenShutter;
-	inReset,				ackReset				: ST_Reset;
-	inTakeExposure,			ackTakeExposure			: ST_TakeExposure;
-	inToggleSafetyCheck,	ackToggleSafetyCheck	: ST_ToggleSafetyCheck;
+	inCalibrate, 			ackCalibrate			: ST_Calibrate			:= (version:=nVersion);
+	inChangeAxisEnable,		ackChangeAxisEnable		: ST_ChangeAxisEnable	:= (version:=nVersion);
+	inChangeBrakeState,		ackChangeBrakeState		: ST_ChangeBrakeState	:= (version:=nVersion);
+	inClearAllFaults,		ackClearAllFaults		: ST_ClearAllFaults		:= (version:=nVersion);
+	inClearAxisFaults,		ackClearAxisFaults		: ST_ClearAxisFaults	:= (version:=nVersion);
+	inCloseShutter,			ackCloseShutter			: ST_CloseShutter		:= (version:=nVersion);
+	inDisableAllAxes,		ackDisableAllAxes		: ST_DisableAllAxes		:= (version:=nVersion);
+	inEnableAllAxes,		ackEnableAllAxes		: ST_EnableAllAxes		:= (version:=nVersion);
+	inGoToProd,				ackGoToProd				: ST_GoToProd			:= (version:=nVersion);
+	inHomeAxis,				ackHomeAxis				: ST_HomeAxis			:= (version:=nVersion);
+	inMoveAxisAbsolute,		ackMoveAxisAbsolute		: ST_MoveAxisAbsolute	:= (version:=nVersion);
+	inMoveAxisRelative,		ackMoveAxisRelative		: ST_MoveAxisRelative	:= (version:=nVersion);
+	inOpenShutter,			ackOpenShutter			: ST_OpenShutter		:= (version:=nVersion);
+	inReset,				ackReset				: ST_Reset				:= (version:=nVersion);
+	inTakeExposure,			ackTakeExposure			: ST_TakeExposure		:= (version:=nVersion);
+	inToggleSafetyCheck,	ackToggleSafetyCheck	: ST_ToggleSafetyCheck	:= (version:=nVersion);
 	
 	//communication OUT
 	fbOutTimer			: TON;
@@ -77,7 +79,7 @@ VAR
 	stCalibDone_rtrig	: R_TRIG;
 	
 	//Read COE
-	fbRead		: ARRAY [0..1] OF FB_EcCoeSdoRead;
+	//fbRead		: ARRAY [0..1] OF FB_EcCoeSdoRead;
 	
 END_VAR
 VAR CONSTANT
@@ -108,6 +110,63 @@ stAxis[GVL.cXM].axisRef.ReadStatus();
 //CCS to PLC
 ////////////////////////////////////////////////////////////////////
 (* Check for new messages from CCS *)
+ACT_CheckNewMessage();
+
+////////////////////////////////////////////////////////////////////
+(*shutter protection module*)
+////////////////////////////////////////////////////////////////////
+ACT_Protection();
+	
+////////////////////////////////////////////////////////////////////
+//Shutter State Machine
+////////////////////////////////////////////////////////////////////
+ACT_StateMachine();
+	
+////////////////////////////////////////////////////////////////////
+//PLC to CCS
+////////////////////////////////////////////////////////////////////
+(*Set version*)
+ACT_SetVersion();
+
+//Shutter Status---------------------------------
+ACT_ShutterStatus();
+
+////////////////////////////////////////////////////////////////////
+//Other (tracking, temperature, etc.)
+////////////////////////////////////////////////////////////////////
+
+(*track motion of both blades*)
+fbTracking(
+	stAxis				:= stAxis, 
+	eCommand			:= eCommand, 
+	bMotionDone			:= fbShutterSM.bMotionDone, 
+	inReset				:= inReset,
+	inMoveAxisAbsolute	:= inMoveAxisAbsolute,
+	inMoveAxisRelative	:= inMoveAxisRelative,
+	stOutMotionDone		=> outMotionDone);
+
+(*When shutter is in motion, remove permit for Filter Changer*)	
+IF (Main.outShutterStatus.smState=E_StatesMaint.Still OR Main.outShutterStatus.smState=E_StatesProd.Closed OR 
+	Main.outShutterStatus.smState=E_StatesProd.Opened OR Main.outShutterStatus.smState=E_StatesTop.Disabled) THEN
+		bFesPermit := TRUE;
+ELSE
+		bFesPermit := FALSE;
+END_IF
+	
+(*
+//write persistent data to file every second
+IF fbWriteDelay.Q THEN
+	GVL.fbWritePersistentData(NETID:='', PORT:=851, START:=TRUE, TMOUT:=T#1S);
+	fbWriteDelay(IN:=FALSE);
+ELSE
+	fbWriteDelay(IN:=TRUE, PT:=T#2S);
+END_IF
+*)
+]]></ST>
+    </Implementation>
+    <Action Name="ACT_CheckNewMessage" Id="{f5374ef6-d39e-45f2-a810-7d6f723bd4be}">
+      <Implementation>
+        <ST><![CDATA[(* Check for new messages from CCS *)
 eCommand := E_Commands.noCommand;
 IF F_HaveDifferentIDs(inCalibrate, ackCalibrate) THEN
 	ackCalibrate := inCalibrate;
@@ -294,28 +353,29 @@ ELSIF F_HaveDifferentIDs(inToggleSafetyCheck, ackToggleSafetyCheck) THEN
 	IF ackToggleSafetyCheck.version <> nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesProd.Closed THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
 		eCommand := E_Commands.turnSafetyOff;
 	END_IF
 	
-END_IF
-
-////////////////////////////////////////////////////////////////////
-(*shutter protection module*)
-////////////////////////////////////////////////////////////////////
-IF (eCommand = E_Commands.turnSafetyOff) THEN
-	bSafetyOn := NOT bSafetyOn;
-	outShutterStatus.isSafetyOn := bSafetyOn;
+END_IF]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="ACT_Protection" Id="{c6b875e2-8f86-47ce-99b2-5bf00c8ba28d}">
+      <Implementation>
+        <ST><![CDATA[IF (eCommand = E_Commands.turnSafetyOff) THEN
+	GVL.bSafetyOn := NOT GVL.bSafetyOn;
 	outShutterStatus.sequence := outShutterStatus.sequence +1;
 END_IF
-IF (fbTracking.bMotionDone) THEN
-	bSafetyOn := TRUE;
+IF (fbTracking.bMotionDone AND NOT GVL.bSafetyOn) THEN
+	GVL.bSafetyOn := TRUE;
+	outShutterStatus.sequence := outShutterStatus.sequence +1;
 END_IF
+outShutterStatus.isSafetyOn := GVL.bSafetyOn;
 
-IF bSafetyOn THEN
+IF GVL.bSafetyOn THEN
 	fbProtect(
 		stAxis 				:= stAxis, 
 		bAuxElxPermit 		:= bAuxElxPermit, 
@@ -339,48 +399,31 @@ IF bSafetyOn THEN
 		inTakeExposure		:= inTakeExposure,
 		inToggleSafetyCheck	:= inToggleSafetyCheck);
 ELSE
+(* Shouldn't be able to enter PROD mode so this is not needed
 	IF (inReset.speed > cMaxSpeedSafetyOFF) THEN
 		inReset.speed := cMaxSpeedSafetyOFF;
 	END_IF
+*)	
 	IF (inMoveAxisAbsolute.speed > cMaxSpeedSafetyOFF) THEN
 		inMoveAxisAbsolute.speed := cMaxSpeedSafetyOFF;
 	END_IF
 	
-	fSpeedRel	:= (2*ABS(inMoveAxisRelative.distance)/(TIME_TO_LREAL(inMoveAxisRelative.moveTime)/1000));
+	IF ((TIME_TO_LREAL(inMoveAxisRelative.moveTime)/1000)>0) THEN
+		fSpeedRel	:= (2*ABS(inMoveAxisRelative.distance)/(TIME_TO_LREAL(inMoveAxisRelative.moveTime)/1000));
+	ELSE
+		fSpeedRel	:= 0.0001;
+	END_IF
+	
 	if (fSpeedRel > cMaxSpeedSafetyOFF) THEN
 		fSpeedRel := cMaxSpeedSafetyOFF;
 		inMoveAxisRelative.moveTime := LREAL_TO_TIME(1000*2*ABS(inMoveAxisRelative.distance)/(fSpeedRel));
 	END_IF
-END_IF
-	
-////////////////////////////////////////////////////////////////////
-//Shutter State Machine
-////////////////////////////////////////////////////////////////////
-fbShutterSM(
-	//inputs
-	stAxis				:= stAxis,
-	bAuxElxPermit		:= bAuxElxPermit,
-	eCommand			:= eCommand,
-	stCalibrate			:= inCalibrate,
-	stChangeAxisEnable	:= inChangeAxisEnable,
-	stChangeBrakeState	:= inChangeBrakeState,
-	stClearAllFaults	:= inClearAllFaults,
-	stClearAxisFaults	:= inClearAxisFaults,
-	stCloseShutter		:= inCloseShutter,
-	stDisableAllAxes	:= inDisableAllAxes,
-	stEnableAllAxes		:= inEnableAllAxes,
-	stGoToProd			:= inGoToProd,
-	stHomeAxis			:= inHomeAxis,
-	stMoveAxisAbsolute	:= inMoveAxisAbsolute,
-	stMoveAxisRelative	:= inMoveAxisRelative,
-	stOpenShutter		:= inOpenShutter,
-	stReset				:= inReset,
-	stTakeExposure		:= inTakeExposure);
-	
-////////////////////////////////////////////////////////////////////
-//PLC to CCS
-////////////////////////////////////////////////////////////////////
-(*Set version*)
+END_IF]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="ACT_SetVersion" Id="{587141af-a60e-402a-8401-1dc2f63ebe7a}">
+      <Implementation>
+        <ST><![CDATA[(*Set version*)
 IF NOT bVersionSet THEN
 	bVersionSet 				:= TRUE;
 	outShutterStatus.version 	:= nVersion;
@@ -391,9 +434,12 @@ IF NOT bVersionSet THEN
 	outTimer.version 			:= nVersion;
 	outCalibDone.version 		:= nVersion;
 	outMotionDone.version		:= nVersion;
-END_IF
-
-//updates upon changes---------------------------------------------
+END_IF]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="ACT_ShutterStatus" Id="{61978c63-ebb5-4185-a49f-56c06c9a4ef0}">
+      <Implementation>
+        <ST><![CDATA[//updates upon changes---------------------------------------------
 //Shutter disabled/enabled
 stDisable_rtrig(CLK:=(fbShutterSM.nSMState = E_StatesTop.Disabled));
 IF stDisable_rtrig.Q THEN
@@ -412,6 +458,8 @@ stCalibDone_rtrig(CLK:=fbShutterSM.bCalibDone);
 IF stCalibDone_rtrig.Q THEN
 	outCalibDone.hallPosCal := fbShutterSM.stOutCalibDone.hallPosCal;
 	outCalibDone.sequence := outCalibDone.sequence + 1;
+	outShutterStatus.isCalibrated := (stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated);
+	outShutterStatus.sequence := outShutterStatus.sequence +1;
 END_IF
 
 //Periodic updates---------------------------------------------
@@ -426,6 +474,9 @@ IF fbOutTimer.Q THEN
 	outShutterStatus.motionProfile := nMotionProfile;
 	outShutterStatus.isCalibrated := (stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated);
 	outShutterStatus.smState := fbShutterSM.nSMState;
+	outShutterStatus.temperature[0] := INT_TO_DINT(fRtdTemp[0]);
+	outShutterStatus.temperature[1] := INT_TO_DINT(fRtdTemp[1]);
+	outShutterStatus.temperature[2] := INT_TO_DINT(fRtdTemp[2]);
 	
 	(*shutter status update, axis XP specific*)
 	outShutterStatus.axis[GVL.cXP].actPos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
@@ -439,7 +490,7 @@ IF fbOutTimer.Q THEN
 	outShutterStatus.axis[GVL.cXP].highLimit := stAxis[GVL.cXP].bLimitDeployed;
 	outShutterStatus.axis[GVL.cXP].lowLimit := stAxis[GVL.cXP].bLimitHome;
 	outShutterStatus.axis[GVL.cXP].isHomed := stAxis[GVL.cXP].axisRef.Status.Homed;
-	outShutterStatus.axis[GVL.cXP].motorTemp := fMotorTemp[0];
+	outShutterStatus.axis[GVL.cXP].motorTemp := UINT_TO_LREAL(fMotorTemp[0]);
 	
 	(*shutter status update, axis XM specific*)
 	outShutterStatus.axis[GVL.cXM].actPos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
@@ -453,90 +504,76 @@ IF fbOutTimer.Q THEN
 	outShutterStatus.axis[GVL.cXM].highLimit := stAxis[GVL.cXM].bLimitHome;
 	outShutterStatus.axis[GVL.cXM].lowLimit := stAxis[GVL.cXM].bLimitDeployed;
 	outShutterStatus.axis[GVL.cXM].isHomed := stAxis[GVL.cXM].axisRef.Status.Homed;
-	outShutterStatus.axis[GVL.cXM].motorTemp := fMotorTemp[1];
+	outShutterStatus.axis[GVL.cXM].motorTemp := UINT_TO_LREAL(fMotorTemp[1]);
 	
-END_IF
-
-////////////////////////////////////////////////////////////////////
-//Other (tracking, temperature, etc.)
-////////////////////////////////////////////////////////////////////
-
-(*track motion of both blades*)
-fbTracking(
-	stAxis				:=stAxis, 
-	eCommand			:=eCommand, 
-	bMotionDone			:=fbShutterSM.bMotionDone, 
-	inReset				:= inReset,
-	inMoveAxisAbsolute	:= inMoveAxisAbsolute,
-	inMoveAxisRelative	:= inMoveAxisRelative,
-	stOutMotionDone		=>outMotionDone);
-
-(*When shutter is in motion, remove permit for Filter Changer*)	
-IF (Main.outShutterStatus.smState=E_StatesMaint.Still OR Main.outShutterStatus.smState=E_StatesProd.Closed OR 
-	Main.outShutterStatus.smState=E_StatesProd.Opened OR Main.outShutterStatus.smState=E_StatesTop.Disabled) THEN
-		bFesPermit := TRUE;
-ELSE
-		bFesPermit := FALSE;
-END_IF
-	
-(*
-//write persistent data to file every second
-IF fbWriteDelay.Q THEN
-	GVL.fbWritePersistentData(NETID:='', PORT:=851, START:=TRUE, TMOUT:=T#1S);
-	fbWriteDelay(IN:=FALSE);
-ELSE
-	fbWriteDelay(IN:=TRUE, PT:=T#2S);
-END_IF
-*)
-]]></ST>
-    </Implementation>
+END_IF]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="ACT_StateMachine" Id="{08dae863-650c-4435-9c46-4f225361ff07}">
+      <Implementation>
+        <ST><![CDATA[fbShutterSM(
+	//inputs
+	stAxis				:= stAxis,
+	bAuxElxPermit		:= bAuxElxPermit,
+	eCommand			:= eCommand,
+	stCalibrate			:= inCalibrate,
+	stChangeAxisEnable	:= inChangeAxisEnable,
+	stChangeBrakeState	:= inChangeBrakeState,
+	stClearAllFaults	:= inClearAllFaults,
+	stClearAxisFaults	:= inClearAxisFaults,
+	stCloseShutter		:= inCloseShutter,
+	stDisableAllAxes	:= inDisableAllAxes,
+	stEnableAllAxes		:= inEnableAllAxes,
+	stGoToProd			:= inGoToProd,
+	stHomeAxis			:= inHomeAxis,
+	stMoveAxisAbsolute	:= inMoveAxisAbsolute,
+	stMoveAxisRelative	:= inMoveAxisRelative,
+	stOpenShutter		:= inOpenShutter,
+	stReset				:= inReset,
+	stTakeExposure		:= inTakeExposure);]]></ST>
+      </Implementation>
+    </Action>
     <LineIds Name="MAIN">
-      <LineId Id="2480" Count="187" />
-      <LineId Id="3130" Count="0" />
-      <LineId Id="3133" Count="9" />
-      <LineId Id="3131" Count="1" />
-      <LineId Id="2668" Count="4" />
-      <LineId Id="3469" Count="0" />
-      <LineId Id="3471" Count="0" />
-      <LineId Id="3473" Count="1" />
-      <LineId Id="3472" Count="0" />
-      <LineId Id="3475" Count="2" />
-      <LineId Id="3467" Count="0" />
-      <LineId Id="3403" Count="0" />
-      <LineId Id="3251" Count="3" />
-      <LineId Id="3307" Count="0" />
-      <LineId Id="3306" Count="0" />
-      <LineId Id="2682" Count="0" />
-      <LineId Id="3260" Count="14" />
-      <LineId Id="3412" Count="0" />
-      <LineId Id="3461" Count="2" />
-      <LineId Id="3413" Count="0" />
-      <LineId Id="3464" Count="2" />
-      <LineId Id="3420" Count="0" />
-      <LineId Id="3415" Count="0" />
-      <LineId Id="3423" Count="0" />
-      <LineId Id="3421" Count="1" />
-      <LineId Id="3248" Count="1" />
-      <LineId Id="2683" Count="22" />
-      <LineId Id="3101" Count="0" />
-      <LineId Id="2706" Count="12" />
-      <LineId Id="3102" Count="0" />
-      <LineId Id="2719" Count="21" />
-      <LineId Id="2742" Count="7" />
-      <LineId Id="3149" Count="0" />
-      <LineId Id="3151" Count="2" />
-      <LineId Id="2755" Count="0" />
-      <LineId Id="3150" Count="0" />
-      <LineId Id="2756" Count="42" />
-      <LineId Id="2888" Count="0" />
-      <LineId Id="2799" Count="0" />
-      <LineId Id="2891" Count="0" />
-      <LineId Id="2893" Count="1" />
-      <LineId Id="2897" Count="1" />
-      <LineId Id="2895" Count="0" />
-      <LineId Id="2890" Count="0" />
-      <LineId Id="2800" Count="8" />
+      <LineId Id="3783" Count="17" />
+      <LineId Id="3820" Count="5" />
+      <LineId Id="3836" Count="0" />
+      <LineId Id="3893" Count="0" />
+      <LineId Id="3837" Count="0" />
+      <LineId Id="3860" Count="32" />
       <LineId Id="324" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.ACT_CheckNewMessage">
+      <LineId Id="2" Count="193" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.ACT_Protection">
+      <LineId Id="2" Count="1" />
+      <LineId Id="5" Count="3" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="9" Count="1" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="11" Count="23" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="35" Count="3" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="39" Count="12" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.ACT_SetVersion">
+      <LineId Id="2" Count="10" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.ACT_ShutterStatus">
+      <LineId Id="47" Count="18" />
+      <LineId Id="68" Count="1" />
+      <LineId Id="66" Count="1" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="2" Count="42" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.ACT_StateMachine">
+      <LineId Id="2" Count="18" />
+      <LineId Id="1" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

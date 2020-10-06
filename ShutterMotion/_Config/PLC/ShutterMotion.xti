@@ -721,6 +721,24 @@ External Setpoint Generation:
 			</Relations>
 		</DataType>
 		<DataType>
+			<Name GUID="{11F20A4A-90D4-35C7-DB3B-0E8659E05E5D}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..1] OF UINT</Name>
+			<BitSize>32</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
+			<ArrayInfo>
+				<LBound>0</LBound>
+				<Elements>2</Elements>
+			</ArrayInfo>
+		</DataType>
+		<DataType>
+			<Name GUID="{7F3999D6-1785-057D-88BC-3449B9362C09}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..2] OF INT</Name>
+			<BitSize>48</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType>
+			<ArrayInfo>
+				<LBound>0</LBound>
+				<Elements>3</Elements>
+			</ArrayInfo>
+		</DataType>
+		<DataType>
 			<Name GUID="{59CB7A65-AEAB-E588-EB2A-AFE112B8A9C4}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..5] OF DINT</Name>
 			<BitSize>192</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000009}">DINT</BaseType>
@@ -754,15 +772,6 @@ External Setpoint Generation:
 			<ArrayInfo>
 				<LBound>0</LBound>
 				<Elements>15</Elements>
-			</ArrayInfo>
-		</DataType>
-		<DataType>
-			<Name GUID="{11F20A4A-90D4-35C7-DB3B-0E8659E05E5D}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..1] OF UINT</Name>
-			<BitSize>32</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
-			<ArrayInfo>
-				<LBound>0</LBound>
-				<Elements>2</Elements>
 			</ArrayInfo>
 		</DataType>
 		<DataType>
@@ -984,6 +993,15 @@ External Setpoint Generation:
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
+					<Name>MAIN.fMotorTemp</Name>
+					<Comment><![CDATA[temp in 1 degree C per increment]]></Comment>
+					<Type GUID="{11F20A4A-90D4-35C7-DB3B-0E8659E05E5D}">ARRAY [0..1] OF UINT</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fRtdTemp</Name>
+					<Type GUID="{7F3999D6-1785-057D-88BC-3449B9362C09}">ARRAY [0..2] OF INT</Type>
+				</Var>
+				<Var>
 					<Name>MAIN.fbPower.Vraw</Name>
 					<Comment><![CDATA[Power variable]]></Comment>
 					<Type GUID="{59CB7A65-AEAB-E588-EB2A-AFE112B8A9C4}">ARRAY [0..5] OF DINT</Type>
@@ -1007,11 +1025,6 @@ External Setpoint Generation:
 				<Var>
 					<Name>MAIN.bFesPermit</Name>
 					<Type>BOOL</Type>
-				</Var>
-				<Var>
-					<Name>MAIN.fMotorTemp</Name>
-					<Comment><![CDATA[temp in 1 degree C per increment]]></Comment>
-					<Type GUID="{11F20A4A-90D4-35C7-DB3B-0E8659E05E5D}">ARRAY [0..1] OF UINT</Type>
 				</Var>
 				<Var>
 					<Name>MAIN.stAxis[0].axisRef.PlcToNc</Name>
@@ -1176,14 +1189,14 @@ External Setpoint Generation:
 	<Mappings>
 		<OwnerA Name="ShutterMotion Instance">
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-00 (EL7047)">
+				<Link VarA="PlcTaskMain Inputs^MAIN.fMotorTemp[0]" VarB="STM Synchron info data^Info data 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[0].bLimitDeployed" VarB="STM Status^Status^Digital input 2" AutoLink="true" Size="1"/>
 				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[0].bLimitHome" VarB="STM Status^Status^Digital input 1" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Outputs^MAIN.fMotorTemp[0]" VarB="STM Synchron info data^Info data 1" AutoLink="true"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-01 (EL7047)">
+				<Link VarA="PlcTaskMain Inputs^MAIN.fMotorTemp[1]" VarB="STM Synchron info data^Info data 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].bLimitDeployed" VarB="STM Status^Status^Digital input 2" AutoLink="true" Size="1"/>
 				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].bLimitHome" VarB="STM Status^Status^Digital input 1" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Outputs^MAIN.fMotorTemp[1]" VarB="STM Synchron info data^Info data 1" AutoLink="true"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)">
 				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[0]" VarB="MTI Inputs 2x Channel 1^Inputs^Input event state 1" AutoLink="true" Size="1"/>
@@ -1239,6 +1252,11 @@ External Setpoint Generation:
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MRE-01 (EL2622)">
 				<Link VarA="PlcTaskMain Outputs^MAIN.stAxis[0].bBrake" VarB="Channel 1^Output" AutoLink="true" Size="1"/>
 				<Link VarA="PlcTaskMain Outputs^MAIN.stAxis[1].bBrake" VarB="Channel 2^Output" AutoLink="true" Size="1"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MTC-00 (EL3214)">
+				<Link VarA="PlcTaskMain Inputs^MAIN.fRtdTemp[0]" VarB="RTD Inputs Channel 1^Value" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^MAIN.fRtdTemp[1]" VarB="RTD Inputs Channel 2^Value" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^MAIN.fRtdTemp[2]" VarB="RTD Inputs Channel 3^Value" AutoLink="true"/>
 			</OwnerB>
 			<OwnerB Name="TINC^NC-Task 1 SAF^Axes^XM">
 				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].axisRef.NcToPlc" VarB="Outputs^ToPlc"/>

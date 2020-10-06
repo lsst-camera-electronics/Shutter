@@ -53,7 +53,9 @@ VAR_GLOBAL CONSTANT
 	
 END_VAR
 VAR_GLOBAL
-
+	//Safety State
+	bSafetyOn	: BOOL := TRUE;
+	
 	//Hall Switches
 	nHallSequence 			: WORD;
 	
