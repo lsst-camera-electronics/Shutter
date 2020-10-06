@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
   <POU Name="MAIN" Id="{f71d400f-d229-45a7-bebf-e505112d31c1}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
@@ -42,22 +42,22 @@ VAR
 	eCommand		: E_Commands;
 	
 	//communication IN
-	inCalibrate, 			ackCalibrate			: ST_Calibrate			:= (version:=nVersion);
-	inChangeAxisEnable,		ackChangeAxisEnable		: ST_ChangeAxisEnable	:= (version:=nVersion);
-	inChangeBrakeState,		ackChangeBrakeState		: ST_ChangeBrakeState	:= (version:=nVersion);
-	inClearAllFaults,		ackClearAllFaults		: ST_ClearAllFaults		:= (version:=nVersion);
-	inClearAxisFaults,		ackClearAxisFaults		: ST_ClearAxisFaults	:= (version:=nVersion);
-	inCloseShutter,			ackCloseShutter			: ST_CloseShutter		:= (version:=nVersion);
-	inDisableAllAxes,		ackDisableAllAxes		: ST_DisableAllAxes		:= (version:=nVersion);
-	inEnableAllAxes,		ackEnableAllAxes		: ST_EnableAllAxes		:= (version:=nVersion);
-	inGoToProd,				ackGoToProd				: ST_GoToProd			:= (version:=nVersion);
-	inHomeAxis,				ackHomeAxis				: ST_HomeAxis			:= (version:=nVersion);
-	inMoveAxisAbsolute,		ackMoveAxisAbsolute		: ST_MoveAxisAbsolute	:= (version:=nVersion);
-	inMoveAxisRelative,		ackMoveAxisRelative		: ST_MoveAxisRelative	:= (version:=nVersion);
-	inOpenShutter,			ackOpenShutter			: ST_OpenShutter		:= (version:=nVersion);
-	inReset,				ackReset				: ST_Reset				:= (version:=nVersion);
-	inTakeExposure,			ackTakeExposure			: ST_TakeExposure		:= (version:=nVersion);
-	inToggleSafetyCheck,	ackToggleSafetyCheck	: ST_ToggleSafetyCheck	:= (version:=nVersion);
+	inCalibrate, 			ackCalibrate			: ST_Calibrate			;//:= (version:=nVersion);
+	inChangeAxisEnable,		ackChangeAxisEnable		: ST_ChangeAxisEnable	;//:= (version:=nVersion);
+	inChangeBrakeState,		ackChangeBrakeState		: ST_ChangeBrakeState	;//:= (version:=nVersion);
+	inClearAllFaults,		ackClearAllFaults		: ST_ClearAllFaults		;//:= (version:=nVersion);
+	inClearAxisFaults,		ackClearAxisFaults		: ST_ClearAxisFaults	;//:= (version:=nVersion);
+	inCloseShutter,			ackCloseShutter			: ST_CloseShutter		;//:= (version:=nVersion);
+	inDisableAllAxes,		ackDisableAllAxes		: ST_DisableAllAxes		;//:= (version:=nVersion);
+	inEnableAllAxes,		ackEnableAllAxes		: ST_EnableAllAxes		;//:= (version:=nVersion);
+	inGoToProd,				ackGoToProd				: ST_GoToProd			;//:= (version:=nVersion);
+	inHomeAxis,				ackHomeAxis				: ST_HomeAxis			;//:= (version:=nVersion);
+	inMoveAxisAbsolute,		ackMoveAxisAbsolute		: ST_MoveAxisAbsolute	;//:= (version:=nVersion);
+	inMoveAxisRelative,		ackMoveAxisRelative		: ST_MoveAxisRelative	;//:= (version:=nVersion);
+	inOpenShutter,			ackOpenShutter			: ST_OpenShutter		;//:= (version:=nVersion);
+	inReset,				ackReset				: ST_Reset				;//:= (version:=nVersion);
+	inTakeExposure,			ackTakeExposure			: ST_TakeExposure		;//:= (version:=nVersion);
+	inToggleSafetyCheck,	ackToggleSafetyCheck	: ST_ToggleSafetyCheck	;//:= (version:=nVersion);
 	
 	//communication OUT
 	fbOutTimer			: TON;
@@ -85,7 +85,7 @@ END_VAR
 VAR CONSTANT
 	//Will change later once motionProfile and version are decided
 	nMotionProfile		: DINT := 0;
-	nVersion			: DINT := 2;
+	//nVersion			: DINT := 2;
 	tUpdateTimer		: TIME := T#2S;
 	cMaxSpeedSafetyOFF	: LREAL := 1;
 END_VAR
@@ -126,7 +126,7 @@ ACT_StateMachine();
 //PLC to CCS
 ////////////////////////////////////////////////////////////////////
 (*Set version*)
-ACT_SetVersion();
+//ACT_SetVersion();
 
 //Shutter Status---------------------------------
 ACT_ShutterStatus();
@@ -170,7 +170,7 @@ END_IF
 eCommand := E_Commands.noCommand;
 IF F_HaveDifferentIDs(inCalibrate, ackCalibrate) THEN
 	ackCalibrate := inCalibrate;
-	IF ackCalibrate.version <> nVersion THEN
+	IF ackCalibrate.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF fbShutterSM.nSMState<>E_StatesMaint.Still THEN//AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
@@ -182,7 +182,7 @@ IF F_HaveDifferentIDs(inCalibrate, ackCalibrate) THEN
 	
 ELSIF F_HaveDifferentIDs(inChangeAxisEnable, ackChangeAxisEnable) THEN
 	ackChangeAxisEnable	:= inChangeAxisEnable;
-	IF ackChangeAxisEnable.version <> nVersion THEN
+	IF ackChangeAxisEnable.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
@@ -194,7 +194,7 @@ ELSIF F_HaveDifferentIDs(inChangeAxisEnable, ackChangeAxisEnable) THEN
 	
 ELSIF F_HaveDifferentIDs(inChangeBrakeState, ackChangeBrakeState) THEN
 	ackChangeBrakeState	:= inChangeBrakeState;
-	IF ackChangeBrakeState.version <> nVersion THEN
+	IF ackChangeBrakeState.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
@@ -206,7 +206,7 @@ ELSIF F_HaveDifferentIDs(inChangeBrakeState, ackChangeBrakeState) THEN
 	
 ELSIF F_HaveDifferentIDs(inClearAllFaults, ackClearAllFaults) THEN
 	ackClearAllFaults := inClearAllFaults;
-	IF ackClearAllFaults.version <> nVersion THEN
+	IF ackClearAllFaults.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
@@ -218,7 +218,7 @@ ELSIF F_HaveDifferentIDs(inClearAllFaults, ackClearAllFaults) THEN
 	
 ELSIF F_HaveDifferentIDs(inClearAxisFaults, ackClearAxisFaults) THEN
 	ackClearAxisFaults 	:= inClearAxisFaults;
-	IF ackClearAxisFaults.version <> nVersion THEN
+	IF ackClearAxisFaults.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
@@ -230,7 +230,7 @@ ELSIF F_HaveDifferentIDs(inClearAxisFaults, ackClearAxisFaults) THEN
 	
 ELSIF F_HaveDifferentIDs(inCloseShutter, ackCloseShutter) THEN
 	ackCloseShutter 	:= inCloseShutter;
-	IF ackCloseShutter.version <> nVersion THEN
+	IF ackCloseShutter.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF fbShutterSM.nSMState <> E_StatesProd.Opened THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
@@ -242,7 +242,7 @@ ELSIF F_HaveDifferentIDs(inCloseShutter, ackCloseShutter) THEN
 	
 ELSIF F_HaveDifferentIDs(inDisableAllAxes, ackDisableAllAxes) THEN
 	ackDisableAllAxes :=  inDisableAllAxes;
-	IF ackDisableAllAxes.version <> nVersion THEN
+	IF ackDisableAllAxes.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
@@ -254,7 +254,7 @@ ELSIF F_HaveDifferentIDs(inDisableAllAxes, ackDisableAllAxes) THEN
 	
 ELSIF F_HaveDifferentIDs( inEnableAllAxes, ackEnableAllAxes) THEN
 	ackEnableAllAxes :=  inEnableAllAxes;
-	IF ackEnableAllAxes.version <> nVersion THEN
+	IF ackEnableAllAxes.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
@@ -266,7 +266,7 @@ ELSIF F_HaveDifferentIDs( inEnableAllAxes, ackEnableAllAxes) THEN
 	
 ELSIF F_HaveDifferentIDs( inGoToProd, ackGoToProd) THEN
 	ackGoToProd :=  inGoToProd;
-	IF ackGoToProd.version <> nVersion THEN
+	IF ackGoToProd.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
@@ -278,7 +278,7 @@ ELSIF F_HaveDifferentIDs( inGoToProd, ackGoToProd) THEN
 	
 ELSIF F_HaveDifferentIDs( inHomeAxis, ackHomeAxis) THEN
 	ackHomeAxis :=  inHomeAxis;
-	IF ackHomeAxis.version <> nVersion THEN
+	IF ackHomeAxis.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
@@ -290,7 +290,7 @@ ELSIF F_HaveDifferentIDs( inHomeAxis, ackHomeAxis) THEN
 	
 ELSIF F_HaveDifferentIDs( inMoveAxisAbsolute, ackMoveAxisAbsolute) THEN
 	ackMoveAxisAbsolute :=  inMoveAxisAbsolute;	
-	IF ackMoveAxisAbsolute.version <> nVersion THEN
+	IF ackMoveAxisAbsolute.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
@@ -302,7 +302,7 @@ ELSIF F_HaveDifferentIDs( inMoveAxisAbsolute, ackMoveAxisAbsolute) THEN
 	
 ELSIF F_HaveDifferentIDs( inMoveAxisRelative, ackMoveAxisRelative) THEN
 	ackMoveAxisRelative := inMoveAxisRelative;	
-	IF ackMoveAxisRelative.version <> nVersion THEN
+	IF ackMoveAxisRelative.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
@@ -314,7 +314,7 @@ ELSIF F_HaveDifferentIDs( inMoveAxisRelative, ackMoveAxisRelative) THEN
 	
 ELSIF F_HaveDifferentIDs(inOpenShutter, ackOpenShutter) THEN
 	ackOpenShutter := inOpenShutter;
-	IF ackOpenShutter.version <> nVersion THEN
+	IF ackOpenShutter.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF fbShutterSM.nSMState <> E_StatesProd.Closed THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
@@ -326,7 +326,7 @@ ELSIF F_HaveDifferentIDs(inOpenShutter, ackOpenShutter) THEN
 	
 ELSIF F_HaveDifferentIDs(inReset, ackReset) THEN
 	ackReset := inReset;	
-	IF ackReset.version <> nVersion THEN
+	IF ackReset.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF NOT bAuxElxPermit THEN
@@ -338,7 +338,7 @@ ELSIF F_HaveDifferentIDs(inReset, ackReset) THEN
 	
 ELSIF F_HaveDifferentIDs(inTakeExposure, ackTakeExposure) THEN
 	ackTakeExposure := inTakeExposure;	
-	IF ackTakeExposure.version <> nVersion THEN
+	IF ackTakeExposure.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF fbShutterSM.nSMState <> E_StatesProd.Closed THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
@@ -350,7 +350,7 @@ ELSIF F_HaveDifferentIDs(inTakeExposure, ackTakeExposure) THEN
 	
 ELSIF F_HaveDifferentIDs(inToggleSafetyCheck, ackToggleSafetyCheck) THEN
 	ackToggleSafetyCheck := inToggleSafetyCheck;	
-	IF ackToggleSafetyCheck.version <> nVersion THEN
+	IF ackToggleSafetyCheck.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN
@@ -426,14 +426,14 @@ END_IF]]></ST>
         <ST><![CDATA[(*Set version*)
 IF NOT bVersionSet THEN
 	bVersionSet 				:= TRUE;
-	outShutterStatus.version 	:= nVersion;
-	outDisable.version 			:= nVersion;
-	outEnable.version 			:= nVersion;
-	outError.version 			:= nVersion;
-	outIgnored.version 			:= nVersion;
-	outTimer.version 			:= nVersion;
-	outCalibDone.version 		:= nVersion;
-	outMotionDone.version		:= nVersion;
+	outShutterStatus.version 	:= GVL.nVersion;
+	outDisable.version 			:= GVL.nVersion;
+	outEnable.version 			:= GVL.nVersion;
+	outError.version 			:= GVL.nVersion;
+	outIgnored.version 			:= GVL.nVersion;
+	outTimer.version 			:= GVL.nVersion;
+	outCalibDone.version 		:= GVL.nVersion;
+	outMotionDone.version		:= GVL.nVersion;
 END_IF]]></ST>
       </Implementation>
     </Action>

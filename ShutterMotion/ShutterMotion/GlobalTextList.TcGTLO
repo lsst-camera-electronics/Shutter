@@ -1,10 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
   <GlobalTextList Name="GlobalTextList" Id="{8bfaf04f-6206-4060-9e10-5ffa58a3a22b}">
     <XmlArchive>
       <Data>
         <o xml:space="preserve" t="GlobalTextListObject">
           <l n="TextList" t="ArrayList" cet="TextListRow">
+            <o>
+              <v n="TextID">"879"</v>
+              <v n="TextDefault">"                Low Limits                                                High Limits"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"769"</v>
+              <v n="TextDefault">"             Low Limits                                                High Limits"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"522"</v>
+              <v n="TextDefault">"           Low Limits                                                High Limits"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"74"</v>
+              <v n="TextDefault">"           Low Limits                                               High Limits"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
             <o>
               <v n="TextID">"9"</v>
               <v n="TextDefault">"%7.1f"</v>
@@ -173,6 +193,16 @@
             <o>
               <v n="TextID">"47"</v>
               <v n="TextDefault">"Init"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"311"</v>
+              <v n="TextDefault">"Low Limits                                                High Limits"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"588"</v>
+              <v n="TextDefault">"Low Limits                                            High Limits"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>

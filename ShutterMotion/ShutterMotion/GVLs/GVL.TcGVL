@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
   <GVL Name="GVL" Id="{543590d2-21dc-426c-bb1c-cff8b9e02654}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 VAR_GLOBAL CONSTANT
@@ -50,6 +50,8 @@ VAR_GLOBAL CONSTANT
 	cXP : INT := 0;
 	cXM : INT := 1;
 	
+	//Shutter version
+	nVersion		: DINT := 2;
 	
 END_VAR
 VAR_GLOBAL
