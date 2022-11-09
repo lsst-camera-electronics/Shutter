@@ -1,5 +1,5 @@
-<?xml version="1.0"?>
-<TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.10" ClassName="CNestedPlcProjDef">
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmItem" TcSmVersion="1.0" TcVersion="3.1.4022.36" ClassName="CNestedPlcProjDef">
 	<DataTypes>
 		<DataType>
 			<Name GUID="{CBC83B73-B816-4597-A9E5-2B03263CA131}" Namespace="MC" TcBaseType="true" HideType="true" IecDeclaration="DWORD;">NCTOPLC_AXIS_REF_STATE</Name>
@@ -212,7 +212,7 @@
 			</Relations>
 		</DataType>
 		<DataType>
-			<Name GUID="{6EF49753-C72C-4F50-AA44-3C7498E76CFE}" Namespace="MC" TcBaseType="true" HideType="true" IecDeclaration="DWORD;">NCTOPLC_AXIS_REF_OPMODE</Name>
+			<Name GUID="{6BDEED54-7268-405F-A18B-665A0AE0FEE9}" Namespace="MC" TcBaseType="true" HideType="true" IecDeclaration="DWORD;">NCTOPLC_AXIS_REF_OPMODE</Name>
 			<BitSize>32</BitSize>
 			<SubItem>
 				<Name>OpModePosAreaMonitoring</Name>
@@ -267,6 +267,18 @@
 				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
 				<BitSize>1</BitSize>
 				<BitOffs>8</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModeStopMonitoring</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>12</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModeOutputSmoothingFilter</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>13</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>OpModePosLagMonitoring</Name>
@@ -362,6 +374,56 @@
 			</Format>
 		</DataType>
 		<DataType>
+			<Name GUID="{F7B9FC50-054E-4547-B468-83A9E72D8064}" Namespace="MC" TcBaseType="true" HideType="true">NCTOPLC_AXIS_REF_STATE3_FLAGS</Name>
+			<BitSize>32</BitSize>
+			<SubItem>
+				<Name>TouchProbe1InputState</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>TouchProbe2InputState</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>1</BitOffs>
+			</SubItem>
+			<Format Name="Short">
+				<Printf>%08x</Printf>
+			</Format>
+			<Format Name="Cpp">
+				<Printf>0x%08x</Printf>
+			</Format>
+			<Format Name="IEC">
+				<Printf>16#%08X</Printf>
+			</Format>
+		</DataType>
+		<DataType>
+			<Name GUID="{60E203BA-3CEE-4BB0-8728-643B1F529592}" Namespace="MC" TcBaseType="true" HideType="true">NCTOPLC_AXIS_REF_STATE3</Name>
+			<BitSize>32</BitSize>
+			<SubItem>
+				<Name>Value</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000007}">DWORD</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>Flags</Name>
+				<Type GUID="{F7B9FC50-054E-4547-B468-83A9E72D8064}" Namespace="MC">NCTOPLC_AXIS_REF_STATE3_FLAGS</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<Format Name="Short">
+				<Printf>%08x</Printf>
+			</Format>
+			<Format Name="Cpp">
+				<Printf>0x%08x</Printf>
+			</Format>
+			<Format Name="IEC">
+				<Printf>16#%08X</Printf>
+			</Format>
+		</DataType>
+		<DataType>
 			<Name GUID="{BA9D9D0F-1A4A-4A27-A19F-3032626A8491}" Namespace="MC" TcBaseType="true" HideType="true">NCTOPLC_AXIS_REF_CAMCOUPLINGSTATE</Name>
 			<BitSize>8</BitSize>
 			<SubItem>
@@ -405,7 +467,7 @@
 			</ArrayInfo>
 		</DataType>
 		<DataType>
-			<Name GUID="{72F5AAAA-16DF-4ED3-8367-F6C8C3ADAE99}" Namespace="MC" TcBaseType="true">NCTOPLC_AXIS_REF</Name>
+			<Name GUID="{10036166-C9D3-404B-BDD3-323034AAA7F4}" Namespace="MC" TcBaseType="true">NCTOPLC_AXIS_REF</Name>
 			<BitSize>2048</BitSize>
 			<SubItem>
 				<Name>StateDWord</Name>
@@ -422,7 +484,8 @@
 			<SubItem>
 				<Name>AxisState</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<Comment><![CDATA[Present State Of The Axis Movement (continuous axis):
+				<Comment>
+					<![CDATA[Present State Of The Axis Movement (continuous axis):
 0  = INACTIVE:		axis has no job
 1  = RUNNING:		axis is executing a motion job
 2  = OVERRIDE_ZERO:	axis is executing a job but override is zero
@@ -436,7 +499,8 @@ Slaves only:
 External Setpoint Generation:
 41 = EXTSETGEN_MODE1:	external setpoint generation active
 42 = EXTSETGEN_MODE2:	internal and external setpoint gen. active
-]]></Comment>
+]]>
+				</Comment>
 				<BitSize>32</BitSize>
 				<BitOffs>64</BitOffs>
 			</SubItem>
@@ -449,7 +513,8 @@ External Setpoint Generation:
 			<SubItem>
 				<Name>HomingState</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<Comment><![CDATA[Axis Homing Status:
+				<Comment>
+					<![CDATA[Axis Homing Status:
 0: idle
 1: start homing
 2: searching home switch
@@ -457,19 +522,22 @@ External Setpoint Generation:
 4: moving off home switch
 5: searching sync pulse
 6: stopping after homing
-]]></Comment>
+]]>
+				</Comment>
 				<BitSize>32</BitSize>
 				<BitOffs>128</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>CoupleState</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<Comment><![CDATA[Axis Coupling Status:
+				<Comment>
+					<![CDATA[Axis Coupling Status:
 0: axis is a single axis (not coupled)
 1: axis is a master axis
 2: axis is master and slave
 3: axis is a slave axis
-]]></Comment>
+]]>
+				</Comment>
 				<BitSize>32</BitSize>
 				<BitOffs>160</BitOffs>
 			</SubItem>
@@ -493,7 +561,7 @@ External Setpoint Generation:
 			</SubItem>
 			<SubItem>
 				<Name>OpModeDWord</Name>
-				<Type GUID="{6EF49753-C72C-4F50-AA44-3C7498E76CFE}" Namespace="MC">NCTOPLC_AXIS_REF_OPMODE</Type>
+				<Type GUID="{6BDEED54-7268-405F-A18B-665A0AE0FEE9}" Namespace="MC">NCTOPLC_AXIS_REF_OPMODE</Type>
 				<BitSize>32</BitSize>
 				<BitOffs>288</BitOffs>
 			</SubItem>
@@ -613,7 +681,7 @@ External Setpoint Generation:
 			</SubItem>
 			<SubItem>
 				<Name>StateDWord3</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000007}">DWORD</Type>
+				<Type GUID="{60E203BA-3CEE-4BB0-8728-643B1F529592}" Namespace="MC">NCTOPLC_AXIS_REF_STATE3</Type>
 				<BitSize>32</BitSize>
 				<BitOffs>1248</BitOffs>
 			</SubItem>
@@ -707,16 +775,19 @@ External Setpoint Generation:
 					<Type GUID="{F794B740-82D7-4637-848E-4F74A711D038}">NCAXLESTRUCT_TOPLC4</Type>
 				</Relation>
 				<Relation Priority="100">
-					<Type GUID="{40BD39B0-C3EA-4F74-9F4F-5F1982786F7C}"></Type>
+					<Type GUID="{40BD39B0-C3EA-4F74-9F4F-5F1982786F7C}"/>
 				</Relation>
 				<Relation Priority="100">
-					<Type GUID="{40BD39B2-C3EA-4F74-9F4F-5F1982786F7C}"></Type>
+					<Type GUID="{40BD39B2-C3EA-4F74-9F4F-5F1982786F7C}"/>
 				</Relation>
 				<Relation Priority="100">
-					<Type GUID="{8CDE0C45-AB9D-42DB-BC94-1CF7521AB268}"></Type>
+					<Type GUID="{8CDE0C45-AB9D-42DB-BC94-1CF7521AB268}"/>
 				</Relation>
 				<Relation Priority="100">
-					<Type GUID="{6A65C767-34E5-42BF-AD87-E1A503EAC7BE}"></Type>
+					<Type GUID="{6A65C767-34E5-42BF-AD87-E1A503EAC7BE}"/>
+				</Relation>
+				<Relation Priority="100">
+					<Type GUID="{72F5AAAA-16DF-4ED3-8367-F6C8C3ADAE99}"/>
 				</Relation>
 			</Relations>
 		</DataType>
@@ -961,40 +1032,142 @@ External Setpoint Generation:
 				<Name>PlcTaskMain Inputs</Name>
 				<Var>
 					<Name>MAIN.bAuxElxPermit</Name>
-					<Comment><![CDATA[external input]]></Comment>
+					<Comment>
+						<![CDATA[external input]]>
+					</Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
 					<Name>MAIN.stAxis[0].axisRef.NcToPlc</Name>
-					<Type GUID="{72F5AAAA-16DF-4ED3-8367-F6C8C3ADAE99}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
+					<Type GUID="{10036166-C9D3-404B-BDD3-323034AAA7F4}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
+					<SubVar>
+						<Name>AxisState</Name>
+						<Comment>
+							<![CDATA[Present State Of The Axis Movement (continuous axis):
+0  = INACTIVE:		axis has no job
+1  = RUNNING:		axis is executing a motion job
+2  = OVERRIDE_ZERO:	axis is executing a job but override is zero
+3  = PHASE_VELOCONST:	axis is moving at constant velocity
+4  = PHASE_ACCPOS:	axis is accelerating
+5  = PHASE_ACCNEG:	axis is decelerating
+Slaves only:
+11 = PREPHASE:		slave axis is in a motion pre-phase
+12 = SYNCHRONIZING:	slave axis is synchronizing
+13 = SYNCHRONOUS:	slave axis is moving synchronously
+External Setpoint Generation:
+41 = EXTSETGEN_MODE1:	external setpoint generation active
+42 = EXTSETGEN_MODE2:	internal and external setpoint gen. active
+]]>
+						</Comment>
+					</SubVar>
+					<SubVar>
+						<Name>HomingState</Name>
+						<Comment>
+							<![CDATA[Axis Homing Status:
+0: idle
+1: start homing
+2: searching home switch
+3: stopping on home switch
+4: moving off home switch
+5: searching sync pulse
+6: stopping after homing
+]]>
+						</Comment>
+					</SubVar>
+					<SubVar>
+						<Name>CoupleState</Name>
+						<Comment>
+							<![CDATA[Axis Coupling Status:
+0: axis is a single axis (not coupled)
+1: axis is a master axis
+2: axis is master and slave
+3: axis is a slave axis
+]]>
+						</Comment>
+					</SubVar>
 				</Var>
 				<Var>
 					<Name>MAIN.stAxis[0].bLimitHome</Name>
-					<Comment><![CDATA[ 1-at limit, 0-not at limit. Should be changed to 0-at limit, 1-not at limit to be SIL-2 compliance. Requires hardware change. ]]></Comment>
+					<Comment>
+						<![CDATA[ 1-at limit, 0-not at limit. Should be changed to 0-at limit, 1-not at limit to be SIL-2 compliance. Requires hardware change. ]]>
+					</Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
 					<Name>MAIN.stAxis[0].bLimitDeployed</Name>
-					<Comment><![CDATA[ 1-at limit, 0-not at limit. Should be changed to 0-at limit, 1-not at limit to be SIL-2 compliance. Requires hardware change. ]]></Comment>
+					<Comment>
+						<![CDATA[ 1-at limit, 0-not at limit. Should be changed to 0-at limit, 1-not at limit to be SIL-2 compliance. Requires hardware change. ]]>
+					</Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
 					<Name>MAIN.stAxis[1].axisRef.NcToPlc</Name>
-					<Type GUID="{72F5AAAA-16DF-4ED3-8367-F6C8C3ADAE99}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
+					<Type GUID="{10036166-C9D3-404B-BDD3-323034AAA7F4}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
+					<SubVar>
+						<Name>AxisState</Name>
+						<Comment>
+							<![CDATA[Present State Of The Axis Movement (continuous axis):
+0  = INACTIVE:		axis has no job
+1  = RUNNING:		axis is executing a motion job
+2  = OVERRIDE_ZERO:	axis is executing a job but override is zero
+3  = PHASE_VELOCONST:	axis is moving at constant velocity
+4  = PHASE_ACCPOS:	axis is accelerating
+5  = PHASE_ACCNEG:	axis is decelerating
+Slaves only:
+11 = PREPHASE:		slave axis is in a motion pre-phase
+12 = SYNCHRONIZING:	slave axis is synchronizing
+13 = SYNCHRONOUS:	slave axis is moving synchronously
+External Setpoint Generation:
+41 = EXTSETGEN_MODE1:	external setpoint generation active
+42 = EXTSETGEN_MODE2:	internal and external setpoint gen. active
+]]>
+						</Comment>
+					</SubVar>
+					<SubVar>
+						<Name>HomingState</Name>
+						<Comment>
+							<![CDATA[Axis Homing Status:
+0: idle
+1: start homing
+2: searching home switch
+3: stopping on home switch
+4: moving off home switch
+5: searching sync pulse
+6: stopping after homing
+]]>
+						</Comment>
+					</SubVar>
+					<SubVar>
+						<Name>CoupleState</Name>
+						<Comment>
+							<![CDATA[Axis Coupling Status:
+0: axis is a single axis (not coupled)
+1: axis is a master axis
+2: axis is master and slave
+3: axis is a slave axis
+]]>
+						</Comment>
+					</SubVar>
 				</Var>
 				<Var>
 					<Name>MAIN.stAxis[1].bLimitHome</Name>
-					<Comment><![CDATA[ 1-at limit, 0-not at limit. Should be changed to 0-at limit, 1-not at limit to be SIL-2 compliance. Requires hardware change. ]]></Comment>
+					<Comment>
+						<![CDATA[ 1-at limit, 0-not at limit. Should be changed to 0-at limit, 1-not at limit to be SIL-2 compliance. Requires hardware change. ]]>
+					</Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
 					<Name>MAIN.stAxis[1].bLimitDeployed</Name>
-					<Comment><![CDATA[ 1-at limit, 0-not at limit. Should be changed to 0-at limit, 1-not at limit to be SIL-2 compliance. Requires hardware change. ]]></Comment>
+					<Comment>
+						<![CDATA[ 1-at limit, 0-not at limit. Should be changed to 0-at limit, 1-not at limit to be SIL-2 compliance. Requires hardware change. ]]>
+					</Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
 					<Name>MAIN.fMotorTemp</Name>
-					<Comment><![CDATA[temp in 1 degree C per increment]]></Comment>
+					<Comment>
+						<![CDATA[temp in 1 degree C per increment]]>
+					</Comment>
 					<Type GUID="{11F20A4A-90D4-35C7-DB3B-0E8659E05E5D}">ARRAY [0..1] OF UINT</Type>
 				</Var>
 				<Var>
@@ -1003,12 +1176,16 @@ External Setpoint Generation:
 				</Var>
 				<Var>
 					<Name>MAIN.fbPower.Vraw</Name>
-					<Comment><![CDATA[Power variable]]></Comment>
+					<Comment>
+						<![CDATA[Power variable]]>
+					</Comment>
 					<Type GUID="{59CB7A65-AEAB-E588-EB2A-AFE112B8A9C4}">ARRAY [0..5] OF DINT</Type>
 				</Var>
 				<Var>
 					<Name>GVL.nInputEventTime</Name>
-					<Comment><![CDATA[unit in nanosecond ]]></Comment>
+					<Comment>
+						<![CDATA[unit in nanosecond ]]>
+					</Comment>
 					<Type GUID="{1F02D6B8-A7D2-F43A-E709-30725419E97A}">ARRAY [0..14] OF UDINT</Type>
 				</Var>
 				<Var>
@@ -1032,7 +1209,9 @@ External Setpoint Generation:
 				</Var>
 				<Var>
 					<Name>MAIN.stAxis[0].bBrake</Name>
-					<Comment><![CDATA[ 1-Brake disengaged, 0-Brake engaged ]]></Comment>
+					<Comment>
+						<![CDATA[ 1-Brake disengaged, 0-Brake engaged ]]>
+					</Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
@@ -1041,7 +1220,9 @@ External Setpoint Generation:
 				</Var>
 				<Var>
 					<Name>MAIN.stAxis[1].bBrake</Name>
-					<Comment><![CDATA[ 1-Brake disengaged, 0-Brake engaged ]]></Comment>
+					<Comment>
+						<![CDATA[ 1-Brake disengaged, 0-Brake engaged ]]>
+					</Comment>
 					<Type>BOOL</Type>
 				</Var>
 			</Vars>
@@ -1181,17 +1362,6 @@ External Setpoint Generation:
 					</OwnerB>
 				</OwnerA>
 			</UnrestoredVarLinks>
-			<Contexts>
-				<Context>
-					<Id NeedCalleeCall="true">0</Id>
-					<Name>PlcTaskMain</Name>
-					<ManualConfig>
-						<OTCID>#x02010140</OTCID>
-					</ManualConfig>
-					<Priority>20</Priority>
-					<CycleTime>500000</CycleTime>
-				</Context>
-			</Contexts>
 			<TaskPouOids>
 				<TaskPouOid Prio="20" OTCID="#x08502001"/>
 			</TaskPouOids>
@@ -1201,23 +1371,23 @@ External Setpoint Generation:
 		<OwnerA Name="ShutterMotion Instance">
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-00 (EL7047)">
 				<Link VarA="PlcTaskMain Inputs^MAIN.fMotorTemp[0]" VarB="STM Synchron info data^Info data 1" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[0].bLimitDeployed" VarB="STM Status^Status^Digital input 2" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[0].bLimitHome" VarB="STM Status^Status^Digital input 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[0].bLimitDeployed" VarB="STM Status^Status^Digital input 2" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[0].bLimitHome" VarB="STM Status^Status^Digital input 1" AutoLink="true"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-01 (EL7047)">
 				<Link VarA="PlcTaskMain Inputs^MAIN.fMotorTemp[1]" VarB="STM Synchron info data^Info data 1" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].bLimitDeployed" VarB="STM Status^Status^Digital input 2" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].bLimitHome" VarB="STM Status^Status^Digital input 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].bLimitDeployed" VarB="STM Status^Status^Digital input 2" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].bLimitHome" VarB="STM Status^Status^Digital input 1" AutoLink="true"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)">
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[0]" VarB="MTI Inputs 2x Channel 1^Inputs^Input event state 1" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[1]" VarB="MTI Inputs 2x Channel 2^Inputs^Input event state 1" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[2]" VarB="MTI Inputs 2x Channel 3^Inputs^Input event state 1" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[3]" VarB="MTI Inputs 2x Channel 4^Inputs^Input event state 1" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[4]" VarB="MTI Inputs 2x Channel 5^Inputs^Input event state 1" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[5]" VarB="MTI Inputs 2x Channel 6^Inputs^Input event state 1" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[6]" VarB="MTI Inputs 2x Channel 7^Inputs^Input event state 1" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[7]" VarB="MTI Inputs 2x Channel 8^Inputs^Input event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[0]" VarB="MTI Inputs 2x Channel 1^Inputs^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[1]" VarB="MTI Inputs 2x Channel 2^Inputs^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[2]" VarB="MTI Inputs 2x Channel 3^Inputs^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[3]" VarB="MTI Inputs 2x Channel 4^Inputs^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[4]" VarB="MTI Inputs 2x Channel 5^Inputs^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[5]" VarB="MTI Inputs 2x Channel 6^Inputs^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[6]" VarB="MTI Inputs 2x Channel 7^Inputs^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[7]" VarB="MTI Inputs 2x Channel 8^Inputs^Input event state 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[0]" VarB="MTI Inputs 2x Channel 1^Input event time 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[1]" VarB="MTI Inputs 2x Channel 2^Input event time 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[2]" VarB="MTI Inputs 2x Channel 3^Input event time 1" AutoLink="true"/>
@@ -1236,13 +1406,13 @@ External Setpoint Generation:
 				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[7]" VarB="MTI Inputs 2x Channel 8^Status^No of input events" AutoLink="true"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)">
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[10]" VarB="MTI Inputs 2x Channel 3^Inputs^Input event state 1" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[11]" VarB="MTI Inputs 2x Channel 4^Inputs^Input event state 1" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[12]" VarB="MTI Inputs 2x Channel 5^Inputs^Input event state 1" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[13]" VarB="MTI Inputs 2x Channel 6^Inputs^Input event state 1" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[14]" VarB="MTI Inputs 2x Channel 7^Inputs^Input event state 1" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[8]" VarB="MTI Inputs 2x Channel 1^Inputs^Input event state 1" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[9]" VarB="MTI Inputs 2x Channel 2^Inputs^Input event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[10]" VarB="MTI Inputs 2x Channel 3^Inputs^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[11]" VarB="MTI Inputs 2x Channel 4^Inputs^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[12]" VarB="MTI Inputs 2x Channel 5^Inputs^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[13]" VarB="MTI Inputs 2x Channel 6^Inputs^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[14]" VarB="MTI Inputs 2x Channel 7^Inputs^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[8]" VarB="MTI Inputs 2x Channel 1^Inputs^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[9]" VarB="MTI Inputs 2x Channel 2^Inputs^Input event state 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[10]" VarB="MTI Inputs 2x Channel 3^Input event time 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[11]" VarB="MTI Inputs 2x Channel 4^Input event time 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[12]" VarB="MTI Inputs 2x Channel 5^Input event time 1" AutoLink="true"/>
@@ -1257,12 +1427,12 @@ External Setpoint Generation:
 				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[14]" VarB="MTI Inputs 2x Channel 7^Status^No of input events" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[8]" VarB="MTI Inputs 2x Channel 1^Status^No of input events" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[9]" VarB="MTI Inputs 2x Channel 2^Status^No of input events" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^MAIN.bAuxElxPermit" VarB="MTI Inputs 2x Channel 8^Status^Input state" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Outputs^MAIN.bFesPermit" VarB="MTO Outputs 2x Channel 1^Outputs^Output event state 1" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Inputs^MAIN.bAuxElxPermit" VarB="MTI Inputs 2x Channel 8^Status^Input state" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Outputs^MAIN.bFesPermit" VarB="MTO Outputs 2x Channel 1^Outputs^Output event state 1" AutoLink="true"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MRE-01 (EL2622)">
-				<Link VarA="PlcTaskMain Outputs^MAIN.stAxis[0].bBrake" VarB="Channel 1^Output" AutoLink="true" Size="1"/>
-				<Link VarA="PlcTaskMain Outputs^MAIN.stAxis[1].bBrake" VarB="Channel 2^Output" AutoLink="true" Size="1"/>
+				<Link VarA="PlcTaskMain Outputs^MAIN.stAxis[0].bBrake" VarB="Channel 1^Output" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Outputs^MAIN.stAxis[1].bBrake" VarB="Channel 2^Output" AutoLink="true"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MTC-00 (EL3214)">
 				<Link VarA="PlcTaskMain Inputs^MAIN.fRtdTemp[0]" VarB="RTD Inputs Channel 1^Value" AutoLink="true"/>
