@@ -21,7 +21,8 @@ VAR
 	stTrackTemp		: ST_TRACK;
 	bGoNextSeq		: BOOL;
 	nAxisID			: INT;
-	tTimeEnd		: T_DCTIME64;
+	tCycleStart		: T_DCTIME64;  // Ext time of the start of the current cycle.
+	tCycleEnd		: T_DCTIME64;  // Ext time of the end of the current cycle.
 	nMask			: ULINT := 16#FFFF_FFFF_0000_0000;
 	
 	//used in determining target duration
@@ -125,6 +126,12 @@ IF (stAxis[GVL.cXM].axisRef.Status.Moving AND stAxis[GVL.cXP].axisRef.Status.InT
 ELSIF (stAxis[GVL.cXP].axisRef.Status.Moving AND stAxis[GVL.cXM].axisRef.Status.InTargetPosition) THEN
 	nLastMoved:=GVL.cXP;
 END_IF
+(* Call this function block to process any updated information about blade set motion and send updates to CCS if required. *)
+
+tCycleStart := F_CycleStartTime();
+tCycleEnd := F_CycleEndTime();
+
+////////// Handle the completion of a blade set motion. //////////
 IF bMotionDone THEN
 	//use for determining which blade set has finished during a travelling slit motion
 	IF (stAxis[GVL.cXM].axisRef.Status.Moving AND stAxis[GVL.cXP].axisRef.Status.InTargetPosition) THEN
@@ -138,33 +145,38 @@ IF bMotionDone THEN
 	IF ((NOT stAxis[GVL.cXP].axisRef.Status.Moving) AND (NOT stAxis[GVL.cXM].axisRef.Status.Moving)) THEN
 		bInMotion := FALSE;
 	END_IF
+	// Fill in a MotionDome message for CCS.
 	nSequence := nSequence+1;
-	tTimeEnd := F_GetCurDcTaskTime64();
-	stMotionDone[nAxisID].actualDur := ULINT_TO_LTIME(tTimeEnd-stMotionDone[nAxisID].startTime);
+	// The motor controller doesn't report exactly when motion was completed, so we assume that it was when the process data
+	// from the controller reached us, i.e., at the start of the current cycle.
+	stMotionDone[nAxisID].actualDur := ULINT_TO_LTIME(tCycleStart - stMotionDone[nAxisID].startTime);
 	stMotionDone[nAxisID].targetDur := tTargetDur;
 	stMotionDone[nAxisID].targetPos := stAxis[nAxisID].axisRef.NcToPlc.TargetPos;
 	stMotionDone[nAxisID].endPos := stAxis[nAxisID].axisRef.NcToPlc.ActPos;
 	
 	stOutMotionDone:=stMotionDone[nAxisID];
-	stOutMotionDone.sequence:=nSequence;
+	stOutMotionDone.sequence:=nSequence;  // Ensure message gets sent to CCS by making sure that at least one field has a changed value.
 END_IF
 
 
-//Detect hall switch transitions
+////////// Collect information on any Hall switch transitions from the time-stamping ADCs. //////////
+// The time stamps recorded are DC time, so must eventually be converted to ext time. Actually, only the lower 32 bits of DC time are recorded, making
+// it necessary to correct for possible rollover of those lower 32 bits during the time that the blade set was moving. In order to correct for this,
+// we first naively add the upper 32 bits of the DC time of the start of the cycle. We know that all the transitions we see now must have
+// occurred before the start of the current cycle, so if the naively corrected DC time is later than that we we subtract one from the upper
+// 32 bits. This works only if at most one rollover can occur during a motion which limits us to motions that take less than 2^32 nanoseconds, or
+// about 4.29 seconds.
+//
+// nNumOfINputs[i] is linked to the event count for the ADC channel assigned to Hall sensor i.
+// bInputEventState[i] is linked to the current ADC channel state for Hall sensor i.
+// nInputEventTime[i] is linked to the first transition timestamp for Hall sensor i. We assume there is at most one.
 FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
-	fbRtrig[i](CLK:=GVL.nNumOfInputs[i].0);
+	fbRtrig[i](CLK:=GVL.nNumOfInputs[i].0);  // Look for a rising edge in channel status, which means we have a transition timestamp.
 	IF fbRtrig[i].Q THEN
 		//identifies which hall switch tripped
 		stTrack[nTPC].nSeqToCompare := INT_TO_WORD((i*10)+5);
 		stTrack[nTPC].bEdgeToCompare := GVL.bInputEventState[i];
 		stTrack[nTPC].nHallID := i;
-		(*
-			The time-stamping module only keeps track of the lower 32-bit time (about 4.29 seconds).
-			To get the actual 64-bit time, add the acquired 32-bit time to the upper 32 bit of the DC time. 
-			Check to see if the event time has overflowed by comparing appended time with current DC task time. 
-			If appeneded time is greater than dc task time, then the 32-bit clock has overflowed.
-			Decrement the 33rd bit of the appended time by 1 to get the correct time.
-		*)
 		stTrack[nTPC].tScanTime := (F_GetCurDcTaskTime64() AND nMask) + GVL.nInputEventTime[stTrack[nTPC].nHallID];
 		IF stTrack[nTPC].tScanTime > F_GetCurDcTaskTime64() THEN
 			stTrack[nTPC].tScanTIME := stTrack[nTPC].tScanTime - 16#1_0000_0000;
@@ -474,150 +486,5 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 END_IF]]></ST>
       </Implementation>
     </Action>
-    <LineIds Name="FB_Tracking">
-      <LineId Id="1927" Count="1" />
-      <LineId Id="1932" Count="2" />
-      <LineId Id="2414" Count="0" />
-      <LineId Id="2806" Count="0" />
-      <LineId Id="2805" Count="0" />
-      <LineId Id="2419" Count="0" />
-      <LineId Id="1935" Count="0" />
-      <LineId Id="2807" Count="0" />
-      <LineId Id="1936" Count="22" />
-      <LineId Id="2593" Count="0" />
-      <LineId Id="2659" Count="8" />
-      <LineId Id="2620" Count="6" />
-      <LineId Id="2632" Count="0" />
-      <LineId Id="2634" Count="0" />
-      <LineId Id="2641" Count="0" />
-      <LineId Id="2649" Count="0" />
-      <LineId Id="2597" Count="0" />
-      <LineId Id="2493" Count="0" />
-      <LineId Id="2486" Count="4" />
-      <LineId Id="1959" Count="0" />
-      <LineId Id="2481" Count="0" />
-      <LineId Id="2474" Count="1" />
-      <LineId Id="2477" Count="1" />
-      <LineId Id="2491" Count="1" />
-      <LineId Id="2476" Count="0" />
-      <LineId Id="2480" Count="0" />
-      <LineId Id="2541" Count="0" />
-      <LineId Id="1965" Count="0" />
-      <LineId Id="2542" Count="0" />
-      <LineId Id="1966" Count="5" />
-      <LineId Id="1974" Count="5" />
-      <LineId Id="2252" Count="0" />
-      <LineId Id="2255" Count="5" />
-      <LineId Id="2398" Count="0" />
-      <LineId Id="2291" Count="0" />
-      <LineId Id="2294" Count="0" />
-      <LineId Id="2298" Count="0" />
-      <LineId Id="2293" Count="0" />
-      <LineId Id="2297" Count="0" />
-      <LineId Id="2300" Count="0" />
-      <LineId Id="2292" Count="0" />
-      <LineId Id="2299" Count="0" />
-      <LineId Id="2287" Count="0" />
-      <LineId Id="2289" Count="0" />
-      <LineId Id="2724" Count="0" />
-      <LineId Id="2325" Count="1" />
-      <LineId Id="2391" Count="0" />
-      <LineId Id="2271" Count="0" />
-      <LineId Id="2336" Count="0" />
-      <LineId Id="2328" Count="1" />
-      <LineId Id="2331" Count="0" />
-      <LineId Id="2333" Count="1" />
-      <LineId Id="2726" Count="0" />
-      <LineId Id="2330" Count="0" />
-      <LineId Id="2272" Count="0" />
-      <LineId Id="2727" Count="1" />
-      <LineId Id="2273" Count="0" />
-      <LineId Id="2421" Count="1" />
-      <LineId Id="2424" Count="1" />
-      <LineId Id="2404" Count="0" />
-      <LineId Id="2302" Count="0" />
-      <LineId Id="2382" Count="0" />
-      <LineId Id="2417" Count="0" />
-      <LineId Id="2304" Count="0" />
-      <LineId Id="2407" Count="2" />
-      <LineId Id="2720" Count="0" />
-      <LineId Id="2722" Count="0" />
-      <LineId Id="2698" Count="1" />
-      <LineId Id="2712" Count="0" />
-      <LineId Id="2716" Count="0" />
-      <LineId Id="2700" Count="0" />
-      <LineId Id="2681" Count="0" />
-      <LineId Id="2701" Count="0" />
-      <LineId Id="2713" Count="0" />
-      <LineId Id="2717" Count="0" />
-      <LineId Id="2702" Count="2" />
-      <LineId Id="2714" Count="0" />
-      <LineId Id="2718" Count="0" />
-      <LineId Id="2705" Count="2" />
-      <LineId Id="2715" Count="0" />
-      <LineId Id="2719" Count="0" />
-      <LineId Id="2708" Count="0" />
-      <LineId Id="2274" Count="0" />
-      <LineId Id="2814" Count="0" />
-      <LineId Id="2721" Count="0" />
-      <LineId Id="2276" Count="5" />
-      <LineId Id="2674" Count="0" />
-      <LineId Id="2742" Count="0" />
-      <LineId Id="2004" Count="1" />
-      <LineId Id="2225" Count="0" />
-      <LineId Id="2221" Count="0" />
-      <LineId Id="2008" Count="0" />
-      <LineId Id="2427" Count="0" />
-      <LineId Id="2235" Count="0" />
-      <LineId Id="2237" Count="0" />
-      <LineId Id="2428" Count="0" />
-      <LineId Id="2238" Count="2" />
-      <LineId Id="2236" Count="0" />
-      <LineId Id="2343" Count="0" />
-      <LineId Id="2811" Count="0" />
-      <LineId Id="2117" Count="0" />
-      <LineId Id="1907" Count="0" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Tracking.ACT_TrackingDoubleNegative">
-      <LineId Id="2" Count="0" />
-      <LineId Id="27" Count="7" />
-      <LineId Id="104" Count="0" />
-      <LineId Id="35" Count="2" />
-      <LineId Id="39" Count="15" />
-      <LineId Id="79" Count="7" />
-      <LineId Id="105" Count="0" />
-      <LineId Id="87" Count="2" />
-      <LineId Id="91" Count="12" />
-      <LineId Id="1" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Tracking.ACT_TrackingDoublePositive">
-      <LineId Id="54" Count="8" />
-      <LineId Id="154" Count="0" />
-      <LineId Id="63" Count="2" />
-      <LineId Id="67" Count="11" />
-      <LineId Id="103" Count="0" />
-      <LineId Id="125" Count="10" />
-      <LineId Id="155" Count="0" />
-      <LineId Id="136" Count="2" />
-      <LineId Id="140" Count="13" />
-      <LineId Id="1" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Tracking.ACT_TrackingSingle">
-      <LineId Id="2" Count="8" />
-      <LineId Id="104" Count="0" />
-      <LineId Id="11" Count="2" />
-      <LineId Id="15" Count="19" />
-      <LineId Id="105" Count="0" />
-      <LineId Id="35" Count="2" />
-      <LineId Id="39" Count="23" />
-      <LineId Id="106" Count="0" />
-      <LineId Id="63" Count="2" />
-      <LineId Id="67" Count="19" />
-      <LineId Id="107" Count="0" />
-      <LineId Id="87" Count="2" />
-      <LineId Id="91" Count="12" />
-      <LineId Id="1" Count="0" />
-    </LineIds>
   </POU>
 </TcPlcObject>

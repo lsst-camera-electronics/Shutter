@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <GVL Name="GVL" Id="{543590d2-21dc-426c-bb1c-cff8b9e02654}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 VAR_GLOBAL CONSTANT
@@ -117,6 +117,10 @@ VAR_GLOBAL
 	
 	//TestVariable
 	fbWritePersistentData	: WritePersistentData;
+	
+	// The offset from DC time to external time.
+	// This remains constant between restarts of the system.
+	DcToExt AT %I*: T_DCTIME64;
 
 END_VAR
 

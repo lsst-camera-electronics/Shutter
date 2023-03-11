@@ -846,6 +846,17 @@ External Setpoint Generation:
 			</ArrayInfo>
 		</DataType>
 		<DataType>
+			<Name GUID="{C3E9C9FA-A772-4888-A673-3D951ACA54AF}" Namespace="Tc2_EtherCAT" AutoDeleteType="true">T_DCTIME64</Name>
+			<BitSize>64</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-00000000000B}">ULINT</BaseType>
+			<Properties>
+				<Property>
+					<Name>TcDisplayTypeGUID</Name>
+					<Value>18071995-0000-0000-0000-000000000047</Value>
+				</Property>
+			</Properties>
+		</DataType>
+		<DataType>
 			<Name GUID="{875D2B22-B7EB-497E-B933-0C004593CCF3}" Namespace="MC" TcBaseType="true" HideType="true" IecDeclaration="DWORD;">PLCTONC_AXIS_REF_CTRL</Name>
 			<BitSize>32</BitSize>
 			<SubItem>
@@ -1196,6 +1207,14 @@ External Setpoint Generation:
 					<Name>GVL.bInputEventState</Name>
 					<Type GUID="{1F02D6B8-A7D2-F43A-E709-30725419E942}">ARRAY [0..14] OF BOOL</Type>
 				</Var>
+				<Var>
+					<Name>GVL.DcToExt</Name>
+					<Comment>
+						<![CDATA[ The offset from DC time to external time.
+ This remains constant between restarts of the system.]]>
+					</Comment>
+					<Type GUID="{C3E9C9FA-A772-4888-A673-3D951ACA54AF}" Namespace="Tc2_EtherCAT">T_DCTIME64</Type>
+				</Var>
 			</Vars>
 			<Vars VarGrpType="2">
 				<Name>PlcTaskMain Outputs</Name>
@@ -1369,6 +1388,9 @@ External Setpoint Generation:
 	</Project>
 	<Mappings>
 		<OwnerA Name="ShutterMotion Instance">
+			<OwnerB Name="TIID^Device 1 (EtherCAT)">
+				<Link VarA="PlcTaskMain Inputs^GVL.DcToExt" VarB="InfoData^DcToExtTimeOffset"/>
+			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-00 (EL7047)">
 				<Link VarA="PlcTaskMain Inputs^MAIN.fMotorTemp[0]" VarB="STM Synchron info data^Info data 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[0].bLimitDeployed" VarB="STM Status^Status^Digital input 2" AutoLink="true"/>
