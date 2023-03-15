@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="F_DcToExt" Id="{87a0d92f-e837-404c-80d3-8113dc33c225}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_DcToExt : T_DCTIME64
+VAR_INPUT
+	dcTime: T_DCTIME64;  // 64-bit timestamp in DC time format.
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[F_DcToExt := dcTime + GVL.DcToExt;
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
