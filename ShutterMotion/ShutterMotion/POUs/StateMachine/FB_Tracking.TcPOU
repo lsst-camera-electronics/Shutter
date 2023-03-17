@@ -188,15 +188,15 @@ FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
 		stTrack[nTPC].nHallID := i;
 		stTrack[nTPC].tScanTime := (dcCycleStart AND nMask) + GVL.nInputEventTime[stTrack[nTPC].nHallID];  // Naive correction.
 		IF stTrack[nTPC].tScanTime >= dcCycleStart THEN
-			stTrack[nTPC].tScanTIME := stTrack[nTPC].tScanTime - 16#1_0000_0000;  // Additional correction, for 32-bit rollover.
+			stTrack[nTPC].tScanTime := stTrack[nTPC].tScanTime - 16#1_0000_0000;  // Additional correction, for 32-bit rollover.
 		END_IF
-		stTrack[nTPC] := F_DcToExt(stTrack[nTPC]);
-		// Count the number of timestamps stored in stTrack.
+		stTrack[nTPC].tScanTime := F_DcToExt(stTrack[nTPC].tScanTime);
+		// Count the number of entries stored in stTrack.
 		nTPC:=nTPC+1;
 		
 		// There's no guaranteed time ordering between timestamps picked up from different ADC channels.
-		// Sort the lot if we picked up more that two this time.
-		// Possible improvements: Use a library sort (if any). Delay sorting until just before copying to CCS.
+		// Sort the lot if we picked up more than two this time.
+		// We expect no more than a handfull of Hall transitions per cycle so a simple exchange sort will do.
 		IF nTPC>=2 THEN
 			FOR j:=nTPC-1 TO 1 BY -1 DO
 				IF (stTrack[j].tScanTime < stTrack[j-1].tScanTime) THEN
@@ -223,25 +223,25 @@ FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
 		END_IF
 		
 		//For debugging only: To see the highest number of trip per cycle
-		IF ((F_GetCurDcTaskTime64() - stTrack[0].tScanTime)>2000000) AND nTPC=1 THEN
-			testTime[0]	:= F_GetCurDcTaskTime64() - stTrack[0].tScanTime;
+		IF ((tCycleStart - stTrack[0].tScanTime)>2000000) AND nTPC=1 THEN
+			testTime[0]	:= tCycleStart - stTrack[0].tScanTime;
 			teststTrack[0] := stTrack[0].tScanTime;
-			 testDCTime[0] := F_GetCurDcTaskTime64();
+			 testDCTime[0] := tCycleStart;
 		END_IF
-		IF ((F_GetCurDcTaskTime64() - stTrack[1].tScanTime)>2000000) AND nTPC=2 THEN
-			testTime[1]	:= F_GetCurDcTaskTime64() - stTrack[1].tScanTime;
+		IF ((tCycleStart - stTrack[1].tScanTime)>2000000) AND nTPC=2 THEN
+			testTime[1]	:= tCycleStart - stTrack[1].tScanTime;
 			teststTrack[1] := stTrack[1].tScanTime;
-			testDCTime[1] := F_GetCurDcTaskTime64();
+			testDCTime[1] := tCycleStart;
 		END_IF
-		IF ((F_GetCurDcTaskTime64() - stTrack[2].tScanTime)>2000000) AND nTPC=3 THEN
-			testTime[2]	:= F_GetCurDcTaskTime64() - stTrack[2].tScanTime;
+		IF ((tCycleStart - stTrack[2].tScanTime)>2000000) AND nTPC=3 THEN
+			testTime[2]	:= tCycleStart - stTrack[2].tScanTime;
 			teststTrack[2] := stTrack[2].tScanTime;
-			testDCTime[2] := F_GetCurDcTaskTime64();
+			testDCTime[2] := tCycleStart;
 		END_IF
-		IF ((F_GetCurDcTaskTime64() - stTrack[3].tScanTime)>2000000) AND nTPC=4 THEN
-			testTime[3]	:= F_GetCurDcTaskTime64() - stTrack[3].tScanTime;
+		IF ((tCycleStart - stTrack[3].tScanTime)>2000000) AND nTPC=4 THEN
+			testTime[3]	:= tCycleStart - stTrack[3].tScanTime;
 			teststTrack[3] := stTrack[3].tScanTime;
-			testDCTime[3] := F_GetCurDcTaskTime64();
+			testDCTime[3] := tCycleStart;
 		END_IF
 	*)
 	END_IF
@@ -255,7 +255,9 @@ END_FOR
 
 
 	
-//blade motion tracking
+// If we picked up some Hall transitions this cycle, then we need to take position samples (encoder readout).
+// We want to check if the position of a blade set at the time of a Hall transition agrees with the
+// Hall switch position taken from the last calibration.
 IF nTPC>0 THEN
 	FOR k:=0 TO nTPC-1 BY 1 DO
 		IF (stAxis[GVL.cXP].axisRef.Status.Moving AND stAxis[GVL.cXM].axisRef.Status.Moving) AND
@@ -274,7 +276,9 @@ END_IF
     </Implementation>
     <Action Name="ACT_TrackingDoubleNegative" Id="{0039cb21-b703-43f6-867c-8fbe57c73e86}">
       <Implementation>
-        <ST><![CDATA[//Hall sensors position tracking for axis XP
+        <ST><![CDATA[// Take encoder samples and compare against Hall transitions when both blade sets are moving toward decreasing camera X coordinate.
+
+// +X blade set
 IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 	//Compare current sequence with recorded sequence. Update position if match. Negative direction.
 	IF stAxis[GVL.cXP].axisRef.status.NegativeDirection AND stAxis[GVL.cXP].stHall[GVL.cDirNeg, stAxis[GVL.cXP].nTripCount].nSeq = stTrack[k].nSeqToCompare AND
@@ -294,7 +298,7 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
 			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
 			
-			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_GetCurDcTaskTime64();
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := tCycleStart;
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
 		END_IF
@@ -302,7 +306,7 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 	END_IF
 END_IF
 
-//Hall sensors position tracking for axis XM
+// -X blade set
 IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 	//Compare current sequence with recorded sequence. Update position if match. Negative direction.
 	IF stAxis[GVL.cXM].axisRef.status.NegativeDirection AND stAxis[GVL.cXM].stHall[GVL.cDirNeg, stAxis[GVL.cXM].nTripCount].nSeq = stTrack[k].nSeqToCompare AND
@@ -322,7 +326,7 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
 			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
 			
-			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_GetCurDcTaskTime64();
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := tCycleStart;
 			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
 		END_IF
@@ -333,7 +337,9 @@ END_IF]]></ST>
     </Action>
     <Action Name="ACT_TrackingDoublePositive" Id="{015fe346-39d0-42ba-a488-79403589a261}">
       <Implementation>
-        <ST><![CDATA[//Hall sensors position tracking for axis XM
+        <ST><![CDATA[// Take encoder samples and compare against Hall transitions when both blade sets are moving toward increasing camera X coordinate.
+
+// -X blade set
 IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 	//Compare current sequence with recorded sequence. Update position if match. Positive direction.
 	IF stAxis[GVL.cXM].axisRef.status.PositiveDirection AND stAxis[GVL.cXM].stHall[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].nSeq = stTrack[k].nSeqToCompare AND
@@ -353,7 +359,7 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
 			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
 			
-			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_GetCurDcTaskTime64();
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := tCycleStart;
 			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
 		END_IF
@@ -361,7 +367,7 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 	END_IF
 END_IF
 
-//Hall sensors position tracking for axis XP
+// +X blade set
 IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 	//Compare current sequence with recorded sequence. Update position if match. Positive direction.
 	IF stAxis[GVL.cXP].axisRef.status.PositiveDirection AND stAxis[GVL.cXP].stHall[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].nSeq = stTrack[k].nSeqToCompare AND 
@@ -381,7 +387,7 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
 			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
 			
-			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_GetCurDcTaskTime64();
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := tCycleStart;
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
 		END_IF
@@ -393,7 +399,9 @@ END_IF
     </Action>
     <Action Name="ACT_TrackingSingle" Id="{68bb727f-4301-4350-9f19-54a85b8d6b0c}">
       <Implementation>
-        <ST><![CDATA[//Hall sensors position tracking for axis XP
+        <ST><![CDATA[// Take encoder samples and compare against Hall transitions when only one blade set is moving.
+
+// +X blade set
 IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 	//Compare current sequence with recorded sequence. Update position if match. Positive direction.
 	IF stAxis[GVL.cXP].axisRef.status.PositiveDirection AND stAxis[GVL.cXP].stHall[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].nSeq = stTrack[k].nSeqToCompare AND 
@@ -413,7 +421,7 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
 			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
 			
-			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_GetCurDcTaskTime64();
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := tCycleStart;
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
 		END_IF
@@ -437,7 +445,7 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
 			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
 			
-			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_GetCurDcTaskTime64();
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := tCycleStart;
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
 		END_IF
@@ -445,7 +453,7 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 	END_IF
 END_IF
 
-//Hall sensors position tracking for axis XM
+// -X blade set
 IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 	//Compare current sequence with recorded sequence. Update position if match. Positive direction.
 	IF stAxis[GVL.cXM].axisRef.status.PositiveDirection AND stAxis[GVL.cXM].stHall[GVL.cDirPos, stAxis[GVL.cXM].nTripCount].nSeq = stTrack[k].nSeqToCompare AND
@@ -465,7 +473,7 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
 			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
 			
-			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_GetCurDcTaskTime64();
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := tCycleStart;
 			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
 		END_IF
@@ -489,7 +497,7 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
 			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
 			
-			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_GetCurDcTaskTime64();
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := tCycleStart;
 			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
 		END_IF
