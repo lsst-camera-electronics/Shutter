@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="F_CycleEndTime" Id="{c963d59d-f512-4524-8da4-15f4027686f3}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_CycleEndTime : T_DCTIME64
+VAR_INPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(* 
+Returns the "ext" time at which the current cycle will end, defined as the sum of:
+    - The cycle start time as calculated by F_CycyleStartTime().
+    - The cycle duration from  _TaskInfo[GETCURTASKINDEXEX()].CycleTime * 100.
+Returns nanseconds since 0 hours on 2000 Jan 1.
+
+Use this function when calculating times for events commanded by the PLC code, since only at the end of a cycle do changes to
+process data made by the PLC code go out to the devices.
+*)
+// GETCURTASKINDEXEX() returns the cycle time in units of 100 ns so we need to multiply it.
+F_CycleEndTime := F_CycleStartTime() + _TaskInfo[GETCURTASKINDEXEX()].CycleTime * 100;]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

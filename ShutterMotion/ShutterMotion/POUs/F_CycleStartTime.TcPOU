@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="F_CycleStartTime" Id="{ae72bd59-79d2-4d06-b239-d9090e1ff681}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_CycleStartTime : T_DCTIME64
+VAR_INPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(* 
+Returns the "ext" time of the start of the current cycle. This is defined as the sum of:
+    - The Distributed Clock time of the start of the current task, from F_GetCurDcTaskTime64().
+	- The offset from DC time to external time.
+The result is of type T_DCTIME64 and is a count of nanoseconds since 0 hours of 2000 Jan 1.
+
+Use this function when reckoning times for events that are being reported to the PLC code, since the PLC code only gets updated process data
+at the start of a cycle.
+*)
+F_CycleStartTime := F_GetCurDcTaskTime64() + GVL.DcToExt;
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
