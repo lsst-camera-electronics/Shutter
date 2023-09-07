@@ -21,9 +21,6 @@ VAR
 	stTrackTemp		: ST_TRACK;
 	bGoNextSeq		: BOOL;
 	nAxisID			: INT;
-	tCycleStart		: T_DCTIME64;  // Ext time of the start of the current cycle.
-	tCycleEnd		: T_DCTIME64;  // Ext time of the end of the current cycle.
-	dcCycleStart    : T_DCTIME64;  // DC time of cycle start.
 	nMask			: ULINT := 16#FFFF_FFFF_0000_0000;
 	
 	//used in determining target duration
@@ -68,9 +65,6 @@ END_VAR
 // Call this function block to process any updated information about blade set motion and send updates to CCS if required.
 //////////////////////////////////////////////////////////////
 
-tCycleStart := F_CycleStartTime();
-tCycleEnd := F_CycleEndTime();
-
 stAxis[GVL.cXP].bTrackedFlag:=FALSE;
 stAxis[GVL.cXM].bTrackedFlag:=FALSE;
 nTPC:=0;
@@ -89,7 +83,7 @@ IF fbMoving_Rtrig[GVL.cXP].Q THEN
 	stMotionDone[GVL.cXP].nsamples := 0;      // No encoder samples yet.
 	stMotionDone[GVL.cXP].ntrans := 0;        // No Hall transitions yet.
 	stMotionDone[gvl.cXP].startPos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;   // Where are we now?
-	stMotionDone[GVL.cXP].startTime := tCycleStart;  // Start time is when we got status update from controller.
+	stMotionDone[GVL.cXP].startTime := F_DcToExt(F_GetCurDcTaskTime64());  // Start time is when we got status update from controller.
 	stMotionDone[GVL.cXP].targetDur := LTIME#0D0H0M0S0MS0US0NS;  // Don't know yet how long this motion will take.
 END_IF
 
@@ -506,5 +500,22 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 END_IF]]></ST>
       </Implementation>
     </Action>
+    <LineIds Name="FB_Tracking">
+      <LineId Id="3" Count="2" />
+      <LineId Id="9" Count="201" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Tracking.ACT_TrackingDoubleNegative">
+      <LineId Id="2" Count="55" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Tracking.ACT_TrackingDoublePositive">
+      <LineId Id="2" Count="56" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Tracking.ACT_TrackingSingle">
+      <LineId Id="2" Count="103" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
   </POU>
 </TcPlcObject>

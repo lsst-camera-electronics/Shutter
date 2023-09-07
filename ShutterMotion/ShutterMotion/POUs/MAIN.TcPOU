@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <POU Name="MAIN" Id="{f71d400f-d229-45a7-bebf-e505112d31c1}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
@@ -16,10 +16,6 @@ VAR
 	fbShutterSM	: FB_ShutterSM;
 	
 	//external input
-	{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 8^Status^Input state'}
-	bAuxElxPermit AT %I*	: BOOL;
-	{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTO Outputs 2x Channel 1^Outputs^Output event state 1'}
-	bFesPermit AT %Q*		: BOOL;
 	{attribute 'TcLinkTo' := '	[0] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-00 (EL7047)^STM Synchron info data^Info data 1;
 								[1] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-01 (EL7047)^STM Synchron info data^Info data 1'}
 	fMotorTemp	AT %I*		: ARRAY [0..1] OF UINT;  //temp in 1 degree C per increment
@@ -77,9 +73,6 @@ VAR
 	stError_rtrig		: R_TRIG;
 	stExpoTimer_rtrig	: R_TRIG;
 	stCalibDone_rtrig	: R_TRIG;
-	
-	//Read COE
-	//fbRead		: ARRAY [0..1] OF FB_EcCoeSdoRead;
 	
 END_VAR
 VAR CONSTANT
