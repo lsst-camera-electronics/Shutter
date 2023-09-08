@@ -6,7 +6,6 @@ VAR_IN_OUT
 	stAxis  	: ARRAY [GVL.cXP .. GVL.cXM] OF ST_AxisGroup;
 END_VAR
 VAR_INPUT
-	bAuxElxPermit	: BOOL;	
 	//commands
 	eCommand			: E_Commands;
 	stCalibrate			: ST_Calibrate;
@@ -50,11 +49,8 @@ END_VAR]]></Declaration>
 IF eCurrentState <> eNextState THEN
 	bLowerEntry := TRUE;
 END_IF
-IF bAuxElxPermit = 1 THEN
-	eNextState := E_StatesTop.Enabled;
-ELSIF bAuxElxPermit = 0 THEN
-	eNextState := E_StatesTop.Disabled;
-END_IF
+
+eNextState := E_StatesTop.Enabled;
 eCurrentState := eNextState;
 (*Start of state machine*)
 CASE eCurrentState OF
@@ -99,7 +95,7 @@ END_CASE
       <LineId Id="60" Count="0" />
       <LineId Id="1185" Count="1" />
       <LineId Id="378" Count="0" />
-      <LineId Id="1362" Count="4" />
+      <LineId Id="1362" Count="1" />
       <LineId Id="318" Count="0" />
       <LineId Id="1048" Count="1" />
       <LineId Id="1104" Count="0" />

@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="FB_PtpDiagReader" Id="{2d2fe6ed-77b1-4d14-9ee0-4b4db2db37c5}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK PUBLIC FB_PtpDiagReader
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+	diagInfo: T_PtpDiag;
+END_VAR
+VAR
+	running: BOOL := FALSE;
+	first: BOOL := TRUE;
+	netId: T_AmsNetId;
+	port: UINT; 
+	index: WORD := 16#FA80;
+	subIndex: BYTE := 0;
+	reader: FB_EcCoESdoReadEx;
+	buf: T_PtpDiag;
+	readInterval: TIME := T#1S;
+	timer: TON;
+	c1: LINT := 0;
+	c2: LINT := 0;
+	c3: LINT := 0;
+	c4: LINT := 0;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// The first time through, get the required ADS parameters.
+IF first THEN
+	first := FALSE;
+	netId := F_CreateAmsNetId(GVL.ptpAdsAddr.netId);
+	port := GVL.ptpAdsAddr.port;
+	timer(IN:=TRUE, PT:=readInterval);
+END_IF
+
+timer();
+// If a request is in progress then check for completion.
+IF running THEN
+	c1 := c1 + 1;
+	reader(bExecute:=running);
+	IF NOT reader.bBusy THEN
+		c2 := c2 + 1;
+		diagInfo := buf;
+		running := FALSE;
+		reader(bExecute:=running);
+	END_IF
+ELSE
+	c3 := c3 + 1;
+	IF timer.Q THEN
+		timer(IN:=FALSE);
+	    running := TRUE;
+		timer(IN:=running);
+	    reader(sNetId:=netId, nSlaveAddr:=port, nSubIndex:=subIndex, nIndex:=index, pDstBuf:=ADR(buf), cbBufLen:=SIZEOF(buf), bCompleteAccess:=TRUE, bExecute:=running);
+	    IF reader.bBusy THEN
+		    c4 := c4 + 1;
+	    END_IF
+	END_IF
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_PtpDiagReader">
+      <LineId Id="9" Count="0" />
+      <LineId Id="17" Count="1" />
+      <LineId Id="20" Count="1" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="64" Count="0" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="65" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="57" Count="2" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="42" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

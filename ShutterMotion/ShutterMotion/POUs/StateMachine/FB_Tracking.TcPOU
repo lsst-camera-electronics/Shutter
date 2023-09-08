@@ -55,7 +55,7 @@ VAR
 	a, b : INT;
 	*)
 	
-	
+	dcCycleStart: T_DCTIME64;
 END_VAR
 
 
@@ -95,7 +95,7 @@ IF fbMoving_Rtrig[GVL.cXM].Q THEN
 	stMotionDone[gvl.cXM].nsamples := 0;
 	stMotionDone[gvl.cXM].ntrans := 0;
 	stMotionDone[gvl.cXM].startPos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
-	stMotionDone[gvl.cXM].startTime := tCycleStart;
+	stMotionDone[gvl.cXM].startTime := F_TaskStartDcTimeToExt();
 	stMotionDone[gvl.cXM].targetDur := LTIME#0D0H0M0S0MS0US0NS;
 END_IF
 
@@ -150,7 +150,7 @@ IF bMotionDone THEN
 	nSequence := nSequence+1;
 	// The motor controller doesn't report exactly when motion was completed, so we assume that it was when the process data
 	// from the controller reached us, i.e., at the start of the current cycle.
-	stMotionDone[nAxisID].actualDur := ULINT_TO_LTIME(tCycleStart - stMotionDone[nAxisID].startTime);
+	stMotionDone[nAxisID].actualDur := ULINT_TO_LTIME(F_TaskStartDcTimeToExt() - stMotionDone[nAxisID].startTime);
 	stMotionDone[nAxisID].targetDur := tTargetDur;
 	stMotionDone[nAxisID].targetPos := stAxis[nAxisID].axisRef.NcToPlc.TargetPos;
 	stMotionDone[nAxisID].endPos := stAxis[nAxisID].axisRef.NcToPlc.ActPos;
@@ -292,7 +292,7 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
 			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
 			
-			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := tCycleStart;
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_TaskStartDcTimeToExt();
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
 		END_IF
@@ -320,7 +320,7 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
 			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
 			
-			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := tCycleStart;
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_TaskStartDcTimeToExt();
 			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
 		END_IF
@@ -353,7 +353,7 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
 			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
 			
-			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := tCycleStart;
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_TaskStartDcTimeToExt();
 			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
 		END_IF
@@ -381,7 +381,7 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
 			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
 			
-			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := tCycleStart;
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_TaskStartDcTimeToExt();
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
 		END_IF
@@ -415,7 +415,7 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
 			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
 			
-			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := tCycleStart;
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_TaskStartDcTimeToExt();
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
 		END_IF
@@ -439,7 +439,7 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
 			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
 			
-			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := tCycleStart;
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_TaskStartDcTimeToExt();
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
 		END_IF
@@ -467,7 +467,7 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
 			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
 			
-			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := tCycleStart;
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_TaskStartDcTimeToExt();
 			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
 		END_IF
@@ -491,7 +491,7 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
 			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
 			
-			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := tCycleStart;
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_TaskStartDcTimeToExt();
 			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
 		END_IF

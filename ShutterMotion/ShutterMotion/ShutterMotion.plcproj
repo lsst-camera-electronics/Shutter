@@ -132,6 +132,9 @@
     <Compile Include="DUTs\ENUM\State ENUM\E_StatesTop.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\T_PtpDiag.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="GlobalTextList.TcGTLO">
       <SubType>Code</SubType>
     </Compile>
@@ -148,10 +151,16 @@
     <Compile Include="POUs\FB_Protection.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\FB_PtpDiagReader.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\F_DcToExt.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\F_HaveDifferentIDs.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\F_TaskStartDcTimeToExt.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\MAIN.TcPOU">
@@ -164,9 +173,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\StateMachine\FB_Tracking.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="POUs\StateMachine\F_TaskStartDcTimeToExt.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\StateMachine\StateTop\FB_StateDisabled.TcPOU">
@@ -318,6 +324,9 @@
     <PlaceholderReference Include="Tc3_Module">
       <DefaultResolution>Tc3_Module, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc3_Module</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Util">
+      <DefaultResolution>Util, * (System)</DefaultResolution>
     </PlaceholderReference>
     <PlaceholderReference Include="VisuDialogs">
       <DefaultResolution>VisuDialogs, * (System)</DefaultResolution>

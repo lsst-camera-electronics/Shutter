@@ -2,6 +2,15 @@
 <TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmItem" TcSmVersion="1.0" TcVersion="3.1.4022.36" ClassName="CNestedPlcProjDef">
 	<DataTypes>
 		<DataType>
+			<Name GUID="{11F20A4A-90D4-35C7-DB3B-0E8659E05E5D}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..1] OF UINT</Name>
+			<BitSize>32</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
+			<ArrayInfo>
+				<LBound>0</LBound>
+				<Elements>2</Elements>
+			</ArrayInfo>
+		</DataType>
+		<DataType>
 			<Name GUID="{CBC83B73-B816-4597-A9E5-2B03263CA131}" Namespace="MC" TcBaseType="true" HideType="true" IecDeclaration="DWORD;">NCTOPLC_AXIS_REF_STATE</Name>
 			<BitSize>32</BitSize>
 			<SubItem>
@@ -792,15 +801,6 @@ External Setpoint Generation:
 			</Relations>
 		</DataType>
 		<DataType>
-			<Name GUID="{11F20A4A-90D4-35C7-DB3B-0E8659E05E5D}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..1] OF UINT</Name>
-			<BitSize>32</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
-			<ArrayInfo>
-				<LBound>0</LBound>
-				<Elements>2</Elements>
-			</ArrayInfo>
-		</DataType>
-		<DataType>
 			<Name GUID="{7F3999D6-1785-057D-88BC-3449B9362C09}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..2] OF INT</Name>
 			<BitSize>48</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType>
@@ -846,15 +846,58 @@ External Setpoint Generation:
 			</ArrayInfo>
 		</DataType>
 		<DataType>
-			<Name GUID="{C3E9C9FA-A772-4888-A673-3D951ACA54AF}" Namespace="Tc2_EtherCAT" AutoDeleteType="true">T_DCTIME64</Name>
+			<Name GUID="{18071995-0000-0000-0000-000000000041}" TcBaseType="true" HideSubItems="true" CName="AmsNetId">AMSNETID</Name>
+			<BitSize>48</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000001}">BYTE</BaseType>
+			<ArrayInfo>
+				<LBound>0</LBound>
+				<Elements>6</Elements>
+			</ArrayInfo>
+			<Format>
+				<Printf>%d.%d.%d.%d.%d.%d</Printf>
+				<Parameter>[0]</Parameter>
+				<Parameter>[1]</Parameter>
+				<Parameter>[2]</Parameter>
+				<Parameter>[3]</Parameter>
+				<Parameter>[4]</Parameter>
+				<Parameter>[5]</Parameter>
+			</Format>
+		</DataType>
+		<DataType>
+			<Name GUID="{18071995-0000-0000-0000-000000000042}" TcBaseType="true" CName="AmsAddr">AMSADDR</Name>
 			<BitSize>64</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-00000000000B}">ULINT</BaseType>
-			<Properties>
-				<Property>
-					<Name>TcDisplayTypeGUID</Name>
-					<Value>18071995-0000-0000-0000-000000000047</Value>
-				</Property>
-			</Properties>
+			<SubItem>
+				<Name>netId</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000041}">AMSNETID</Type>
+				<BitSize>48</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>port</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000004}">WORD</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>48</BitOffs>
+			</SubItem>
+			<Format>
+				<Printf>%d.%d.%d.%d.%d.%d:%d</Printf>
+				<Parameter>.netId[0]</Parameter>
+				<Parameter>.netId[1]</Parameter>
+				<Parameter>.netId[2]</Parameter>
+				<Parameter>.netId[3]</Parameter>
+				<Parameter>.netId[4]</Parameter>
+				<Parameter>.netId[5]</Parameter>
+				<Parameter>.port</Parameter>
+			</Format>
+			<Format Name="Iec">
+				<Printf>(netId:=[%d.%d.%d.%d.%d.%d], port :=%d)</Printf>
+				<Parameter>.netId[0]</Parameter>
+				<Parameter>.netId[1]</Parameter>
+				<Parameter>.netId[2]</Parameter>
+				<Parameter>.netId[3]</Parameter>
+				<Parameter>.netId[4]</Parameter>
+				<Parameter>.netId[5]</Parameter>
+				<Parameter>.port</Parameter>
+			</Format>
 		</DataType>
 		<DataType>
 			<Name GUID="{875D2B22-B7EB-497E-B933-0C004593CCF3}" Namespace="MC" TcBaseType="true" HideType="true" IecDeclaration="DWORD;">PLCTONC_AXIS_REF_CTRL</Name>
@@ -1042,11 +1085,11 @@ External Setpoint Generation:
 			<Vars VarGrpType="1">
 				<Name>PlcTaskMain Inputs</Name>
 				<Var>
-					<Name>MAIN.bAuxElxPermit</Name>
+					<Name>MAIN.fMotorTemp</Name>
 					<Comment>
-						<![CDATA[external input]]>
+						<![CDATA[temp in 1 degree C per increment]]>
 					</Comment>
-					<Type>BOOL</Type>
+					<Type GUID="{11F20A4A-90D4-35C7-DB3B-0E8659E05E5D}">ARRAY [0..1] OF UINT</Type>
 				</Var>
 				<Var>
 					<Name>MAIN.stAxis[0].axisRef.NcToPlc</Name>
@@ -1175,13 +1218,6 @@ External Setpoint Generation:
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.fMotorTemp</Name>
-					<Comment>
-						<![CDATA[temp in 1 degree C per increment]]>
-					</Comment>
-					<Type GUID="{11F20A4A-90D4-35C7-DB3B-0E8659E05E5D}">ARRAY [0..1] OF UINT</Type>
-				</Var>
-				<Var>
 					<Name>MAIN.fRtdTemp</Name>
 					<Type GUID="{7F3999D6-1785-057D-88BC-3449B9362C09}">ARRAY [0..2] OF INT</Type>
 				</Var>
@@ -1208,20 +1244,26 @@ External Setpoint Generation:
 					<Type GUID="{1F02D6B8-A7D2-F43A-E709-30725419E942}">ARRAY [0..14] OF BOOL</Type>
 				</Var>
 				<Var>
-					<Name>GVL.DcToExt</Name>
+					<Name>GVL.DcToExtTimeOffset</Name>
 					<Comment>
-						<![CDATA[ The offset from DC time to external time.
- This remains constant between restarts of the system.]]>
+						<![CDATA[ Exported by the EtherCAT master.]]>
 					</Comment>
-					<Type GUID="{C3E9C9FA-A772-4888-A673-3D951ACA54AF}" Namespace="Tc2_EtherCAT">T_DCTIME64</Type>
+					<Type>LINT</Type>
+				</Var>
+				<Var>
+					<Name>GVL.DcToTcTimeOffset</Name>
+					<Type>LINT</Type>
+				</Var>
+				<Var>
+					<Name>GVL.ptpAdsAddr</Name>
+					<Comment>
+						<![CDATA[ Exported by the EL6688.]]>
+					</Comment>
+					<Type GUID="{18071995-0000-0000-0000-000000000042}">AMSADDR</Type>
 				</Var>
 			</Vars>
 			<Vars VarGrpType="2">
 				<Name>PlcTaskMain Outputs</Name>
-				<Var>
-					<Name>MAIN.bFesPermit</Name>
-					<Type>BOOL</Type>
-				</Var>
 				<Var>
 					<Name>MAIN.stAxis[0].axisRef.PlcToNc</Name>
 					<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
@@ -1381,6 +1423,21 @@ External Setpoint Generation:
 					</OwnerB>
 				</OwnerA>
 			</UnrestoredVarLinks>
+			<UnrestoredVarLinks ImportTime="2023-09-07T13:28:12">
+				<OwnerA Name="OutputSrc" Prefix="TIPC^ShutterMotion^ShutterMotion Instance" Type="2">
+					<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)">
+						<Link VarA="MAIN.bFesPermit" TypeA="BOOL" InOutA="1" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTO Outputs 2x Channel 1^Outputs^Output event state 1" AutoLink="true" Size="1" RestoreInfo="ANotFound"/>
+					</OwnerB>
+				</OwnerA>
+				<OwnerA Name="InputDst" Prefix="TIPC^ShutterMotion^ShutterMotion Instance" Type="1">
+					<OwnerB Name="TIID^Device 1 (EtherCAT)">
+						<Link VarA="GVL.DcToExt" TypeA="Tc2_EtherCAT.T_DCTIME64" InOutA="0" GuidA="{C3E9C9FA-A772-4888-A673-3D951ACA54AF}" VarB="InfoData^DcToExtTimeOffset" RestoreInfo="ANotFound"/>
+					</OwnerB>
+					<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)">
+						<Link VarA="MAIN.bAuxElxPermit" TypeA="BOOL" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000030}" VarB="MTI Inputs 2x Channel 8^Status^Input state" AutoLink="true" Size="1" RestoreInfo="ANotFound"/>
+					</OwnerB>
+				</OwnerA>
+			</UnrestoredVarLinks>
 			<TaskPouOids>
 				<TaskPouOid Prio="20" OTCID="#x08502001"/>
 			</TaskPouOids>
@@ -1388,9 +1445,6 @@ External Setpoint Generation:
 	</Project>
 	<Mappings>
 		<OwnerA Name="ShutterMotion Instance">
-			<OwnerB Name="TIID^Device 1 (EtherCAT)">
-				<Link VarA="PlcTaskMain Inputs^GVL.DcToExt" VarB="InfoData^DcToExtTimeOffset"/>
-			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-00 (EL7047)">
 				<Link VarA="PlcTaskMain Inputs^MAIN.fMotorTemp[0]" VarB="STM Synchron info data^Info data 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[0].bLimitDeployed" VarB="STM Status^Status^Digital input 2" AutoLink="true"/>
@@ -1449,8 +1503,6 @@ External Setpoint Generation:
 				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[14]" VarB="MTI Inputs 2x Channel 7^Status^No of input events" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[8]" VarB="MTI Inputs 2x Channel 1^Status^No of input events" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[9]" VarB="MTI Inputs 2x Channel 2^Status^No of input events" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^MAIN.bAuxElxPermit" VarB="MTI Inputs 2x Channel 8^Status^Input state" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Outputs^MAIN.bFesPermit" VarB="MTO Outputs 2x Channel 1^Outputs^Output event state 1" AutoLink="true"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MRE-01 (EL2622)">
 				<Link VarA="PlcTaskMain Outputs^MAIN.stAxis[0].bBrake" VarB="Channel 1^Output" AutoLink="true"/>
@@ -1460,6 +1512,9 @@ External Setpoint Generation:
 				<Link VarA="PlcTaskMain Inputs^MAIN.fRtdTemp[0]" VarB="RTD Inputs Channel 1^Value" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^MAIN.fRtdTemp[1]" VarB="RTD Inputs Channel 2^Value" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^MAIN.fRtdTemp[2]" VarB="RTD Inputs Channel 3^Value" AutoLink="true"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MTM-00 (EL6688)">
+				<Link VarA="PlcTaskMain Inputs^GVL.ptpAdsAddr" VarB="InfoData^AdsAddr"/>
 			</OwnerB>
 			<OwnerB Name="TINC^NC-Task 1 SAF^Axes^XM">
 				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].axisRef.NcToPlc" VarB="Outputs^ToPlc"/>

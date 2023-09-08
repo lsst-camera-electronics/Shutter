@@ -3,6 +3,8 @@
   <POU Name="MAIN" Id="{f71d400f-d229-45a7-bebf-e505112d31c1}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
+	ptpDiagReader: FB_PtpDiagReader;
+
 	//Axis
 	{attribute 'TcLinkTo' := '	[0].bLimitHome		:= TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-00 (EL7047)^STM Status^Status^Digital input 1;
 								[0].bLimitDeployed	:= TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-00 (EL7047)^STM Status^Status^Digital input 2;
@@ -95,7 +97,10 @@ motor 2: 0.0498327596
 *)	
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[(*update Axis_Ref status*)
+      <ST><![CDATA[// Read PTP Diag info from the EL6688.
+ptpDiagReader();
+
+(*update Axis_Ref status*)
 stAxis[GVL.cXP].axisRef.ReadStatus();
 stAxis[GVL.cXM].axisRef.ReadStatus();
 
@@ -137,14 +142,6 @@ fbTracking(
 	inMoveAxisAbsolute	:= inMoveAxisAbsolute,
 	inMoveAxisRelative	:= inMoveAxisRelative,
 	stOutMotionDone		=> outMotionDone);
-
-(*When shutter is in motion, remove permit for Filter Changer*)	
-IF (Main.outShutterStatus.smState=E_StatesMaint.Still OR Main.outShutterStatus.smState=E_StatesProd.Closed OR 
-	Main.outShutterStatus.smState=E_StatesProd.Opened OR Main.outShutterStatus.smState=E_StatesTop.Disabled) THEN
-		bFesPermit := TRUE;
-ELSE
-		bFesPermit := FALSE;
-END_IF
 	
 (*
 //write persistent data to file every second
@@ -322,9 +319,6 @@ ELSIF F_HaveDifferentIDs(inReset, ackReset) THEN
 	IF ackReset.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF NOT bAuxElxPermit THEN
-		outIgnored.reason := 1; (*ignored by state machine*)
-		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
 		eCommand := E_Commands.reset;
 	END_IF
@@ -371,7 +365,6 @@ outShutterStatus.isSafetyOn := GVL.bSafetyOn;
 IF GVL.bSafetyOn THEN
 	fbProtect(
 		stAxis 				:= stAxis, 
-		bAuxElxPermit 		:= bAuxElxPermit, 
 		nState 				:= fbShutterSM.nSMState,
 		eCommand 			:= eCommand,
 		
@@ -507,7 +500,6 @@ END_IF]]></ST>
         <ST><![CDATA[fbShutterSM(
 	//inputs
 	stAxis				:= stAxis,
-	bAuxElxPermit		:= bAuxElxPermit,
 	eCommand			:= eCommand,
 	stCalibrate			:= inCalibrate,
 	stChangeAxisEnable	:= inChangeAxisEnable,
@@ -527,16 +519,20 @@ END_IF]]></ST>
       </Implementation>
     </Action>
     <LineIds Name="MAIN">
+      <LineId Id="3986" Count="1" />
+      <LineId Id="3990" Count="0" />
       <LineId Id="3783" Count="17" />
       <LineId Id="3820" Count="5" />
       <LineId Id="3836" Count="0" />
       <LineId Id="3893" Count="0" />
       <LineId Id="3837" Count="0" />
-      <LineId Id="3860" Count="32" />
+      <LineId Id="3860" Count="14" />
+      <LineId Id="3883" Count="9" />
       <LineId Id="324" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.ACT_CheckNewMessage">
-      <LineId Id="2" Count="193" />
+      <LineId Id="2" Count="162" />
+      <LineId Id="168" Count="27" />
       <LineId Id="1" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.ACT_Protection">
@@ -545,7 +541,8 @@ END_IF]]></ST>
       <LineId Id="53" Count="0" />
       <LineId Id="9" Count="1" />
       <LineId Id="52" Count="0" />
-      <LineId Id="11" Count="23" />
+      <LineId Id="11" Count="2" />
+      <LineId Id="15" Count="19" />
       <LineId Id="54" Count="0" />
       <LineId Id="35" Count="3" />
       <LineId Id="55" Count="0" />
@@ -565,7 +562,8 @@ END_IF]]></ST>
       <LineId Id="1" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.ACT_StateMachine">
-      <LineId Id="2" Count="18" />
+      <LineId Id="2" Count="2" />
+      <LineId Id="6" Count="14" />
       <LineId Id="1" Count="0" />
     </LineIds>
   </POU>
