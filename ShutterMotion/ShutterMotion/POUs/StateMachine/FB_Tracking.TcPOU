@@ -83,7 +83,7 @@ IF fbMoving_Rtrig[GVL.cXP].Q THEN
 	stMotionDone[GVL.cXP].nsamples := 0;      // No encoder samples yet.
 	stMotionDone[GVL.cXP].ntrans := 0;        // No Hall transitions yet.
 	stMotionDone[gvl.cXP].startPos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;   // Where are we now?
-	stMotionDone[GVL.cXP].startTime := F_DcToExt(F_GetCurDcTaskTime64());  // Start time is when we got status update from controller.
+	stMotionDone[GVL.cXP].startTime := F_TaskStartDcTimeToExt();  // Start time is when we got status update from controller.
 	stMotionDone[GVL.cXP].targetDur := LTIME#0D0H0M0S0MS0US0NS;  // Don't know yet how long this motion will take.
 END_IF
 
@@ -154,6 +154,9 @@ IF bMotionDone THEN
 	stMotionDone[nAxisID].targetDur := tTargetDur;
 	stMotionDone[nAxisID].targetPos := stAxis[nAxisID].axisRef.NcToPlc.TargetPos;
 	stMotionDone[nAxisID].endPos := stAxis[nAxisID].axisRef.NcToPlc.ActPos;
+	stMotionDone[nAxisId].ptpState := MAIN.ptpDiagInfo.PTPState;
+	stMotionDone[nAxisId].leapSeconds := MAIN.ptpDiagInfo.CurrentUtcOffset;
+	stMotionDone[nAxisId].leapIsValid := TO_BOOL(MAIN.ptpDiagInfo.CurrentUtcOffsetIsValid);
 	// Copy our local motion-done message to the location that's monitored by CCS.
 	stOutMotionDone:=stMotionDone[nAxisID];
 	stOutMotionDone.sequence:=nSequence;  // Ensure message gets sent to CCS by making sure that at least one field has a changed value.
@@ -502,7 +505,9 @@ END_IF]]></ST>
     </Action>
     <LineIds Name="FB_Tracking">
       <LineId Id="3" Count="2" />
-      <LineId Id="9" Count="201" />
+      <LineId Id="9" Count="89" />
+      <LineId Id="269" Count="2" />
+      <LineId Id="99" Count="111" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Tracking.ACT_TrackingDoubleNegative">

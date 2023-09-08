@@ -5,7 +5,7 @@
 VAR_INPUT
 END_VAR
 VAR_OUTPUT
-	diagInfo: T_PtpDiag;
+	diagInfo: ST_PtpDiag;
 END_VAR
 VAR
 	running: BOOL := FALSE;
@@ -15,7 +15,7 @@ VAR
 	index: WORD := 16#FA80;
 	subIndex: BYTE := 0;
 	reader: FB_EcCoESdoReadEx;
-	buf: T_PtpDiag;
+	buf: ST_PtpDiag;
 	readInterval: TIME := T#1S;
 	timer: TON;
 	c1: LINT := 0;

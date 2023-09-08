@@ -132,7 +132,7 @@
     <Compile Include="DUTs\ENUM\State ENUM\E_StatesTop.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\T_PtpDiag.TcDUT">
+    <Compile Include="DUTs\ST_PtpDiag.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GlobalTextList.TcGTLO">

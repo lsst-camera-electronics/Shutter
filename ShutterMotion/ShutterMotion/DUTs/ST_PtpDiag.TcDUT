@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
-  <DUT Name="T_PtpDiag" Id="{913bc9c7-bb8b-4f1f-acd3-92d64244d25d}">
+  <DUT Name="ST_PtpDiag" Id="{913bc9c7-bb8b-4f1f-acd3-92d64244d25d}">
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
-TYPE T_PtpDiag : // Holds the data from the PTP Diag section of the EL6688 CoE items
+TYPE ST_PtpDiag : // Holds the data from the PTP Diag section of the EL6688 CoE items
 STRUCT
 	numMembers: UINT;  // Added by FB_EcCoESdoReadEx.
 	PTPVersion: UINT;

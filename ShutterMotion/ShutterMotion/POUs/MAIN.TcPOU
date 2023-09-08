@@ -4,6 +4,7 @@
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
 	ptpDiagReader: FB_PtpDiagReader;
+	ptpDiagInfo: ST_PtpDiag;
 
 	//Axis
 	{attribute 'TcLinkTo' := '	[0].bLimitHome		:= TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-00 (EL7047)^STM Status^Status^Digital input 1;
@@ -97,8 +98,9 @@ motor 2: 0.0498327596
 *)	
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[// Read PTP Diag info from the EL6688.
+      <ST><![CDATA[// Read PTP Diag info from the EL6688 once a second. Initially it will take a cycle or so for the data to be collected, shouldn't be a problem. *)
 ptpDiagReader();
+ptpDiagInfo := ptpDiagReader.diagInfo;
 
 (*update Axis_Ref status*)
 stAxis[GVL.cXP].axisRef.ReadStatus();
@@ -463,6 +465,10 @@ IF fbOutTimer.Q THEN
 	outShutterStatus.temperature[0] := INT_TO_DINT(fRtdTemp[0]);
 	outShutterStatus.temperature[1] := INT_TO_DINT(fRtdTemp[1]);
 	outShutterStatus.temperature[2] := INT_TO_DINT(fRtdTemp[2]);
+	outShutterStatus.when := F_TaskStartDcTimeToExt();
+	outShutterStatus.ptpState := MAIN.ptpDiagInfo.PTPState;
+	outShutterStatus.leapSeconds := MAIN.ptpDiagInfo.CurrentUtcOffset;
+	outShutterStatus.leapIsValid := TO_BOOL(MAIN.ptpDiagInfo.CurrentUtcOffsetIsValid);
 	
 	(*shutter status update, axis XP specific*)
 	outShutterStatus.axis[GVL.cXP].actPos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
@@ -476,7 +482,7 @@ IF fbOutTimer.Q THEN
 	outShutterStatus.axis[GVL.cXP].highLimit := stAxis[GVL.cXP].bLimitDeployed;
 	outShutterStatus.axis[GVL.cXP].lowLimit := stAxis[GVL.cXP].bLimitHome;
 	outShutterStatus.axis[GVL.cXP].isHomed := stAxis[GVL.cXP].axisRef.Status.Homed;
-	outShutterStatus.axis[GVL.cXP].motorTemp := UINT_TO_LREAL(fMotorTemp[0]);
+	outShutterStatus.axis[GVL.cXP].icTemp := UINT_TO_LREAL(fMotorTemp[0]);
 	
 	(*shutter status update, axis XM specific*)
 	outShutterStatus.axis[GVL.cXM].actPos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
@@ -490,7 +496,7 @@ IF fbOutTimer.Q THEN
 	outShutterStatus.axis[GVL.cXM].highLimit := stAxis[GVL.cXM].bLimitHome;
 	outShutterStatus.axis[GVL.cXM].lowLimit := stAxis[GVL.cXM].bLimitDeployed;
 	outShutterStatus.axis[GVL.cXM].isHomed := stAxis[GVL.cXM].axisRef.Status.Homed;
-	outShutterStatus.axis[GVL.cXM].motorTemp := UINT_TO_LREAL(fMotorTemp[1]);
+	outShutterStatus.axis[GVL.cXM].icTemp := UINT_TO_LREAL(fMotorTemp[1]);
 	
 END_IF]]></ST>
       </Implementation>
@@ -520,6 +526,7 @@ END_IF]]></ST>
     </Action>
     <LineIds Name="MAIN">
       <LineId Id="3986" Count="1" />
+      <LineId Id="3992" Count="0" />
       <LineId Id="3990" Count="0" />
       <LineId Id="3783" Count="17" />
       <LineId Id="3820" Count="5" />
@@ -558,7 +565,9 @@ END_IF]]></ST>
       <LineId Id="68" Count="1" />
       <LineId Id="66" Count="1" />
       <LineId Id="45" Count="0" />
-      <LineId Id="2" Count="42" />
+      <LineId Id="2" Count="13" />
+      <LineId Id="72" Count="3" />
+      <LineId Id="16" Count="28" />
       <LineId Id="1" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.ACT_StateMachine">
