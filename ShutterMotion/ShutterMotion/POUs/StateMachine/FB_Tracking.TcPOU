@@ -289,13 +289,13 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 		
 		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 			nAxisID:= GVL.cXP;
-			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].dcTime := stTrack[k].tScanTime;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].extTime := stTrack[k].tScanTime;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].id := stTrack[k].nHallID;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].on := stTrack[k].bEdgeToCompare;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
 			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
 			
-			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_TaskStartDcTimeToExt();
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].extTime := F_TaskStartDcTimeToExt();
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
 		END_IF
@@ -317,13 +317,13 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 		
 		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 			nAxisID:= GVL.cXM;
-			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].dcTime := stTrack[k].tScanTime;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].extTime := stTrack[k].tScanTime;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].id := stTrack[k].nHallID;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].on := stTrack[k].bEdgeToCompare;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
 			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
 			
-			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_TaskStartDcTimeToExt();
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].extTime := F_TaskStartDcTimeToExt();
 			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
 		END_IF
@@ -350,13 +350,13 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 		
 		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 			nAxisID:= GVL.cXM;
-			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].dcTime := stTrack[k].tScanTime;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].extTime := stTrack[k].tScanTime;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].id := stTrack[k].nHallID;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].on := stTrack[k].bEdgeToCompare;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
 			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
 			
-			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_TaskStartDcTimeToExt();
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].extTime := F_TaskStartDcTimeToExt();
 			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
 		END_IF
@@ -378,13 +378,13 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 		
 		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 			nAxisID:= GVL.cXP;
-			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].dcTime := stTrack[k].tScanTime;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].extTime := stTrack[k].tScanTime;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].id := stTrack[k].nHallID;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].on := stTrack[k].bEdgeToCompare;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
 			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
 			
-			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_TaskStartDcTimeToExt();
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].extTime := F_TaskStartDcTimeToExt();
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
 		END_IF
@@ -412,13 +412,13 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 		
 		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 			nAxisID:= GVL.cXP;
-			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].dcTime := stTrack[k].tScanTime;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].extTime := stTrack[k].tScanTime;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].id := stTrack[k].nHallID;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].on := stTrack[k].bEdgeToCompare;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
 			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
 			
-			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_TaskStartDcTimeToExt();
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].extTime := F_TaskStartDcTimeToExt();
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
 		END_IF
@@ -436,13 +436,13 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 		
 		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 			nAxisID:= GVL.cXP;
-			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].dcTime := stTrack[k].tScanTime;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].extTime := stTrack[k].tScanTime;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].id := stTrack[k].nHallID;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].on := stTrack[k].bEdgeToCompare;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
 			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
 			
-			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].dcTime := F_TaskStartDcTimeToExt();
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].extTime := F_TaskStartDcTimeToExt();
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
 		END_IF
@@ -464,13 +464,13 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 		
 		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 			nAxisID:= GVL.cXM;
-			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].dcTime := stTrack[k].tScanTime;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].extTime := stTrack[k].tScanTime;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].id := stTrack[k].nHallID;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].on := stTrack[k].bEdgeToCompare;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
 			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
 			
-			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_TaskStartDcTimeToExt();
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].extTime := F_TaskStartDcTimeToExt();
 			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
 		END_IF
@@ -488,13 +488,13 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 		
 		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 			nAxisID:= GVL.cXM;
-			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].dcTime := stTrack[k].tScanTime;
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].extTime := stTrack[k].tScanTime;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].id := stTrack[k].nHallID;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].on := stTrack[k].bEdgeToCompare;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
 			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
 			
-			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].dcTime := F_TaskStartDcTimeToExt();
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].extTime := F_TaskStartDcTimeToExt();
 			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
 		END_IF

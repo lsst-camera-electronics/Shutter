@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <DUT Name="ST_HallTransition" Id="{963b807c-9109-44aa-be8e-578efeb1b658}">
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
 TYPE ST_HallTransition:
 STRUCT
     id		: DINT; (* ID no. of sensor. *)
-    dcTime	: T_DCTIME64; (* The time of the transition. *)
+    extTime	: T_DCTIME64; (* The time of the transition, Beckhoff TAI-like external time. *)
     pos		: LREAL; (* Position of transition. *)
     on		: BOOL; (* TRUE for off -> on, else FALSE. *)
 END_STRUCT
