@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <DUT Name="ST_MotionDone" Id="{2b9ea7f7-0758-4683-a894-9d5c92ba2a18}">
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
 TYPE ST_MotionDone EXTENDS ST_MsgToCCS:
 STRUCT
     axisNum		: DINT;						(* Which axis moved. *)
-    startTime	: T_DCTIME64;				(* When motion started. *)
+    startTime	: T_DCTIME64;				(* When motion started. Absolute TAI64N-like nanoseconds since Jan 1, 2000.*)
     startPos	: LREAL;					(* Starting position. *)
     targetDur	: LTIME;					(* Expected duration of motion. *)
     targetPos	: LREAL;					(* Desired final position. *)
@@ -17,6 +17,11 @@ STRUCT
     maxsamples	: DINT := GVL.cTripCount+1;	(* Size M of samples array. *)
     trans		: ARRAY [0 .. GVL.cTripCount] OF ST_HallTransition;
     samples		: ARRAY	[0 .. GVL.cTripCount] OF ST_EncoderSample;
+	ptpState    : DINT;                     (* Encoded PTP slave clock state. *)
+											(* 0=NO_OPERATION, 1=INITIALIZING, 2=FAULTY, 3=DISABLED, 4=LISTENING, *)
+											(* 5=PRE_MASTER, 6=MASTER, 7=PASSIVE, 8=UNCALIBRATED, 9=SLAVE. *)
+	leapSeconds : DINT;                     (* Latest leap second count gotten from PTP. *)
+	leapIsValid : BOOL;                     (* Is nonzero if leap second count is valid, else is zero. *)
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

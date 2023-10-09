@@ -51,7 +51,7 @@ VAR_GLOBAL CONSTANT
 	cXM : INT := 1;
 	
 	//Shutter version
-	nVersion		: DINT := 2;
+	nVersion		: DINT := 3;
 	
 END_VAR
 VAR_GLOBAL
@@ -118,9 +118,13 @@ VAR_GLOBAL
 	//TestVariable
 	fbWritePersistentData	: WritePersistentData;
 	
-	// The offset from DC time to external time.
-	// This remains constant between restarts of the system.
-	DcToExt AT %I*: T_DCTIME64;
+	// Exported by the EtherCAT master.
+	DcToExtTimeOffset AT %I*: LINT;
+	DcToTcTimeOffset AT %I*: LINT;
+	
+	// Exported by the EL6688.
+	ptpAdsAddr AT %I*: AMSADDR;
+	
 
 END_VAR
 

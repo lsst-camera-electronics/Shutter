@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4020.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <VisuManager Name="Visualization Manager" Id="{cfb11896-db7c-4c3c-b38b-051a61d39e7f}">
     <XmlArchive>
       <Data>
         <o xml:space="preserve" t="VisualManagerObject">
+          <v n="UseUnicodeStrings" t="UnicodeSupport">Undefined</v>
           <o n="ViewSettings" t="VisualManagerViewSettings">
             <n n="StartVisu" />
             <v n="StartVisu33">""</v>
@@ -35,15 +36,19 @@
             <v n="GuidShowChangePasswordDialogFunction">{00000000-0000-0000-0000-000000000000}</v>
             <v n="GuidShowChangeConfigDialogFunction">{00000000-0000-0000-0000-000000000000}</v>
             <v n="UseStandardKeyboardHandling">false</v>
+            <v n="PaintDeactiveElementsGrayedOut">true</v>
+            <n n="GlobalOpenNumpadKeypadSettings" />
+            <v n="ConvertImages">false</v>
+            <v n="ConversionType">""</v>
           </o>
           <o n="RegisterDesc" t="GenericFbDescription">
             <d n="FbMethods" t="CaseInsensitiveHashtable" ckt="String" cvt="Guid">
+              <v>FB_Exit</v>
+              <v>a6c8b013-2531-43d3-addc-bfda027f3f3a</v>
               <v>FB_Init</v>
               <v>e4a26c81-9be8-4be8-a92a-a03a7bee332c</v>
               <v>FB_Reinit</v>
               <v>084a1bbe-a129-475d-a073-bcec6d501ce5</v>
-              <v>FB_Exit</v>
-              <v>a6c8b013-2531-43d3-addc-bfda027f3f3a</v>
             </d>
             <v n="FbName">"NotImportant"</v>
             <v n="FbGuid">{9ee251ed-5345-447c-b4d8-14c1f9d311d9}</v>
@@ -53,7 +58,7 @@
               <v n="Modifiers">7</v>
               <v n="DevType">4096</v>
               <v n="DevId">"1002 0001"</v>
-              <v n="DevVersion">"1.0.0.2"</v>
+              <v n="DevVersion">"1.0.0.6"</v>
               <v n="BaseProvider">{cb73a13e-6ccc-4bc6-8859-f5aa98bb116b}</v>
               <l n="Keys" t="ArrayList" cet="DeviceBasedHotkeyItem">
                 <o>
@@ -459,42 +464,42 @@
           </o>
           <o n="DefInpHandlerGuids" t="GenericFbDescription">
             <d n="FbMethods" t="CaseInsensitiveHashtable" ckt="String" cvt="Guid">
-              <v>ExecuteLooseCapture</v>
-              <v>1049a34b-c0cd-4b89-a35b-538ed0eda817</v>
-              <v>ExecuteMouseUp</v>
-              <v>164096d0-28dd-448e-9f83-936c1ec728ae</v>
-              <v>Init</v>
-              <v>ecc04721-1ab7-4b8e-885a-49866284109b</v>
-              <v>FB_Exit</v>
-              <v>57cb953b-2cb2-4a57-9c29-d134bcf06ad9</v>
-              <v>ExecuteMouseDblClick</v>
-              <v>fe232f1c-8e21-44e8-b25c-9f0a852ec19c</v>
-              <v>GetElementInfo</v>
-              <v>764590c9-7336-40e6-9547-ca84bffac266</v>
-              <v>ExecuteMouseDown</v>
-              <v>b64b8272-fe99-4287-88c7-9d57d818c0f5</v>
-              <v>FB_Reinit</v>
-              <v>b2d61e5c-3b7b-4067-9cb4-ed06f78e0b8e</v>
-              <v>Initialize</v>
-              <v>1bc83cf6-e9b0-4fd4-9f58-0d1aae32afef</v>
-              <v>ExecuteMouseMove</v>
-              <v>0cad1bec-4499-4481-aba7-6bf1536bddab</v>
-              <v>ExecuteDialogClosed</v>
-              <v>c1da4285-5596-4ee3-92e8-e87b69cebe93</v>
-              <v>ExecuteKeyUp</v>
-              <v>e11d6260-1244-4c26-8d5b-62ebdb6cb8a0</v>
-              <v>ExecuteKeyDown</v>
-              <v>284c49ac-6456-4d50-a939-fa0956dfe4b7</v>
               <v>abstrGetDefaultCursor</v>
               <v>bf4635cc-4e22-4c63-9232-0caa1947a5ad</v>
+              <v>ExecuteDialogClosed</v>
+              <v>c1da4285-5596-4ee3-92e8-e87b69cebe93</v>
+              <v>ExecuteKeyDown</v>
+              <v>284c49ac-6456-4d50-a939-fa0956dfe4b7</v>
+              <v>ExecuteKeyUp</v>
+              <v>e11d6260-1244-4c26-8d5b-62ebdb6cb8a0</v>
+              <v>ExecuteLooseCapture</v>
+              <v>1049a34b-c0cd-4b89-a35b-538ed0eda817</v>
+              <v>ExecuteMouseClick</v>
+              <v>1c7a5bf3-da71-4e68-ae34-dd82f51e5082</v>
+              <v>ExecuteMouseDblClick</v>
+              <v>fe232f1c-8e21-44e8-b25c-9f0a852ec19c</v>
+              <v>ExecuteMouseDown</v>
+              <v>b64b8272-fe99-4287-88c7-9d57d818c0f5</v>
               <v>ExecuteMouseEnter</v>
               <v>d14705fd-2225-41b4-8b21-fa111420c796</v>
               <v>ExecuteMouseLeave</v>
               <v>f1d5d945-5fd8-4093-b6bc-40dcfec3e8f3</v>
+              <v>ExecuteMouseMove</v>
+              <v>0cad1bec-4499-4481-aba7-6bf1536bddab</v>
+              <v>ExecuteMouseUp</v>
+              <v>164096d0-28dd-448e-9f83-936c1ec728ae</v>
+              <v>FB_Exit</v>
+              <v>57cb953b-2cb2-4a57-9c29-d134bcf06ad9</v>
               <v>FB_Init</v>
               <v>ebad1653-1259-4cce-bcd6-491aab7e62f4</v>
-              <v>ExecuteMouseClick</v>
-              <v>1c7a5bf3-da71-4e68-ae34-dd82f51e5082</v>
+              <v>FB_Reinit</v>
+              <v>b2d61e5c-3b7b-4067-9cb4-ed06f78e0b8e</v>
+              <v>GetElementInfo</v>
+              <v>764590c9-7336-40e6-9547-ca84bffac266</v>
+              <v>Init</v>
+              <v>ecc04721-1ab7-4b8e-885a-49866284109b</v>
+              <v>Initialize</v>
+              <v>1bc83cf6-e9b0-4fd4-9f58-0d1aae32afef</v>
             </d>
             <v n="FbName">"NotImportant"</v>
             <v n="FbGuid">{557958ab-045c-4d85-845a-fdcbf6afa092}</v>
@@ -518,6 +523,8 @@
           <n n="RemoteUserMgmtPath" />
           <n n="FontsConfig" />
           <n n="FontDownloadConfig" />
+          <n n="VisuInitializationCode" />
+          <n n="FontSettings" />
           <v n="GuidVisuSettingsPou">{03cc3003-caae-4adc-ab71-fa8e9cb87bd2}</v>
           <v n="GuidVisuSettingsPouInit">{a8ade69e-b086-4f61-b89e-07639bb5c7b7}</v>
           <v n="GuidVisuSettingsPouReInit">{c0c43c64-abfa-4500-bec8-cbb6e318ac43}</v>
@@ -565,6 +572,7 @@
         <Type n="Int32">System.Int32</Type>
         <Type n="Int64">System.Int64</Type>
         <Type n="String">System.String</Type>
+        <Type n="UnicodeSupport">{19611221-ebd3-4607-86d2-9822fbe84c30}</Type>
         <Type n="VisualClientSizeMode">{c37fe731-4f69-4d98-82fe-4f9aefbe200d}</Type>
         <Type n="VisualizationClientReferencesSet">{f348a7f0-9602-490e-8c1b-295c0602e7a6}</Type>
         <Type n="VisualizationInstantiationExplicitEntry">{28102c5e-89a3-48b7-8c0c-c747111b6ab8}</Type>

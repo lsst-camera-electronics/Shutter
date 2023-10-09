@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="F_TaskStartDcTimeToExt" Id="{af9dc5c7-0d13-4791-9001-84456674ac2e}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_TaskStartDcTimeToExt : T_DCTIME64
+VAR_INPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[F_TaskStartDcTimeToExt := F_DcToExt(F_GetCurDcTaskTime64());
+]]></ST>
+    </Implementation>
+    <LineIds Name="F_TaskStartDcTimeToExt">
+      <LineId Id="7" Count="1" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <DUT Name="ST_ShutterStatus" Id="{92b4458d-b7e8-4988-b98b-43af5ff05814}">
     <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
 TYPE ST_ShutterStatus EXTENDS ST_MsgToCCS:
@@ -10,6 +10,12 @@ STRUCT
     axis			: ARRAY [0..1] OF AxisStatus;
 	isSafetyOn		: BOOL;
 	temperature 	: ARRAY [0..2] OF DINT;
+	when			: T_DCTIME64;               (* When this message was created, TAI nanoseconds since Jan 1, 2000. *)
+	ptpState    	: DINT;                     (* Encoded PTP slave clock state. *)
+												(* 0=NO_OPERATION, 1=INITIALIZING, 2=FAULTY, 3=DISABLED, 4=LISTENING, *)
+												(* 5=PRE_MASTER, 6=MASTER, 7=PASSIVE, 8=UNCALIBRATED, 9=SLAVE. *)
+	leapSeconds		: DINT;                     (* Latest leap second count gotten from PTP. *)
+	leapIsValid 	: BOOL;                     (* Is nonzero if leap second count is valid, else is zero. *)
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>
