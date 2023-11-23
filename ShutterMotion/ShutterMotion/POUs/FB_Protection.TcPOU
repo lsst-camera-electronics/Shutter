@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <POU Name="FB_Protection" Id="{c9f611d7-5ee7-465f-b1ca-c69ee56fc15b}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_Protection
 VAR_IN_OUT
@@ -24,7 +24,6 @@ VAR_IN_OUT
 	inToggleSafetyCheck	: ST_ToggleSafetyCheck;
 END_VAR
 VAR_INPUT
-	bAuxElxPermit	: BOOL;	
 	nState 			: DINT;
 END_VAR
 VAR_OUTPUT
@@ -74,15 +73,7 @@ IF (eCommand=E_Commands.calibrate) THEN
 	bBadHall := FALSE;
 END_IF
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-(*Checks permit from auxiliary electronic subsystem*)
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-IF NOT bAuxElxPermit THEN
-	//////// --set error here-- //////////////////////////////////////////////////////////////////////////////////////////
-	nShutterError.0 := 1;
-ELSE
-	nShutterError.0 := 0;
-END_IF
+nShutterError.0 := 0;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (*Check brake status - prevents motion if motion is commanded while brake is engaged*)
@@ -311,7 +302,9 @@ END_IF
 ]]></ST>
     </Implementation>
     <LineIds Name="FB_Protection">
-      <LineId Id="46" Count="234" />
+      <LineId Id="46" Count="18" />
+      <LineId Id="72" Count="1" />
+      <LineId Id="75" Count="205" />
       <LineId Id="9" Count="0" />
       <LineId Id="298" Count="0" />
       <LineId Id="300" Count="1" />
