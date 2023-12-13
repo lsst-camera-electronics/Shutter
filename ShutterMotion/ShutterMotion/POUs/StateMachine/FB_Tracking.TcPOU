@@ -55,7 +55,16 @@ VAR
 	a, b : INT;
 	*)
 	
+	(* The DC time at which the current cycle started. *)
 	dcCycleStart: T_DCTIME64;
+	
+	(* Do we need to make another pass of sorting of Hall timestamps. *)
+	newPass: BOOL:= TRUE;
+	
+	(* DEBUG. Track adjustment of Hall ADC timestamps. *)
+	(* Entries are in groups of five: dcCycleStart, 32-bit ADC time, naive adjusted time, final adjusted time, ext time *)
+	nDebugAdc: INT := 0;
+	debugAdc: ARRAY [0..99] OF T_DCTIME64;
 END_VAR
 
 
@@ -83,7 +92,7 @@ IF fbMoving_Rtrig[GVL.cXP].Q THEN
 	stMotionDone[GVL.cXP].nsamples := 0;      // No encoder samples yet.
 	stMotionDone[GVL.cXP].ntrans := 0;        // No Hall transitions yet.
 	stMotionDone[gvl.cXP].startPos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;   // Where are we now?
-	stMotionDone[GVL.cXP].startTime := F_TaskStartDcTimeToExt();  // Start time is when we got status update from controller.
+	stMotionDone[GVL.cXP].startTime := F_GetCurDcTaskTime64();  // DEBUG F_TaskStartDcTimeToExt();  // Start time is when we got status update from controller.
 	stMotionDone[GVL.cXP].targetDur := LTIME#0D0H0M0S0MS0US0NS;  // Don't know yet how long this motion will take.
 END_IF
 
@@ -95,7 +104,7 @@ IF fbMoving_Rtrig[GVL.cXM].Q THEN
 	stMotionDone[gvl.cXM].nsamples := 0;
 	stMotionDone[gvl.cXM].ntrans := 0;
 	stMotionDone[gvl.cXM].startPos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
-	stMotionDone[gvl.cXM].startTime := F_TaskStartDcTimeToExt();
+	stMotionDone[gvl.cXM].startTime := F_GetCurDcTaskTime64();  // DEBUG F_TaskStartDcTimeToExt();
 	stMotionDone[gvl.cXM].targetDur := LTIME#0D0H0M0S0MS0US0NS;
 END_IF
 
@@ -176,32 +185,48 @@ END_IF
 // nInputEventTime[i] is linked to the first transition timestamp for Hall sensor i. We assume there is at most one.
 // New timestamps are added to the end of the stTrack array.
 dcCycleStart := F_GetCurDcTaskTime64();
+nDebugAdc := 0;
 FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
 	fbRtrig[i](CLK:=GVL.nNumOfInputs[i].0);  // Look for a rising edge in channel status, which means we have a transition timestamp.
 	IF fbRtrig[i].Q THEN
 		//identifies which hall switch tripped
+		debugAdc[nDebugAdc] := dcCycleStart;
+		nDebugAdc := nDebugAdc + 1; 
 		stTrack[nTPC].nSeqToCompare := INT_TO_WORD((i*10)+5);
 		stTrack[nTPC].bEdgeToCompare := GVL.bInputEventState[i];
 		stTrack[nTPC].nHallID := i;
+		debugAdc[nDebugAdc] := GVL.nInputEventTime[stTrack[nTPC].nHallID];
+		nDebugAdc := nDebugAdc + 1;
 		stTrack[nTPC].tScanTime := (dcCycleStart AND nMask) + GVL.nInputEventTime[stTrack[nTPC].nHallID];  // Naive correction.
+		debugAdc[nDebugAdc] := stTrack[nTPC].tScanTime;
+		nDebugAdc := nDebugAdc + 1;
 		IF stTrack[nTPC].tScanTime >= dcCycleStart THEN
 			stTrack[nTPC].tScanTime := stTrack[nTPC].tScanTime - 16#1_0000_0000;  // Additional correction, for 32-bit rollover.
 		END_IF
+		debugAdc[nDebugAdc] := stTrack[nTPC].tScanTime;
+		nDebugAdc := nDebugAdc + 1;		
 		stTrack[nTPC].tScanTime := F_DcToExt(stTrack[nTPC].tScanTime);
+		debugAdc[nDebugAdc] := stTrack[nTPC].tScanTime;
+		nDebugAdc := nDebugAdc + 1;
 		// Count the number of entries stored in stTrack.
 		nTPC:=nTPC+1;
 		
 		// There's no guaranteed time ordering between timestamps picked up from different ADC channels.
-		// Sort the lot if we picked up more than two this time.
+		// Sort the lot if we picked up more than one this time.
 		// We expect no more than a handfull of Hall transitions per cycle so a simple exchange sort will do.
 		IF nTPC>=2 THEN
-			FOR j:=nTPC-1 TO 1 BY -1 DO
-				IF (stTrack[j].tScanTime < stTrack[j-1].tScanTime) THEN
+			newPass := TRUE;
+			WHILE newPass DO
+				newPass := FALSE;
+				FOR j:=nTPC-1 TO 1 BY -1 DO
+					IF (stTrack[j].tScanTime < stTrack[j-1].tScanTime) THEN
 						stTrackTemp := stTrack[j];
 						stTrack[j] := stTrack[j-1];
 						stTrack[j-1] := stTrackTemp;
-				END_IF
-			END_FOR
+						newPass := TRUE;
+					END_IF
+				END_FOR
+			END_WHILE
 		END_IF
 
 (*
@@ -507,7 +532,28 @@ END_IF]]></ST>
       <LineId Id="3" Count="2" />
       <LineId Id="9" Count="89" />
       <LineId Id="269" Count="2" />
-      <LineId Id="99" Count="111" />
+      <LineId Id="99" Count="18" />
+      <LineId Id="336" Count="0" />
+      <LineId Id="118" Count="3" />
+      <LineId Id="338" Count="1" />
+      <LineId Id="122" Count="2" />
+      <LineId Id="341" Count="1" />
+      <LineId Id="125" Count="0" />
+      <LineId Id="343" Count="0" />
+      <LineId Id="345" Count="0" />
+      <LineId Id="126" Count="2" />
+      <LineId Id="346" Count="1" />
+      <LineId Id="129" Count="0" />
+      <LineId Id="348" Count="1" />
+      <LineId Id="130" Count="6" />
+      <LineId Id="357" Count="0" />
+      <LineId Id="354" Count="0" />
+      <LineId Id="359" Count="0" />
+      <LineId Id="137" Count="4" />
+      <LineId Id="360" Count="0" />
+      <LineId Id="142" Count="1" />
+      <LineId Id="355" Count="0" />
+      <LineId Id="144" Count="66" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Tracking.ACT_TrackingDoubleNegative">
