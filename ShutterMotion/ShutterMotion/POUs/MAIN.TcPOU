@@ -77,6 +77,9 @@ VAR
 	stExpoTimer_rtrig	: R_TRIG;
 	stCalibDone_rtrig	: R_TRIG;
 	
+	(* DEBUG Time when OpenShutterCommand was received. *)
+	openCmdTime: T_DCTIME64 := 0;
+	
 END_VAR
 VAR CONSTANT
 	//Will change later once motionProfile and version are decided
@@ -305,6 +308,7 @@ ELSIF F_HaveDifferentIDs( inMoveAxisRelative, ackMoveAxisRelative) THEN
 	END_IF
 	
 ELSIF F_HaveDifferentIDs(inOpenShutter, ackOpenShutter) THEN
+	openCmdTime := F_TaskStartDcTimeToExt();
 	ackOpenShutter := inOpenShutter;
 	IF ackOpenShutter.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
@@ -538,7 +542,9 @@ END_IF]]></ST>
       <LineId Id="324" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.ACT_CheckNewMessage">
-      <LineId Id="2" Count="162" />
+      <LineId Id="2" Count="146" />
+      <LineId Id="196" Count="0" />
+      <LineId Id="149" Count="15" />
       <LineId Id="168" Count="27" />
       <LineId Id="1" Count="0" />
     </LineIds>

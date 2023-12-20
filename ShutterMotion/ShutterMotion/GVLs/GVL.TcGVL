@@ -36,6 +36,7 @@ VAR_GLOBAL CONSTANT
 	cTripPerHall	: INT := 16;
 	cNumOfHall		: INT := 15;
 	cTripCount		: INT := (cTripPerHall*cNumOfHall)-1;
+	cHallOnAdc1     : INT := 8;  // Hall sensors with this ID or greater are on the second ADC MIO-01.
 	  
 	cBrakeOff		: BOOL	:= TRUE;
 	cBrakeOn		: BOOL	:= FALSE;
@@ -118,12 +119,17 @@ VAR_GLOBAL
 	//TestVariable
 	fbWritePersistentData	: WritePersistentData;
 	
-	// Exported by the EtherCAT master.
+	// Process data from the EtherCAT master.
 	DcToExtTimeOffset AT %I*: LINT;
 	DcToTcTimeOffset AT %I*: LINT;
 	
-	// Exported by the EL6688.
-	ptpAdsAddr AT %I*: AMSADDR;
+	// Process data from the EL6688 PTP module MTM-00.
+	ptpAdsAddr AT %I*: AMSADDR;       // Used to contact the module for CoE data.
+	ptpExtTime AT %I*: T_DCTIME64;    // The external time value kept by the module. 
+	
+	// Process data from the two ADC modules MIO-00 and MIO-01 monitoring the Hall sensors.
+	adc0DcTime AT %I*: T_DCTIME64;    // Hall sensors 0 through 7 inclusive, MIO-00.
+	adc1DcTime AT %I*: T_DCTIME64;    // Hall sensors 8 through 14 inclusive, MIO-01.
 	
 
 END_VAR

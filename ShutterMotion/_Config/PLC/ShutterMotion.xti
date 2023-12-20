@@ -900,6 +900,17 @@ External Setpoint Generation:
 			</Format>
 		</DataType>
 		<DataType>
+			<Name GUID="{E8836AD4-1D36-4866-8BD7-EA80C50A3441}" Namespace="Tc2_EtherCAT" AutoDeleteType="true">T_DCTIME64</Name>
+			<BitSize>64</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-00000000000B}">ULINT</BaseType>
+			<Properties>
+				<Property>
+					<Name>TcDisplayTypeGUID</Name>
+					<Value>18071995-0000-0000-0000-000000000047</Value>
+				</Property>
+			</Properties>
+		</DataType>
+		<DataType>
 			<Name GUID="{875D2B22-B7EB-497E-B933-0C004593CCF3}" Namespace="MC" TcBaseType="true" HideType="true" IecDeclaration="DWORD;">PLCTONC_AXIS_REF_CTRL</Name>
 			<BitSize>32</BitSize>
 			<SubItem>
@@ -1246,7 +1257,7 @@ External Setpoint Generation:
 				<Var>
 					<Name>GVL.DcToExtTimeOffset</Name>
 					<Comment>
-						<![CDATA[ Exported by the EtherCAT master.]]>
+						<![CDATA[ Process data from the EtherCAT master.]]>
 					</Comment>
 					<Type>LINT</Type>
 				</Var>
@@ -1257,9 +1268,30 @@ External Setpoint Generation:
 				<Var>
 					<Name>GVL.ptpAdsAddr</Name>
 					<Comment>
-						<![CDATA[ Exported by the EL6688.]]>
+						<![CDATA[ AMS address used to contact the module for CoE data. ]]>
 					</Comment>
 					<Type GUID="{18071995-0000-0000-0000-000000000042}">AMSADDR</Type>
+				</Var>
+				<Var>
+					<Name>GVL.ptpExtTime</Name>
+					<Comment>
+						<![CDATA[ The external time value kept by the module. ]]>
+					</Comment>
+					<Type GUID="{E8836AD4-1D36-4866-8BD7-EA80C50A3441}" Namespace="Tc2_EtherCAT">T_DCTIME64</Type>
+				</Var>
+				<Var>
+					<Name>GVL.adc0DcTime</Name>
+					<Comment>
+						<![CDATA[ Hall sensors 0 through 7 inclusive. ]]>
+					</Comment>
+					<Type GUID="{E8836AD4-1D36-4866-8BD7-EA80C50A3441}" Namespace="Tc2_EtherCAT">T_DCTIME64</Type>
+				</Var>
+				<Var>
+					<Name>GVL.adc1DcTime</Name>
+					<Comment>
+						<![CDATA[ Hall sensors 8 through 14 inclusive. ]]>
+					</Comment>
+					<Type GUID="{E8836AD4-1D36-4866-8BD7-EA80C50A3441}" Namespace="Tc2_EtherCAT">T_DCTIME64</Type>
 				</Var>
 			</Vars>
 			<Vars VarGrpType="2">
@@ -1456,6 +1488,7 @@ External Setpoint Generation:
 				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].bLimitHome" VarB="STM Status^Status^Digital input 1" AutoLink="true"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)">
+				<Link VarA="PlcTaskMain Inputs^GVL.adc0DcTime" VarB="DEV Inputs Device^SysTime"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[0]" VarB="MTI Inputs 2x Channel 1^Inputs^Input event state 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[1]" VarB="MTI Inputs 2x Channel 2^Inputs^Input event state 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[2]" VarB="MTI Inputs 2x Channel 3^Inputs^Input event state 1" AutoLink="true"/>
@@ -1482,6 +1515,7 @@ External Setpoint Generation:
 				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[7]" VarB="MTI Inputs 2x Channel 8^Status^No of input events" AutoLink="true"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)">
+				<Link VarA="PlcTaskMain Inputs^GVL.adc1DcTime" VarB="DEV Inputs Device^SysTime"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[10]" VarB="MTI Inputs 2x Channel 3^Inputs^Input event state 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[11]" VarB="MTI Inputs 2x Channel 4^Inputs^Input event state 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[12]" VarB="MTI Inputs 2x Channel 5^Inputs^Input event state 1" AutoLink="true"/>
@@ -1515,6 +1549,7 @@ External Setpoint Generation:
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MTM-00 (EL6688)">
 				<Link VarA="PlcTaskMain Inputs^GVL.ptpAdsAddr" VarB="InfoData^AdsAddr"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.ptpExtTime" VarB="External Sync^External time stamp"/>
 			</OwnerB>
 			<OwnerB Name="TINC^NC-Task 1 SAF^Axes^XM">
 				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].axisRef.NcToPlc" VarB="Outputs^ToPlc"/>
