@@ -114,6 +114,9 @@
     <Compile Include="DUTs\CCSInterface STRUCT\ST_PLCMsg.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\ENUM\E_HallADC.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\ENUM\E_Commands.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -135,6 +138,9 @@
     <Compile Include="DUTs\ST_PtpDiag.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\ST_StartTimes.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="GlobalTextList.TcGTLO">
       <SubType>Code</SubType>
     </Compile>
@@ -152,6 +158,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\FB_PtpDiagReader.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\F_AdcPtpTime.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\F_DcToExt.TcPOU">

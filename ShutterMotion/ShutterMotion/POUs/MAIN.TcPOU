@@ -157,6 +157,9 @@ ELSE
 	fbWriteDelay(IN:=TRUE, PT:=T#2S);
 END_IF
 *)
+
+// Remember the ADC DC times for this cycle.
+GVL.prevAdcDcTime := GVL.curAdcDcTime;
 ]]></ST>
     </Implementation>
     <Action Name="ACT_CheckNewMessage" Id="{f5374ef6-d39e-45f2-a810-7d6f723bd4be}">
@@ -539,6 +542,9 @@ END_IF]]></ST>
       <LineId Id="3837" Count="0" />
       <LineId Id="3860" Count="14" />
       <LineId Id="3883" Count="9" />
+      <LineId Id="4092" Count="0" />
+      <LineId Id="4091" Count="0" />
+      <LineId Id="4093" Count="0" />
       <LineId Id="324" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.ACT_CheckNewMessage">
