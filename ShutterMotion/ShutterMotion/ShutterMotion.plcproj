@@ -175,6 +175,9 @@
     <Compile Include="POUs\MAIN.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\F_EncPtpTime.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\StateMachine\FB_Cycler.TcPOU">
       <SubType>Code</SubType>
     </Compile>

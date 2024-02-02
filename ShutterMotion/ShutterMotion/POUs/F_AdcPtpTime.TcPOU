@@ -4,15 +4,15 @@
     <Declaration><![CDATA[(* Calculates the absolute time at which a Hall transition occurred. *)
 FUNCTION F_AdcPtpTime : T_DCTIME64
 VAR_INPUT
-	hallId: INT;  (* The Hall ID number. *)
-	adcTime: UDINT; (* The 32-bit timestamp retrieved from the ADC.*)
+	hallId: INT;  (* The ID number of the Hall sensor that had the transition event. *)
+	adcTime: UDINT; (* The 32-bit event timestamp retrieved from the ADC.*)
 	motionStartTimes: ST_StartTimes;  (* The motion start times for the blade set that caused the Hall event. *)
 END_VAR
 VAR
 	adcId: E_HallADC;  (* The ADC to which the Hall switch is connected. *)
-	startTime: T_DCTIME64;  (* The motion start time based on the ADC clock. *)
-	eventTime: T_DCTIME64;  (* The full 64-bit DC time of the Hall event, based on the ADC clock.*)
-	elapsedNs: ULINT;  (* Nanoseconds between the start of motion and the Hall event. *)
+	startTime: T_DCTIME64;  (* The motion start time based on the ADC DC clock. *)
+	eventTime: T_DCTIME64;  (* The full 64-bit DC time of the Hall event, based on the ADC DC clock.*)
+	elapsedNs: ULINT;  (* Nanoseconds between the start of motion and the event. *)
 END_VAR
 ]]></Declaration>
     <Implementation>

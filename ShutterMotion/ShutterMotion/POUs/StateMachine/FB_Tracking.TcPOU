@@ -243,36 +243,17 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 		bGoNextSeq:=TRUE;
 		
 		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
+			nAxisID := GVL.cXP;
 			// The Hall event belongs to the +X blade set.
-			// We need to determine the time elapsed since the blade set started moving then add that
-			// to the PTP timestamp saved at the start of motion. There are two complications we have
-			// to deal with. The first is that the ADC start time has to be the one taken from the ADC
-			// to which the Hall sensor is attached. The second is that the event times from the ADCs 
-			// capture only the low order 32 bits of the ADC clock, so event times could roll over
-			// during motion. If the motion lasts less than 2^32 nanoseconds, about 4.29 seconds, then there can have been
-			// at most one rollover, for which we can correct.
-			nAxisID:= GVL.cXP;
-			IF stTrack[k].nHallID < GVL.cHallOnAdc1 THEN
-				adcBase := adc0StartDcTime[nAxisID];
-			ELSE
-				adcBase := adc1StartDcTime[nAxisID];
-			END_IF
-			adcBase := adcBase AND 16#00_00_00_00_FF_FF_FF_FF;  // Make this a 32-bit time.
-			adcEvent := stTrack[k].tScanTime;    // This was always 32-bit.
-			IF adcEvent <= adcBase THEN
-				// Correct for rollover.
-				adcEvent := adcEvent + 16#00_00_00_01_00_00_00_00;
-			END_IF
-			adcExtTime := ptpStartExtTime[nAxisID] + (adcEvent - adcBase);
+			adcExtTime := F_AdcPtpTime(stTrack[k].nHallID, stTrack[k].tScanTime, motionStartTime[GVL.cXP]);
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].extTime := adcExtTime;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].id := stTrack[k].nHallID;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].on := stTrack[k].bEdgeToCompare;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
 			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
-			
-			// Calculate the sample external time by again calculating the elapsed time and adding
-			// it to the absolute starting time.
-			encExtTime := ptpStartExtTime[nAxisId] + (F_GetCurDcTaskTime64() - plcStartDcTime[nAxisID]);
+			// We're taking the encoder value from process data for this cycle, so the closest
+			// approximation we have to the actual sample time is the DC time at the start of the cycle.
+			encExtTime := F_EncPtpTime(F_GetCurDcTaskTime64(), motionStartTime[GVL.cXP]);
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].extTime := encExtTime;
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
@@ -295,13 +276,16 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 		
 		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 			nAxisID:= GVL.cXM;
-			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].extTime := stTrack[k].tScanTime;
+			// The Hall event belongs to the -X blade set.
+			adcExtTime := F_AdcPtpTime(stTrack[k].nHallID, stTrack[k].tScanTime, motionStartTime[GVL.cXM]);
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].extTime := adcExtTime;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].id := stTrack[k].nHallID;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].on := stTrack[k].bEdgeToCompare;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
 			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
 			
-			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].extTime := F_TaskStartDcTimeToExt();
+			encExtTime := F_EncPtpTime(F_GetCurDcTaskTime64(), motionStartTime[GVL.cXM]);
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].extTime := encExtTime;
 			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
 		END_IF
@@ -328,13 +312,16 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 		
 		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 			nAxisID:= GVL.cXM;
-			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].extTime := stTrack[k].tScanTime;
+			// The Hall event belongs to the -X blade set.
+			adcExtTime := F_AdcPtpTime(stTrack[k].nHallID, stTrack[k].tScanTime, motionStartTime[GVL.cXM]);
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].extTime := adcExtTime;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].id := stTrack[k].nHallID;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].on := stTrack[k].bEdgeToCompare;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
 			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
 			
-			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].extTime := F_TaskStartDcTimeToExt();
+			encExtTime := F_EncPtpTime(F_GetCurDcTaskTime64(), motionStartTime[GVL.cXM]);
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].extTime := encExtTime;
 			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
 		END_IF
@@ -356,13 +343,18 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 		
 		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 			nAxisID:= GVL.cXP;
-			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].extTime := stTrack[k].tScanTime;
+			// The Hall event belongs to the +X blade set.
+			adcExtTime := F_AdcPtpTime(stTrack[k].nHallID, stTrack[k].tScanTime, motionStartTime[GVL.cXP]);
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].extTime := adcExtTime;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].id := stTrack[k].nHallID;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].on := stTrack[k].bEdgeToCompare;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
 			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
 			
-			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].extTime := F_TaskStartDcTimeToExt();
+			// We're taking the encoder value from process data for this cycle, so the closest
+			// approximation we have to the actual sample time is the DC time at the start of the cycle.
+			encExtTime := F_EncPtpTime(F_GetCurDcTaskTime64(), motionStartTime[GVL.cXP]);
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].extTime := encExtTime;
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
 		END_IF
@@ -390,13 +382,17 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 		
 		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 			nAxisID:= GVL.cXP;
-			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].extTime := stTrack[k].tScanTime;
+			// The Hall event belongs to the +X blade set.
+			adcExtTime := F_AdcPtpTime(stTrack[k].nHallID, stTrack[k].tScanTime, motionStartTime[GVL.cXP]);
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].extTime := adcExtTime;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].id := stTrack[k].nHallID;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].on := stTrack[k].bEdgeToCompare;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
-			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
-			
-			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].extTime := F_TaskStartDcTimeToExt();
+			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;			
+			// We're taking the encoder value from process data for this cycle, so the closest
+			// approximation we have to the actual sample time is the DC time at the start of the cycle.
+			encExtTime := F_EncPtpTime(F_GetCurDcTaskTime64(), motionStartTime[GVL.cXP]);
+			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].extTime := encExtTime;
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
 		END_IF
@@ -414,13 +410,16 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 		
 		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 			nAxisID:= GVL.cXP;
-			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].extTime := stTrack[k].tScanTime;
+			// The Hall event belongs to the +X blade set.
+			adcExtTime := F_AdcPtpTime(stTrack[k].nHallID, stTrack[k].tScanTime, motionStartTime[GVL.cXP]);
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].extTime := adcExtTime;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].id := stTrack[k].nHallID;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].on := stTrack[k].bEdgeToCompare;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
 			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
 			
-			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].extTime := F_TaskStartDcTimeToExt();
+			encExtTime := F_EncPtpTime(F_GetCurDcTaskTime64(), motionStartTime[GVL.cXP]);
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXP].nsamples].extTime := encExtTime;
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
 		END_IF
@@ -442,13 +441,16 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 		
 		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 			nAxisID:= GVL.cXM;
-			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].extTime := stTrack[k].tScanTime;
+			// The Hall event belongs to the -X blade set.
+			adcExtTime := F_AdcPtpTime(stTrack[k].nHallID, stTrack[k].tScanTime, motionStartTime[GVL.cXM]);
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].extTime := adcExtTime;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].id := stTrack[k].nHallID;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].on := stTrack[k].bEdgeToCompare;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
 			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
 			
-			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].extTime := F_TaskStartDcTimeToExt();
+			encExtTime := F_EncPtpTime(F_GetCurDcTaskTime64(), motionStartTime[GVL.cXM]);
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].extTime := encExtTime;
 			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
 		END_IF
@@ -466,13 +468,16 @@ IF stAxis[GVL.cXM].axisRef.Status.Moving THEN
 		
 		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 			nAxisID:= GVL.cXM;
-			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].extTime := stTrack[k].tScanTime;
+			// The Hall event belongs to the -X blade set.
+			adcExtTime := F_AdcPtpTime(stTrack[k].nHallID, stTrack[k].tScanTime, motionStartTime[GVL.cXM]);
+			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].extTime := adcExtTime;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].id := stTrack[k].nHallID;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].on := stTrack[k].bEdgeToCompare;
 			stMotionDone[GVL.cXM].trans[stMotionDone[GVL.cXM].ntrans].pos := stAxis[GVL.cXM].fHallPosAct;
 			stMotionDone[GVL.cXM].ntrans := stMotionDone[GVL.cXM].ntrans +1;
 			
-			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].extTime := F_TaskStartDcTimeToExt();
+			encExtTime := F_EncPtpTime(F_GetCurDcTaskTime64(), motionStartTime[GVL.cXM]);
+			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].extTime := encExtTime;
 			stMotionDone[GVL.cXM].samples[stMotionDone[GVL.cXM].nsamples].pos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXM].nsamples := stMotionDone[GVL.cXM].nsamples + 1;
 		END_IF
@@ -511,26 +516,49 @@ END_IF]]></ST>
       <LineId Id="2" Count="1" />
       <LineId Id="58" Count="2" />
       <LineId Id="4" Count="12" />
-      <LineId Id="61" Count="7" />
-      <LineId Id="17" Count="0" />
-      <LineId Id="69" Count="1" />
-      <LineId Id="72" Count="1" />
-      <LineId Id="71" Count="0" />
-      <LineId Id="83" Count="0" />
-      <LineId Id="75" Count="1" />
-      <LineId Id="84" Count="0" />
-      <LineId Id="77" Count="2" />
-      <LineId Id="18" Count="5" />
-      <LineId Id="80" Count="2" />
-      <LineId Id="24" Count="33" />
+      <LineId Id="87" Count="0" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="18" Count="4" />
+      <LineId Id="85" Count="1" />
+      <LineId Id="82" Count="0" />
+      <LineId Id="24" Count="21" />
+      <LineId Id="88" Count="1" />
+      <LineId Id="46" Count="5" />
+      <LineId Id="90" Count="0" />
+      <LineId Id="52" Count="5" />
       <LineId Id="1" Count="0" />
     </LineIds>
     <LineIds Name="FB_Tracking.ACT_TrackingDoublePositive">
-      <LineId Id="2" Count="56" />
+      <LineId Id="2" Count="15" />
+      <LineId Id="64" Count="1" />
+      <LineId Id="18" Count="5" />
+      <LineId Id="66" Count="1" />
+      <LineId Id="25" Count="20" />
+      <LineId Id="59" Count="1" />
+      <LineId Id="46" Count="5" />
+      <LineId Id="61" Count="2" />
+      <LineId Id="52" Count="6" />
       <LineId Id="1" Count="0" />
     </LineIds>
     <LineIds Name="FB_Tracking.ACT_TrackingSingle">
-      <LineId Id="2" Count="103" />
+      <LineId Id="2" Count="15" />
+      <LineId Id="106" Count="2" />
+      <LineId Id="19" Count="3" />
+      <LineId Id="109" Count="2" />
+      <LineId Id="24" Count="17" />
+      <LineId Id="121" Count="2" />
+      <LineId Id="43" Count="4" />
+      <LineId Id="119" Count="1" />
+      <LineId Id="49" Count="20" />
+      <LineId Id="124" Count="1" />
+      <LineId Id="70" Count="5" />
+      <LineId Id="126" Count="0" />
+      <LineId Id="76" Count="17" />
+      <LineId Id="127" Count="2" />
+      <LineId Id="95" Count="4" />
+      <LineId Id="130" Count="1" />
+      <LineId Id="101" Count="4" />
       <LineId Id="1" Count="0" />
     </LineIds>
   </POU>
