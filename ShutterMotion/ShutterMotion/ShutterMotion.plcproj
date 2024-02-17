@@ -114,9 +114,6 @@
     <Compile Include="DUTs\CCSInterface STRUCT\ST_PLCMsg.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\ENUM\E_HallADC.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="DUTs\ENUM\E_Commands.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -138,7 +135,10 @@
     <Compile Include="DUTs\ST_PtpDiag.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\ST_StartTimes.TcDUT">
+    <Compile Include="DUTs\T_AdcSysTimes.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\T_TaskStartTimes.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GlobalTextList.TcGTLO">
@@ -160,22 +160,13 @@
     <Compile Include="POUs\FB_PtpDiagReader.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\F_AdcPtpTime.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="POUs\F_DcToExt.TcPOU">
+    <Compile Include="POUs\F_AdcExtTime.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\F_HaveDifferentIDs.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\F_TaskStartDcTimeToExt.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="POUs\MAIN.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="POUs\F_EncPtpTime.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\StateMachine\FB_Cycler.TcPOU">

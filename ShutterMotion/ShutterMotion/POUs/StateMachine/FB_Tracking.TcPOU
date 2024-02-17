@@ -55,26 +55,23 @@ VAR
 	a, b : INT;
 	*)
 	
-	// Record these times at the start of a new motion.
-	motionStartTime: ARRAY [GVL.cXP .. GVL.cXM] OF ST_StartTimes;
-	
-	(* Do we need to make another pass of sorting of Hall timestamps. *)
-	newPass: BOOL:= TRUE;
-	
-	// Temporary variables used in the calculation of absolute (ext) timestamps
-	// for Hall events and encoder samples.
-	adcBase: T_DCTIME64;     // The 32-bit motion start time for the right axis and ADC module.
-	adcEvent: T_DCTIME64;    // The elapsed time since adcBase for the Hall event.
-	adcExtTime: T_DCTIME64;  // The final absolute timestamp for the Hall event.
-	encExtTime: T_DCTIME64;
+	// Some time values that we need to know for both the current cycle and the previous one.
+	taskStartExtTime: T_TaskStartTimes;
+	adcSysTime: T_AdcSysTimes;
 END_VAR
 
 
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[//////////////////////////////////////////////////////////////
-// Call this function block to process any updated information about blade set motion and send updates to CCS if required.
+// Call this function block once per cycle to process any updated information about blade set motion and send updates to CCS if required.
 //////////////////////////////////////////////////////////////
+
+// Update some times for the previous and current cycles.
+taskStartExtTime[GVL.cPreviousCycle] := taskStartExtTime[GVL.cCurrentCycle];
+taskStartExtTime[GVL.cCurrentCycle] := F_GetCurExtTime64(GVL.DcToExtTimeOffset, GVL.DcToTcTimeOffset);
+adcSysTime[GVL.cPreviousCycle] := adcSysTime[GVL.cCurrentCycle];
+adcSysTime[GVL.cCurrentCycle] := GVL.adcSysTime;
 
 stAxis[GVL.cXP].bTrackedFlag:=FALSE;
 stAxis[GVL.cXM].bTrackedFlag:=FALSE;
@@ -89,34 +86,26 @@ testInt4:=0;
 // Reset motion profile parameters in a local motion-done message not monitored by CCS.
 fbMoving_Rtrig[GVL.cXP](CLK:=stAxis[GVL.cXP].axisRef.Status.Moving);
 IF fbMoving_Rtrig[GVL.cXP].Q THEN
-	// Record clock values for the various players: PLC, ADCs, PTP module.
-	motionStartTime[GVL.cXP].ptpTime := GVL.ptpExtTime;
-	motionStartTime[GVL.cXP].plcDcTime := F_GetCurDcTaskTime64();
-	motionStartTime[GVL.cXP].adcDcTime := GVL.curAdcDcTime;
 	// Prepare to record motion profile information.
 	bInMotion:=TRUE;  // We're moving!
 	stMotionDone[GVL.cXP].axisNum := GVL.cXP; // Axis is +X.
 	stMotionDone[GVL.cXP].nsamples := 0;      // No encoder samples yet.
 	stMotionDone[GVL.cXP].ntrans := 0;        // No Hall transitions yet.
 	stMotionDone[gvl.cXP].startPos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;   // Where are we now?
-	stMotionDone[GVL.cXP].startTime := motionStartTime[GVL.cXP].ptpTime;
+	stMotionDone[GVL.cXP].startTime := taskStartExtTime[GVL.cCurrentCycle];
 	stMotionDone[GVL.cXP].targetDur := LTIME#0D0H0M0S0MS0US0NS;  // Don't know yet how long this motion will take.
 END_IF
 
 // The same, but for the -X blade set.
 fbMoving_Rtrig[GVL.cXM](CLK:=stAxis[GVL.cXM].axisRef.Status.Moving);
 IF fbMoving_Rtrig[GVL.cXM].Q THEN
-	// Record clock values for the various players: PLC, ADCs, PTP module.
-	motionStartTime[GVL.cXM].ptpTime := GVL.ptpExtTime;
-	motionStartTime[GVL.cXM].plcDcTime := F_GetCurDcTaskTime64();
-	motionStartTime[GVL.cXM].adcDcTime := GVL.curAdcDcTime;
 	// Prepare to record motion profile information.
 	bInMotion:=TRUE;
 	stMotionDone[gvl.cXM].axisNum := GVL.cXM;
 	stMotionDone[gvl.cXM].nsamples := 0;
 	stMotionDone[gvl.cXM].ntrans := 0;
 	stMotionDone[gvl.cXM].startPos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
-	stMotionDone[gvl.cXM].startTime := motionStartTime[GVL.cXM].ptpTime;
+	stMotionDone[gvl.cXM].startTime := taskStartExtTime[GVL.cCurrentCycle];
 	stMotionDone[gvl.cXM].targetDur := LTIME#0D0H0M0S0MS0US0NS;
 END_IF
 
@@ -170,7 +159,7 @@ IF bMotionDone THEN
 	nSequence := nSequence+1;
 	// The motor controller doesn't report exactly when motion was completed, so we assume that it was when the process data
 	// from the controller reached us, i.e., at the start of the current cycle.
-	stMotionDone[nAxisID].actualDur := ULINT_TO_LTIME(F_TaskStartDcTimeToExt() - stMotionDone[nAxisID].startTime);
+	stMotionDone[nAxisID].actualDur := ULINT_TO_LTIME(taskStartExtTime[GVL.cCurrentCycle] - stMotionDone[nAxisID].startTime);
 	stMotionDone[nAxisID].targetDur := tTargetDur;
 	stMotionDone[nAxisID].targetPos := stAxis[nAxisID].axisRef.NcToPlc.TargetPos;
 	stMotionDone[nAxisID].endPos := stAxis[nAxisID].axisRef.NcToPlc.ActPos;
@@ -198,8 +187,8 @@ FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
 		stTrack[nTPC].nSeqToCompare := INT_TO_WORD((i*10)+5);
 		stTrack[nTPC].bEdgeToCompare := GVL.bInputEventState[i];
 		stTrack[nTPC].nHallID := i;
-		stTrack[nTPC].tScanTime := GVL.nInputEventTime[stTrack[nTPC].nHallID];
-		// Count the number of entries stored in stTrack.
+		stTrack[nTPC].tScanTime := GVL.nInputEventTime[stTrack[nTPC].nHallID];  // Note expansion from  UDINT (32 bits) to T_DCTIME64 (64 bits).
+ 		// Count the number of entries stored in stTrack.
 		nTPC:=nTPC+1;
 	END_IF
 END_FOR
@@ -383,8 +372,8 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 		IF bInMotion AND MAIN.outShutterStatus.smState<>E_StatesMaint.Calibrating THEN
 			nAxisID:= GVL.cXP;
 			// The Hall event belongs to the +X blade set.
-			adcExtTime := F_AdcPtpTime(stTrack[k].nHallID, stTrack[k].tScanTime, motionStartTime[GVL.cXP]);
-			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].extTime := adcExtTime;
+			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].extTime := 
+				F_AdcExtTime(stTrack[k].nHallID, stTrack[k].tScanTime, taskStartExtTime, adcSysTime);
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].id := stTrack[k].nHallID;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].on := stTrack[k].bEdgeToCompare;
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
@@ -488,13 +477,14 @@ END_IF]]></ST>
     </Action>
     <LineIds Name="FB_Tracking">
       <LineId Id="3" Count="2" />
-      <LineId Id="9" Count="13" />
-      <LineId Id="588" Count="0" />
-      <LineId Id="590" Count="2" />
+      <LineId Id="755" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="756" Count="0" />
+      <LineId Id="758" Count="2" />
+      <LineId Id="757" Count="0" />
+      <LineId Id="10" Count="12" />
       <LineId Id="589" Count="0" />
       <LineId Id="23" Count="11" />
-      <LineId Id="594" Count="0" />
-      <LineId Id="677" Count="2" />
       <LineId Id="599" Count="0" />
       <LineId Id="35" Count="33" />
       <LineId Id="680" Count="0" />
@@ -543,7 +533,9 @@ END_IF]]></ST>
     </LineIds>
     <LineIds Name="FB_Tracking.ACT_TrackingSingle">
       <LineId Id="2" Count="15" />
-      <LineId Id="106" Count="2" />
+      <LineId Id="106" Count="0" />
+      <LineId Id="108" Count="0" />
+      <LineId Id="132" Count="0" />
       <LineId Id="19" Count="3" />
       <LineId Id="109" Count="2" />
       <LineId Id="24" Count="17" />

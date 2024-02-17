@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="T_AdcSysTimes" Id="{421feef3-879a-4082-9c7a-56b0d93ff5bd}">
+    <Declaration><![CDATA[TYPE T_AdcSysTimes : ARRAY [GVL.cCurrentCycle .. GVL.cPreviousCycle] OF ARRAY [GVL.cAdc0 .. GVL.cAdc1] OF ULINT; END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
