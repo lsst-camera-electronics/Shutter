@@ -309,7 +309,7 @@ ELSIF F_HaveDifferentIDs( inMoveAxisRelative, ackMoveAxisRelative) THEN
 	END_IF
 	
 ELSIF F_HaveDifferentIDs(inOpenShutter, ackOpenShutter) THEN
-	openCmdTime := F_TaskStartDcTimeToExt();
+	openCmdTime := F_GetCurExtTime64(GVL.DcToExtTimeOffset, GVL.DcToTcTimeOffset);
 	ackOpenShutter := inOpenShutter;
 	IF ackOpenShutter.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
@@ -470,7 +470,7 @@ IF fbOutTimer.Q THEN
 	outShutterStatus.temperature[0] := INT_TO_DINT(fRtdTemp[0]);
 	outShutterStatus.temperature[1] := INT_TO_DINT(fRtdTemp[1]);
 	outShutterStatus.temperature[2] := INT_TO_DINT(fRtdTemp[2]);
-	outShutterStatus.when := F_TaskStartDcTimeToExt();
+	outShutterStatus.when := F_GetCurExtTime64(GVL.DcToExtTimeOffset, GVL.DcToTcTimeOffset);
 	outShutterStatus.ptpState := MAIN.ptpDiagInfo.PTPState;
 	outShutterStatus.leapSeconds := MAIN.ptpDiagInfo.CurrentUtcOffset;
 	outShutterStatus.leapIsValid := TO_BOOL(MAIN.ptpDiagInfo.CurrentUtcOffsetIsValid);

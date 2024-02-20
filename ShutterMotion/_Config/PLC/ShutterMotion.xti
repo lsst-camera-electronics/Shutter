@@ -900,23 +900,9 @@ External Setpoint Generation:
 			</Format>
 		</DataType>
 		<DataType>
-			<Name GUID="{E8836AD4-1D36-4866-8BD7-EA80C50A3441}" Namespace="Tc2_EtherCAT" AutoDeleteType="true">T_DCTIME64</Name>
-			<BitSize>64</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-00000000000B}">ULINT</BaseType>
-			<Properties>
-				<Property>
-					<Name>TcDisplayTypeGUID</Name>
-					<Value>18071995-0000-0000-0000-000000000047</Value>
-				</Property>
-			</Properties>
-		</DataType>
-		<DataType>
-			<Name GUID="{AC3EA595-CDA1-4D97-AC17-073934FEA52D}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..1] OF Tc2_EtherCAT.T_DCTIME64</Name>
-			<Comment>
-				<![CDATA[ Current cycle.]]>
-			</Comment>
+			<Name GUID="{11F20A4A-90D4-35C7-DB3B-0E8659E05E53}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..1] OF ULINT</Name>
 			<BitSize>128</BitSize>
-			<BaseType GUID="{E8836AD4-1D36-4866-8BD7-EA80C50A3441}" Namespace="Tc2_EtherCAT">T_DCTIME64</BaseType>
+			<BaseType GUID="{18071995-0000-0000-0000-00000000000B}">ULINT</BaseType>
 			<ArrayInfo>
 				<LBound>0</LBound>
 				<Elements>2</Elements>
@@ -1269,13 +1255,14 @@ External Setpoint Generation:
 				<Var>
 					<Name>GVL.DcToExtTimeOffset</Name>
 					<Comment>
-						<![CDATA[ Process data from the EtherCAT master.]]>
+						<![CDATA[ Process data from the EtherCAT master. The time offset types are given as ULINT instead of LINT because
+ that's how the corresponding arguments to F_GetCurExtTime64() are declared.]]>
 					</Comment>
-					<Type>LINT</Type>
+					<Type>ULINT</Type>
 				</Var>
 				<Var>
 					<Name>GVL.DcToTcTimeOffset</Name>
-					<Type>LINT</Type>
+					<Type>ULINT</Type>
 				</Var>
 				<Var>
 					<Name>GVL.ptpAdsAddr</Name>
@@ -1285,18 +1272,12 @@ External Setpoint Generation:
 					<Type GUID="{18071995-0000-0000-0000-000000000042}">AMSADDR</Type>
 				</Var>
 				<Var>
-					<Name>GVL.ptpExtTime</Name>
+					<Name>GVL.adcSysTime</Name>
 					<Comment>
-						<![CDATA[ The external time value kept by the module. ]]>
+						<![CDATA[ Process data from the two ADC modules.
+ SysTime is a 64-bit variable containing the lower 32 bits of the ADC's DC clock.]]>
 					</Comment>
-					<Type GUID="{E8836AD4-1D36-4866-8BD7-EA80C50A3441}" Namespace="Tc2_EtherCAT">T_DCTIME64</Type>
-				</Var>
-				<Var>
-					<Name>GVL.curAdcDcTime</Name>
-					<Comment>
-						<![CDATA[ Current cycle.]]>
-					</Comment>
-					<Type GUID="{AC3EA595-CDA1-4D97-AC17-073934FEA52D}">ARRAY [0..1] OF Tc2_EtherCAT.T_DCTIME64</Type>
+					<Type GUID="{11F20A4A-90D4-35C7-DB3B-0E8659E05E53}">ARRAY [0..1] OF ULINT</Type>
 				</Var>
 			</Vars>
 			<Vars VarGrpType="2">
@@ -1485,6 +1466,23 @@ External Setpoint Generation:
 					</OwnerB>
 				</OwnerA>
 			</UnrestoredVarLinks>
+			<UnrestoredVarLinks ImportTime="2024-02-18T18:01:04">
+				<OwnerA Name="InputDst" Prefix="TIPC^ShutterMotion^ShutterMotion Instance" Type="1">
+					<OwnerB Name="TIID^Device 1 (EtherCAT)">
+						<Link VarA="GVL.DcToExtTimeOffset" TypeA="LINT" InOutA="0" GuidA="{18071995-0000-0000-0000-00000000000C}" VarB="InfoData^DcToTcTimeOffset" RestoreInfo="TypeMismatch" OldTypeA="LINT" OldGuidA="{18071995-0000-0000-0000-00000000000C}" NewTypeA="ULINT" NewGuidA="{18071995-0000-0000-0000-00000000000B}"/>
+						<Link VarA="GVL.DcToTcTimeOffset" TypeA="LINT" InOutA="0" GuidA="{18071995-0000-0000-0000-00000000000C}" VarB="InfoData^DcToExtTimeOffset" RestoreInfo="TypeMismatch" OldTypeA="LINT" OldGuidA="{18071995-0000-0000-0000-00000000000C}" NewTypeA="ULINT" NewGuidA="{18071995-0000-0000-0000-00000000000B}"/>
+					</OwnerB>
+					<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)">
+						<Link VarA="GVL.curAdcDcTime[0]" TypeA="Tc2_EtherCAT.T_DCTIME64" InOutA="0" GuidA="{E8836AD4-1D36-4866-8BD7-EA80C50A3441}" VarB="DEV Inputs Device^SysTime" RestoreInfo="ANotFound"/>
+					</OwnerB>
+					<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)">
+						<Link VarA="GVL.curAdcDcTime[1]" TypeA="Tc2_EtherCAT.T_DCTIME64" InOutA="0" GuidA="{E8836AD4-1D36-4866-8BD7-EA80C50A3441}" VarB="DEV Inputs Device^SysTime" RestoreInfo="ANotFound"/>
+					</OwnerB>
+					<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MTM-00 (EL6688)">
+						<Link VarA="GVL.ptpExtTime" TypeA="Tc2_EtherCAT.T_DCTIME64" InOutA="0" GuidA="{E8836AD4-1D36-4866-8BD7-EA80C50A3441}" VarB="External Sync^External time stamp" RestoreInfo="ANotFound"/>
+					</OwnerB>
+				</OwnerA>
+			</UnrestoredVarLinks>
 			<TaskPouOids>
 				<TaskPouOid Prio="20" OTCID="#x08502001"/>
 			</TaskPouOids>
@@ -1492,6 +1490,10 @@ External Setpoint Generation:
 	</Project>
 	<Mappings>
 		<OwnerA Name="ShutterMotion Instance">
+			<OwnerB Name="TIID^Device 1 (EtherCAT)">
+				<Link VarA="PlcTaskMain Inputs^GVL.DcToExtTimeOffset" VarB="InfoData^DcToExtTimeOffset"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.DcToTcTimeOffset" VarB="InfoData^DcToTcTimeOffset"/>
+			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-00 (EL7047)">
 				<Link VarA="PlcTaskMain Inputs^MAIN.fMotorTemp[0]" VarB="STM Synchron info data^Info data 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[0].bLimitDeployed" VarB="STM Status^Status^Digital input 2" AutoLink="true"/>
@@ -1503,17 +1505,18 @@ External Setpoint Generation:
 				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].bLimitHome" VarB="STM Status^Status^Digital input 1" AutoLink="true"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)">
-				<Link VarA="PlcTaskMain Inputs^GVL.curAdcDcTime[0]" VarB="DEV Inputs Device^SysTime"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[0]" VarB="MTI Inputs 2x Channel 1^Input event time 1" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[1]" VarB="MTI Inputs 2x Channel 2^Input event time 1" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[2]" VarB="MTI Inputs 2x Channel 3^Input event time 1" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[3]" VarB="MTI Inputs 2x Channel 4^Input event time 1" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[4]" VarB="MTI Inputs 2x Channel 5^Input event time 1" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[5]" VarB="MTI Inputs 2x Channel 6^Input event time 1" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[6]" VarB="MTI Inputs 2x Channel 7^Input event time 1" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[7]" VarB="MTI Inputs 2x Channel 8^Input event time 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.adcSysTime[0]" VarB="DEV Inputs Device^SysTime"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[0]" VarB="MTI Inputs 2x Channel 1^Input event time 1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[1]" VarB="MTI Inputs 2x Channel 2^Input event time 1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[2]" VarB="MTI Inputs 2x Channel 3^Input event time 1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[3]" VarB="MTI Inputs 2x Channel 4^Input event time 1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[4]" VarB="MTI Inputs 2x Channel 5^Input event time 1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[5]" VarB="MTI Inputs 2x Channel 6^Input event time 1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[6]" VarB="MTI Inputs 2x Channel 7^Input event time 1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[7]" VarB="MTI Inputs 2x Channel 8^Input event time 1"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)">
+				<Link VarA="PlcTaskMain Inputs^GVL.adcSysTime[1]" VarB="DEV Inputs Device^SysTime"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[10]" VarB="MTI Inputs 2x Channel 3^Inputs^Input event state 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[11]" VarB="MTI Inputs 2x Channel 4^Inputs^Input event state 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[12]" VarB="MTI Inputs 2x Channel 5^Inputs^Input event state 1" AutoLink="true"/>
@@ -1521,7 +1524,6 @@ External Setpoint Generation:
 				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[14]" VarB="MTI Inputs 2x Channel 7^Inputs^Input event state 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[8]" VarB="MTI Inputs 2x Channel 1^Inputs^Input event state 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[9]" VarB="MTI Inputs 2x Channel 2^Inputs^Input event state 1" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.curAdcDcTime[1]" VarB="DEV Inputs Device^SysTime"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[10]" VarB="MTI Inputs 2x Channel 3^Input event time 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[11]" VarB="MTI Inputs 2x Channel 4^Input event time 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[12]" VarB="MTI Inputs 2x Channel 5^Input event time 1" AutoLink="true"/>
@@ -1548,7 +1550,6 @@ External Setpoint Generation:
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MTM-00 (EL6688)">
 				<Link VarA="PlcTaskMain Inputs^GVL.ptpAdsAddr" VarB="InfoData^AdsAddr"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.ptpExtTime" VarB="External Sync^External time stamp"/>
 			</OwnerB>
 			<OwnerB Name="TINC^NC-Task 1 SAF^Axes^XM">
 				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].axisRef.NcToPlc" VarB="Outputs^ToPlc"/>

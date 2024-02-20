@@ -125,9 +125,10 @@ VAR_GLOBAL
 	//TestVariable
 	fbWritePersistentData	: WritePersistentData;
 	
-	// Process data from the EtherCAT master.
-	DcToExtTimeOffset AT %I*: LINT;
-	DcToTcTimeOffset AT %I*: LINT;
+	// Process data from the EtherCAT master. The time offset types are given as ULINT instead of LINT because
+	// that's how the corresponding arguments to F_GetCurExtTime64() are declared.
+	DcToExtTimeOffset AT %I*: ULINT;
+	DcToTcTimeOffset AT %I*: ULINT;
 	
 	// Process data from the EL6688 PTP module, MTM-00.
 	ptpAdsAddr AT %I*: AMSADDR;       // Used to contact the module for CoE data.

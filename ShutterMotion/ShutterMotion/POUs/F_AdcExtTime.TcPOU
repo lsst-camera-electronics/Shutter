@@ -3,7 +3,7 @@
   <POU Name="F_AdcExtTime" Id="{7c38fc38-e280-4189-a3ee-ea4adf34d5f3}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION F_AdcExtTime : T_DCTIME64
 VAR_INPUT
-	hallId: INT;  // The ID number of the Hall sensor that caused the event.
+	hallId: DINT;  // The ID number of the Hall sensor that caused the event.
 	eventTime: ULINT;  // The timestamp recorded by the ADC.
 	taskStartExtTime: T_TaskStartTimes;  // Saved task start times for current and previous cycles.
 	adcSysTime: T_AdcSysTimes;  // Saved ADC SysTimes for current and previous cycles.
@@ -12,7 +12,7 @@ VAR CONSTANT
 	rolloverCorrection: ULINT := 16#00000001_00000000;
 END_VAR
 VAR
-	adcId: INT;  // GVL.Adc0 or Adc1.
+	adcId: DINT;  // GVL.Adc0 or Adc1.
 	prevSysTime: ULINT;  // The previous cycle's value of SysTime for the right ADC.
 	elapsedTime: ULINT;  // Time between the event and prevSysTime.
 END_VAR
