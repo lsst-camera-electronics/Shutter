@@ -1240,7 +1240,7 @@ External Setpoint Generation:
 				<Var>
 					<Name>GVL.nInputEventTime</Name>
 					<Comment>
-						<![CDATA[unit in nanosecond ]]>
+						<![CDATA[unit of nanoseconds ]]>
 					</Comment>
 					<Type GUID="{1F02D6B8-A7D2-F43A-E709-30725419E97A}">ARRAY [0..14] OF UDINT</Type>
 				</Var>
@@ -1506,6 +1506,14 @@ External Setpoint Generation:
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)">
 				<Link VarA="PlcTaskMain Inputs^GVL.adcSysTime[0]" VarB="DEV Inputs Device^SysTime"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[0]" VarB="MTI Inputs 2x Channel 1^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[1]" VarB="MTI Inputs 2x Channel 2^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[2]" VarB="MTI Inputs 2x Channel 3^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[3]" VarB="MTI Inputs 2x Channel 4^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[4]" VarB="MTI Inputs 2x Channel 5^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[5]" VarB="MTI Inputs 2x Channel 6^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[6]" VarB="MTI Inputs 2x Channel 7^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[7]" VarB="MTI Inputs 2x Channel 8^Input event state 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[0]" VarB="MTI Inputs 2x Channel 1^Input event time 1"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[1]" VarB="MTI Inputs 2x Channel 2^Input event time 1"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[2]" VarB="MTI Inputs 2x Channel 3^Input event time 1"/>
@@ -1514,16 +1522,24 @@ External Setpoint Generation:
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[5]" VarB="MTI Inputs 2x Channel 6^Input event time 1"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[6]" VarB="MTI Inputs 2x Channel 7^Input event time 1"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[7]" VarB="MTI Inputs 2x Channel 8^Input event time 1"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[0]" VarB="MTI Inputs 2x Channel 1^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[1]" VarB="MTI Inputs 2x Channel 2^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[2]" VarB="MTI Inputs 2x Channel 3^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[3]" VarB="MTI Inputs 2x Channel 4^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[4]" VarB="MTI Inputs 2x Channel 5^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[5]" VarB="MTI Inputs 2x Channel 6^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[6]" VarB="MTI Inputs 2x Channel 7^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[7]" VarB="MTI Inputs 2x Channel 8^No of input events" AutoLink="true"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)">
 				<Link VarA="PlcTaskMain Inputs^GVL.adcSysTime[1]" VarB="DEV Inputs Device^SysTime"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[10]" VarB="MTI Inputs 2x Channel 3^Inputs^Input event state 1" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[11]" VarB="MTI Inputs 2x Channel 4^Inputs^Input event state 1" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[12]" VarB="MTI Inputs 2x Channel 5^Inputs^Input event state 1" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[13]" VarB="MTI Inputs 2x Channel 6^Inputs^Input event state 1" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[14]" VarB="MTI Inputs 2x Channel 7^Inputs^Input event state 1" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[8]" VarB="MTI Inputs 2x Channel 1^Inputs^Input event state 1" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[9]" VarB="MTI Inputs 2x Channel 2^Inputs^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[10]" VarB="MTI Inputs 2x Channel 3^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[11]" VarB="MTI Inputs 2x Channel 4^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[12]" VarB="MTI Inputs 2x Channel 5^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[13]" VarB="MTI Inputs 2x Channel 6^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[14]" VarB="MTI Inputs 2x Channel 7^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[8]" VarB="MTI Inputs 2x Channel 1^Input event state 1" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.bInputEventState[9]" VarB="MTI Inputs 2x Channel 2^Input event state 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[10]" VarB="MTI Inputs 2x Channel 3^Input event time 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[11]" VarB="MTI Inputs 2x Channel 4^Input event time 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[12]" VarB="MTI Inputs 2x Channel 5^Input event time 1" AutoLink="true"/>
@@ -1531,13 +1547,13 @@ External Setpoint Generation:
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[14]" VarB="MTI Inputs 2x Channel 7^Input event time 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[8]" VarB="MTI Inputs 2x Channel 1^Input event time 1" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^GVL.nInputEventTime[9]" VarB="MTI Inputs 2x Channel 2^Input event time 1" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[10]" VarB="MTI Inputs 2x Channel 3^Status^No of input events" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[11]" VarB="MTI Inputs 2x Channel 4^Status^No of input events" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[12]" VarB="MTI Inputs 2x Channel 5^Status^No of input events" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[13]" VarB="MTI Inputs 2x Channel 6^Status^No of input events" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[14]" VarB="MTI Inputs 2x Channel 7^Status^No of input events" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[8]" VarB="MTI Inputs 2x Channel 1^Status^No of input events" AutoLink="true"/>
-				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[9]" VarB="MTI Inputs 2x Channel 2^Status^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[10]" VarB="MTI Inputs 2x Channel 3^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[11]" VarB="MTI Inputs 2x Channel 4^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[12]" VarB="MTI Inputs 2x Channel 5^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[13]" VarB="MTI Inputs 2x Channel 6^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[14]" VarB="MTI Inputs 2x Channel 7^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[8]" VarB="MTI Inputs 2x Channel 1^No of input events" AutoLink="true"/>
+				<Link VarA="PlcTaskMain Inputs^GVL.nNumOfInputs[9]" VarB="MTI Inputs 2x Channel 2^No of input events" AutoLink="true"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MRE-01 (EL2622)">
 				<Link VarA="PlcTaskMain Outputs^MAIN.stAxis[0].bBrake" VarB="Channel 1^Output" AutoLink="true"/>
