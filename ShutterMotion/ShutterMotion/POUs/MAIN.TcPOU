@@ -22,6 +22,7 @@ VAR
 	{attribute 'TcLinkTo' := '	[0] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-00 (EL7047)^STM Synchron info data^Info data 1;
 								[1] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-01 (EL7047)^STM Synchron info data^Info data 1'}
 	fMotorTemp	AT %I*		: ARRAY [0..1] OF UINT;  //temp in 1 degree C per increment
+
 	{attribute 'TcLinkTo' := '	[0] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MTC-00 (EL3214)^RTD Inputs Channel 1^Value;
 								[1] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MTC-00 (EL3214)^RTD Inputs Channel 2^Value;
 								[2] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MTC-00 (EL3214)^RTD Inputs Channel 3^Value'}
