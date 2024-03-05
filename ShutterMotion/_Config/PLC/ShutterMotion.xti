@@ -1572,6 +1572,9 @@ External Setpoint Generation:
 				<Link VarA="PlcTaskMain Inputs^MAIN.fRtdTemp[1]" VarB="RTD Inputs Channel 2^Value" AutoLink="true"/>
 				<Link VarA="PlcTaskMain Inputs^MAIN.fRtdTemp[2]" VarB="RTD Inputs Channel 3^Value" AutoLink="true"/>
 			</OwnerB>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MTM-00 (EL6688)">
+				<Link VarA="PlcTaskMain Inputs^GVL.ptpAdsAddr" VarB="InfoData^AdsAddr" AutoLink="true"/>
+			</OwnerB>
 			<OwnerB Name="TINC^NC-Task 1 SAF^Axes^XM">
 				<Link VarA="PlcTaskMain Inputs^MAIN.stAxis[1].axisRef.NcToPlc" VarB="Outputs^ToPlc"/>
 				<Link VarA="PlcTaskMain Outputs^MAIN.stAxis[1].axisRef.PlcToNc" VarB="Inputs^FromPlc"/>

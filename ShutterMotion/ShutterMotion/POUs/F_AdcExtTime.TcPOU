@@ -5,29 +5,33 @@
 VAR_INPUT
 	hallId: DINT;  // The ID number of the Hall sensor that caused the event.
 	eventTime: ULINT;  // The timestamp recorded by the ADC.
-	taskStartExtTime: T_TaskStartTimes;  // Saved task start times for current and previous cycles.
-	adcSysTime: T_AdcSysTimes;  // Saved ADC SysTimes for current and previous cycles.
+	iCurTime: INT;  // The index of the current cycle's times in the time buffer.
+	taskStartExtTime: T_TaskStartTimes;  // Time buffer. Saved task start times.
+	adcSysTime: T_AdcSysTimes;  // Time buffer. Saved ADC SysTime values.
 END_VAR
 VAR CONSTANT
 	rolloverCorrection: ULINT := 16#00000001_00000000;
 END_VAR
 VAR
+	iPrevTime: INT;  // The index of the oldest times in the time buffer.
 	adcId: DINT;  // GVL.Adc0 or Adc1.
-	prevSysTime: ULINT;  // The previous cycle's value of SysTime for the right ADC.
+	prevSysTime: ULINT;  // The oldest value of SysTime for the right ADC.
 	elapsedTime: ULINT;  // Time between the event and prevSysTime.
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[// Converts a 32-bit ADC timestamp into a 64-bit external timestamp in T_DCTIME64 format.
 
-// Assume that the ADC timestamp was created sometime between the start of the previous cycle and this one.
-// This implies that we drain all ADC timestamps every cycle.
+// Assume that the ADC timestamp was created sometime between the start of the oldest cycle in the time buffer
+// and the current cycle.
 
-// Find out how much time has passed on the ADC clock between the start of the
-// previous cycle and the Hall event. Take into account a possible rollover
+// Find out how much time has passed on the ADC clock between the oldest cycle
+// cycle and the Hall event. Take into account a possible rollover
 // of the ADC SysTime.
 adcId := hallId / GVL.cFirstAdc1Hall;
-prevSysTime := adcSysTime[GVL.cPreviousCycle][adcId];
+
+iPrevTime := (iCurTime + 1) MOD GVL.cTimeBufferDepth;
+prevSysTime := adcSysTime[iPrevTime][adcId];
 IF eventTime <= prevSysTime THEN
 	elapsedTime := (eventTime + rolloverCorrection) - prevSysTime;
 ELSE
@@ -36,18 +40,20 @@ END_IF
 
 // Assume that the ADC clock and the PLC task clock are running at the same rate.
 // Then the external time for the event is just the elapsed time on the ADC
-// clock added to the external time at the start of the last cycle.
-F_AdcExtTime := taskStartExtTime[GVL.cPreviousCycle] + elapsedTime;
+// clock added to the external time at the start of the oldest cycle in the time buffer.
+F_AdcExtTime := taskStartExtTime[iPrevTime] + elapsedTime;
 ]]></ST>
     </Implementation>
     <LineIds Name="F_AdcExtTime">
       <LineId Id="7" Count="0" />
       <LineId Id="20" Count="0" />
       <LineId Id="19" Count="0" />
-      <LineId Id="21" Count="0" />
+      <LineId Id="57" Count="0" />
       <LineId Id="23" Count="0" />
       <LineId Id="22" Count="0" />
       <LineId Id="24" Count="2" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="59" Count="0" />
       <LineId Id="28" Count="0" />
       <LineId Id="30" Count="1" />
       <LineId Id="34" Count="1" />

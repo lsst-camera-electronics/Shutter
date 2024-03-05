@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <DUT Name="T_TaskStartTimes" Id="{d34905f3-17b5-4337-9119-1b9441f79a00}">
-    <Declaration><![CDATA[TYPE T_TaskStartTimes : ARRAY[GVL.cCurrentCycle..GVL.cPreviousCycle] OF T_DCTIME64; END_TYPE
+    <Declaration><![CDATA[TYPE T_TaskStartTimes : ARRAY[0 .. GVL.cTimeBufferDepth] OF T_DCTIME64; END_TYPE
 ]]></Declaration>
   </DUT>
 </TcPlcObject>

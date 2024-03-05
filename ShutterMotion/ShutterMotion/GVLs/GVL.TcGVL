@@ -53,9 +53,8 @@ VAR_GLOBAL CONSTANT
 	cXP : INT := 0;  // +X side.
 	cXM : INT := 1;  // -X side.
 	
-	// Indexing for current vs. previous PLC task cycle.
-	cCurrentCycle    : INT := 0;
-	cPreviousCycle   : INT := 1;
+	// For how many cycles should we save PLC external task-start time and ADC SysTimes?
+	cTimeBufferDepth: INT := 5;
 	
 	// Version number for the set of messages passsing between CCS and this firmware.
 	nVersion		: DINT := 3;
