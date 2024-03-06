@@ -132,6 +132,9 @@
     <Compile Include="DUTs\ENUM\State ENUM\E_StatesTop.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\ENUM\ST_HallAssignment.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\ST_AdcDebug.TcDUT">
       <SubType>Code</SubType>
     </Compile>

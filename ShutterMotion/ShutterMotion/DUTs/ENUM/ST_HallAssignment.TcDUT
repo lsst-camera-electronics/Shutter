@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="ST_HallAssignment" Id="{cdc908b1-35d7-43f1-ae6b-4ea7a1693955}">
+    <Declaration><![CDATA[TYPE ST_HallAssignment :
+STRUCT
+	posDirection: BOOL;
+	nTripCount: INT;
+	calNseq: WORD;
+	eventNseq: WORD;
+	calEdge: BOOL;
+	eventEdge: BOOL;
+	calPos: LREAL;
+	goNextSeq: BOOL;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
