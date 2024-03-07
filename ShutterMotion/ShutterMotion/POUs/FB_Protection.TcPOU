@@ -90,15 +90,14 @@ END_IF
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (*Check position differences - Compare hall switch and motor encoder position. Stop motion if greater than diffLimit.*)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-nShutterError.2 := 0;  // DEBUG
-//IF stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated THEN
-//	IF ABS(stAxis[GVL.cXP].fPosDiffAtTrip)>cDiffLimit OR ABS(stAxis[GVL.cXM].fPosDiffAtTrip)>cDiffLimit THEN
-//		//////// --set error here-- /////////////////////////////////////////////////////////////////////////////////
-//		nShutterError.2 := 1;
-//	ELSE
-//		nShutterError.2 := 0;
-//	END_IF
-//END_IF
+IF stAxis[GVL.cXP].bIsCalibrated AND stAxis[GVL.cXM].bIsCalibrated THEN
+	IF ABS(stAxis[GVL.cXP].fPosDiffAtTrip)>cDiffLimit OR ABS(stAxis[GVL.cXM].fPosDiffAtTrip)>cDiffLimit THEN
+		//////// --set error here-- /////////////////////////////////////////////////////////////////////////////////
+		nShutterError.2 := 1;
+	ELSE
+		nShutterError.2 := 0;
+	END_IF
+END_IF
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (*Check exposure time - If less than 100 ms, prevent exposure command from running*)
@@ -305,9 +304,7 @@ END_IF
     <LineIds Name="FB_Protection">
       <LineId Id="46" Count="18" />
       <LineId Id="72" Count="1" />
-      <LineId Id="75" Count="14" />
-      <LineId Id="437" Count="0" />
-      <LineId Id="90" Count="190" />
+      <LineId Id="75" Count="205" />
       <LineId Id="9" Count="0" />
       <LineId Id="298" Count="0" />
       <LineId Id="300" Count="1" />

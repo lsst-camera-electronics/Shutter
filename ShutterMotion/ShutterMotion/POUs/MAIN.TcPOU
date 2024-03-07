@@ -78,14 +78,10 @@ VAR
 	stExpoTimer_rtrig	: R_TRIG;
 	stCalibDone_rtrig	: R_TRIG;
 	
-	(* DEBUG Time when OpenShutterCommand was received. *)
-	openCmdTime: T_DCTIME64 := 0;
-	
 END_VAR
 VAR CONSTANT
 	//Will change later once motionProfile and version are decided
 	nMotionProfile		: DINT := 0;
-	//nVersion			: DINT := 2;
 	tUpdateTimer		: TIME := T#2S;
 	cMaxSpeedSafetyOFF	: LREAL := 1;
 END_VAR
@@ -148,17 +144,6 @@ fbTracking(
 	inMoveAxisAbsolute	:= inMoveAxisAbsolute,
 	inMoveAxisRelative	:= inMoveAxisRelative,
 	stOutMotionDone		=> outMotionDone);
-	
-(*
-//write persistent data to file every second
-IF fbWriteDelay.Q THEN
-	GVL.fbWritePersistentData(NETID:='', PORT:=851, START:=TRUE, TMOUT:=T#1S);
-	fbWriteDelay(IN:=FALSE);
-ELSE
-	fbWriteDelay(IN:=TRUE, PT:=T#2S);
-END_IF
-*)
-
 ]]></ST>
     </Implementation>
     <Action Name="ACT_CheckNewMessage" Id="{f5374ef6-d39e-45f2-a810-7d6f723bd4be}">
@@ -302,7 +287,7 @@ ELSIF F_HaveDifferentIDs( inMoveAxisRelative, ackMoveAxisRelative) THEN
 	IF ackMoveAxisRelative.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -310,12 +295,11 @@ ELSIF F_HaveDifferentIDs( inMoveAxisRelative, ackMoveAxisRelative) THEN
 	END_IF
 	
 ELSIF F_HaveDifferentIDs(inOpenShutter, ackOpenShutter) THEN
-	openCmdTime := F_GetCurExtTime64(GVL.DcToExtTimeOffset, GVL.DcToTcTimeOffset);
 	ackOpenShutter := inOpenShutter;
 	IF ackOpenShutter.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesProd.Closed THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesProd.Closed THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -336,7 +320,7 @@ ELSIF F_HaveDifferentIDs(inTakeExposure, ackTakeExposure) THEN
 	IF ackTakeExposure.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesProd.Closed THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesProd.Closed THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -540,14 +524,10 @@ END_IF]]></ST>
       <LineId Id="3893" Count="0" />
       <LineId Id="3837" Count="0" />
       <LineId Id="3860" Count="14" />
-      <LineId Id="3883" Count="9" />
-      <LineId Id="4092" Count="0" />
-      <LineId Id="324" Count="0" />
+      <LineId Id="3883" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.ACT_CheckNewMessage">
-      <LineId Id="2" Count="146" />
-      <LineId Id="196" Count="0" />
-      <LineId Id="149" Count="15" />
+      <LineId Id="2" Count="162" />
       <LineId Id="168" Count="27" />
       <LineId Id="1" Count="0" />
     </LineIds>

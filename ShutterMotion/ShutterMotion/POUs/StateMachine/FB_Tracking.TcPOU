@@ -39,42 +39,13 @@ VAR
 	//counter
 	i, j, k, m		: INT := 0;
 	nTPC	: INT; //Trip Per Cycle
-	
-	// DEBUG Keep track of raw ADC info each time we get an event. Counter is reset for on each start-of-motion.
-	nAdcEvents: DINT;
-	adcEvents: ARRAY [0..249] OF ST_AdcDebug;
-	cycleCounter: UDINT;
-	
-	// DEBUG Count how many times each tracking action is called.
-	nDoubleNeg: UDINT;
-	nDoublePos: UDINT;
-	nSingle: UDINT;
-	
-	(*
-	//TestVar
-	testRtrig : R_TRIG;
-	testRtrig2 : R_TRIG;
-	testInt: INT;
-	testInt3: INT;
-	testInt4: INT;
-	testLREAL : LREAL;
-	testTemp : ARRAY[0 .. 4] OF ST_Track;
-	testTime : ARRAY[0 .. 4] OF T_DCTIME64;
-	teststTrack : ARRAY[0 .. 4] OF T_DCTIME64;
-	testDCTime	: ARRAY[0 .. 4] OF T_DCTIME64;
-	nMask2	 : ULINT := 16#0000_0000_FFFF_FFFF;
-	a, b : INT;
-	*)
 
 	// Save task-start and ADC SysTime values in a ring buffer x of depth N. The newest
 	// entry is x[i], the oldest is x[(i + 1) mod N], assuming that the buffer is full.
 	iTimeBuffer: INT := GVL.cTimeBufferDepth - 1;
 	taskStartExtTime: T_TaskStartTimes;
 	adcSysTime: T_AdcSysTimes;
-	
-	// DEBUG Investigate assignment of Hall events to blade sets.
-	assignment: ARRAY [0..239] OF ST_HallAssignment;
-	nAssign: INT;
+
 END_VAR
 
 
@@ -93,11 +64,6 @@ stAxis[GVL.cXP].bTrackedFlag:=FALSE;
 stAxis[GVL.cXM].bTrackedFlag:=FALSE;
 nTPC:=0;
 
-(* variable for debugging
-testInt3:=0;
-testInt4:=0;
-*)
-
 // Detect start of motion for the +X blade set, rising edge of its Moving flag from the motor controller.
 // Reset motion profile parameters in a local motion-done message not monitored by CCS.
 fbMoving_Rtrig[GVL.cXP](CLK:=stAxis[GVL.cXP].axisRef.Status.Moving);
@@ -110,12 +76,6 @@ IF fbMoving_Rtrig[GVL.cXP].Q THEN
 	stMotionDone[gvl.cXP].startPos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;   // Where are we now?
 	stMotionDone[GVL.cXP].startTime := taskStartExtTime[iTimeBuffer];
 	stMotionDone[GVL.cXP].targetDur := LTIME#0D0H0M0S0MS0US0NS;  // Don't know yet how long this motion will take.
-	nAdcEvents := 0;  // DEBUG
-	cycleCounter := 0; // DEBUG
-	nDoubleNeg := 0; // DEBUG
-	nDoublePos := 0;  // DEBUG
-	nSingle := 0;  // DEBUG
-	nAssign := 0;
 END_IF
 
 // The same, but for the -X blade set.
@@ -129,11 +89,6 @@ IF fbMoving_Rtrig[GVL.cXM].Q THEN
 	stMotionDone[gvl.cXM].startPos := stAxis[GVL.cXM].axisRef.NcToPlc.ActPos;
 	stMotionDone[gvl.cXM].startTime := taskStartExtTime[iTimeBuffer];
 	stMotionDone[gvl.cXM].targetDur := LTIME#0D0H0M0S0MS0US0NS;
-	nAdcEvents := 0;  // DEBUG
-	cycleCounter := 0; // DEBUG
-	nDoubleNeg := 0; // DEBUG
-	nDoublePos := 0;  // DEBUG
-	nSingle := 0;  // DEBUG
 END_IF
 
 // Assuming that a motion command was issued by CCS, calculate how long the motion is supposed to last.
@@ -206,7 +161,6 @@ END_IF
 // more than one channel may have a timestamp available in the same cycle.
 // New timestamps are added to the end of the stTrack array.
 
-cycleCounter := cycleCounter + 1;  // DEBUG
 FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
 	fbRtrig[i](CLK:=GVL.nNumOfInputs[i].0);  // Look for a rising edge in channel status, which means we have a transition timestamp.
 	IF fbRtrig[i].Q THEN
@@ -217,17 +171,6 @@ FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
 			F_AdcExtTime(i, GVL.nInputEventTime[i], iTimeBuffer, taskStartExtTime, adcSysTime);  // ADC timestamp -> ext time.
  		// Count the number of entries stored in stTrack.
 		nTPC:=nTPC+1;
-		// DEBUG start
-		adcEvents[nAdcEvents].cycleCounter := cycleCounter;
-		adcEvents[nAdcEvents].hallId := i;
-		adcEvents[nAdcEvents].adcNo := i / GVL.cFirstAdc1Hall;
-		adcEvents[nAdcEvents].numEvents := GVL.nNumOfInputs[i];
-		adcEvents[nAdcEvents].curSysClock := adcSysTime[iTimeBuffer][adcEvents[nAdcEvents].adcNo];
-		adcEvents[nAdcEvents].prevSysClock := adcSysTime[(iTimeBuffer + 1) MOD GVL.cTimeBufferDepth][adcEvents[nAdcEvents].adcNo];
-		adcEvents[nAdcEvents].eventState := GVL.bInputEventState[i];
-		adcEvents[nAdcEvents].eventTime := GVL.nInputEventTime[i];
-		nAdcEvents := nAdcEvents + 1;
-		// DEBUG end
 	END_IF
 END_FOR
 	
@@ -258,14 +201,11 @@ IF nTPC>0 THEN
 	FOR k:=0 TO nTPC-1 BY 1 DO
 		IF (stAxis[GVL.cXP].axisRef.Status.Moving AND stAxis[GVL.cXM].axisRef.Status.Moving) AND
 			(stAxis[GVL.cXP].axisRef.Status.PositiveDirection AND stAxis[GVL.cXM].axisRef.Status.PositiveDirection) THEN
-			nDoublePos := nDoublePos + 1;
 			ACT_TrackingDoublePositive();
 		ELSIF (stAxis[GVL.cXP].axisRef.Status.Moving AND stAxis[GVL.cXM].axisRef.Status.Moving) AND
 			(stAxis[GVL.cXP].axisRef.Status.NegativeDirection AND stAxis[GVL.cXM].axisRef.Status.NegativeDirection) THEN
-			nDoubleNeg := nDoubleNeg + 1;
 			ACT_TrackingDoubleNegative();
 		ELSE
-			nSingle := nSingle + 1;
 			ACT_TrackingSingle();
 		END_IF
 		bGoNextSeq:=FALSE;
@@ -413,17 +353,6 @@ END_IF
 // +X blade set
 IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 	//Compare current sequence with recorded sequence. Update position if match. Positive direction.
-	IF stAxis[GVL.cXP].axisRef.status.PositiveDirection THEN
-		assignment[nAssign].posDirection := stAxis[GVL.cXP].axisRef.status.PositiveDirection;
-		assignment[nAssign].calEdge := stAxis[GVL.cXP].stHall[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].bEdge;
-		assignment[nAssign].calNseq := stAxis[GVL.cXP].stHall[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].nSeq;
-		assignment[nAssign].calPos := stAxis[GVL.cXP].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXP].nTripCount];
-		assignment[nAssign].eventEdge := stTrack[k].bEdgeToCompare;
-		assignment[nAssign].eventNseq := stTrack[k].nSeqToCompare;
-		assignment[nAssign].goNextSeq := bGoNextSeq;
-		assignment[nAssign].nTripCount := stAxis[GVL.cXP].nTripCount;
-		nAssign := nAssign + 1;
-	END_IF
 	IF stAxis[GVL.cXP].axisRef.status.PositiveDirection AND stAxis[GVL.cXP].stHall[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].nSeq = stTrack[k].nSeqToCompare AND 
 			stAxis[GVL.cXP].stHall[GVL.cDirPos, stAxis[GVL.cXP].nTripCount].bEdge = stTrack[k].bEdgeToCompare AND (NOT bGoNextSeq) THEN
 		stAxis[GVL.cXP].fHallPosAct := stAxis[GVL.cXP].fHallPosCal[GVL.cDirPos, stAxis[GVL.cXP].nTripCount];
@@ -532,7 +461,15 @@ END_IF]]></ST>
       </Implementation>
     </Action>
     <LineIds Name="FB_Tracking">
-      <LineId Id="1115" Count="190" />
+      <LineId Id="1115" Count="11" />
+      <LineId Id="1132" Count="12" />
+      <LineId Id="1151" Count="12" />
+      <LineId Id="1169" Count="71" />
+      <LineId Id="1242" Count="9" />
+      <LineId Id="1263" Count="29" />
+      <LineId Id="1294" Count="2" />
+      <LineId Id="1298" Count="1" />
+      <LineId Id="1301" Count="4" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Tracking.ACT_TrackingDoubleNegative">
@@ -561,11 +498,7 @@ END_IF]]></ST>
       <LineId Id="1" Count="0" />
     </LineIds>
     <LineIds Name="FB_Tracking.ACT_TrackingSingle">
-      <LineId Id="2" Count="4" />
-      <LineId Id="149" Count="0" />
-      <LineId Id="140" Count="8" />
-      <LineId Id="150" Count="0" />
-      <LineId Id="7" Count="10" />
+      <LineId Id="2" Count="15" />
       <LineId Id="106" Count="0" />
       <LineId Id="108" Count="0" />
       <LineId Id="19" Count="3" />
