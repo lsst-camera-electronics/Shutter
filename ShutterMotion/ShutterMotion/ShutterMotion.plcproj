@@ -135,6 +135,12 @@
     <Compile Include="DUTs\ST_PtpDiag.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\T_MioSysTimes.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\T_TaskStartTimes.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="GlobalTextList.TcGTLO">
       <SubType>Code</SubType>
     </Compile>
@@ -154,13 +160,10 @@
     <Compile Include="POUs\FB_PtpDiagReader.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\F_DcToExt.TcPOU">
+    <Compile Include="POUs\F_MioExtTime.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\F_HaveDifferentIDs.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="POUs\F_TaskStartDcTimeToExt.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\MAIN.TcPOU">

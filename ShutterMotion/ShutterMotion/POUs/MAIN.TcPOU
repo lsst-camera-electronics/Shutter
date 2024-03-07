@@ -22,6 +22,7 @@ VAR
 	{attribute 'TcLinkTo' := '	[0] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-00 (EL7047)^STM Synchron info data^Info data 1;
 								[1] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MDR-01 (EL7047)^STM Synchron info data^Info data 1'}
 	fMotorTemp	AT %I*		: ARRAY [0..1] OF UINT;  //temp in 1 degree C per increment
+
 	{attribute 'TcLinkTo' := '	[0] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MTC-00 (EL3214)^RTD Inputs Channel 1^Value;
 								[1] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MTC-00 (EL3214)^RTD Inputs Channel 2^Value;
 								[2] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MTC-00 (EL3214)^RTD Inputs Channel 3^Value'}
@@ -81,7 +82,6 @@ END_VAR
 VAR CONSTANT
 	//Will change later once motionProfile and version are decided
 	nMotionProfile		: DINT := 0;
-	//nVersion			: DINT := 2;
 	tUpdateTimer		: TIME := T#2S;
 	cMaxSpeedSafetyOFF	: LREAL := 1;
 END_VAR
@@ -144,16 +144,6 @@ fbTracking(
 	inMoveAxisAbsolute	:= inMoveAxisAbsolute,
 	inMoveAxisRelative	:= inMoveAxisRelative,
 	stOutMotionDone		=> outMotionDone);
-	
-(*
-//write persistent data to file every second
-IF fbWriteDelay.Q THEN
-	GVL.fbWritePersistentData(NETID:='', PORT:=851, START:=TRUE, TMOUT:=T#1S);
-	fbWriteDelay(IN:=FALSE);
-ELSE
-	fbWriteDelay(IN:=TRUE, PT:=T#2S);
-END_IF
-*)
 ]]></ST>
     </Implementation>
     <Action Name="ACT_CheckNewMessage" Id="{f5374ef6-d39e-45f2-a810-7d6f723bd4be}">
@@ -297,7 +287,7 @@ ELSIF F_HaveDifferentIDs( inMoveAxisRelative, ackMoveAxisRelative) THEN
 	IF ackMoveAxisRelative.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesMaint.Still THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -309,7 +299,7 @@ ELSIF F_HaveDifferentIDs(inOpenShutter, ackOpenShutter) THEN
 	IF ackOpenShutter.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesProd.Closed THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesProd.Closed THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -330,7 +320,7 @@ ELSIF F_HaveDifferentIDs(inTakeExposure, ackTakeExposure) THEN
 	IF ackTakeExposure.version <> GVL.nVersion THEN
 		outIgnored.reason := 0; (*wrong version*)
 		outIgnored.sequence := outIgnored.sequence + 1;
-	ELSIF fbShutterSM.nSMState <> E_StatesProd.Closed THEN //AND ((fbShutterSM.nSMState<>E_StatesProd.Closing) OR (fbShutterSM.nSMState<>E_StatesProd.Traveling)) THEN
+	ELSIF fbShutterSM.nSMState <> E_StatesProd.Closed THEN
 		outIgnored.reason := 1; (*ignored by state machine*)
 		outIgnored.sequence := outIgnored.sequence + 1;
 	ELSE
@@ -465,7 +455,7 @@ IF fbOutTimer.Q THEN
 	outShutterStatus.temperature[0] := INT_TO_DINT(fRtdTemp[0]);
 	outShutterStatus.temperature[1] := INT_TO_DINT(fRtdTemp[1]);
 	outShutterStatus.temperature[2] := INT_TO_DINT(fRtdTemp[2]);
-	outShutterStatus.when := F_TaskStartDcTimeToExt();
+	outShutterStatus.when := F_GetCurExtTime64(GVL.DcToExtTimeOffset, GVL.DcToTcTimeOffset);
 	outShutterStatus.ptpState := MAIN.ptpDiagInfo.PTPState;
 	outShutterStatus.leapSeconds := MAIN.ptpDiagInfo.CurrentUtcOffset;
 	outShutterStatus.leapIsValid := TO_BOOL(MAIN.ptpDiagInfo.CurrentUtcOffsetIsValid);
@@ -534,8 +524,7 @@ END_IF]]></ST>
       <LineId Id="3893" Count="0" />
       <LineId Id="3837" Count="0" />
       <LineId Id="3860" Count="14" />
-      <LineId Id="3883" Count="9" />
-      <LineId Id="324" Count="0" />
+      <LineId Id="3883" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.ACT_CheckNewMessage">
       <LineId Id="2" Count="162" />
