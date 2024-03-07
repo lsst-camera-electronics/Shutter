@@ -132,16 +132,10 @@
     <Compile Include="DUTs\ENUM\State ENUM\E_StatesTop.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\ENUM\ST_HallAssignment.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DUTs\ST_AdcDebug.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="DUTs\ST_PtpDiag.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\T_AdcSysTimes.TcDUT">
+    <Compile Include="DUTs\T_MioSysTimes.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\T_TaskStartTimes.TcDUT">
@@ -166,7 +160,7 @@
     <Compile Include="POUs\FB_PtpDiagReader.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\F_AdcExtTime.TcPOU">
+    <Compile Include="POUs\F_MioExtTime.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\F_HaveDifferentIDs.TcPOU">

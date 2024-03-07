@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="F_MioExtTime" Id="{7c38fc38-e280-4189-a3ee-ea4adf34d5f3}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_MioExtTime : T_DCTIME64
+VAR_INPUT
+	hallId: DINT;  // The ID number of the Hall sensor that caused the event.
+	eventTime: ULINT;  // The timestamp recorded by the MIO.
+	iCurTime: INT;  // The index of the current cycle's times in the time buffer.
+	taskStartExtTime: T_TaskStartTimes;  // Time buffer. Saved task start times.
+	mioSysTime: T_MioSysTimes;  // Time buffer. Saved MIO SysTime values.
+END_VAR
+VAR CONSTANT
+	rolloverCorrection: ULINT := 16#00000001_00000000;
+END_VAR
+VAR
+	iPrevTime: INT;  // The index of the oldest times in the time buffer.
+	mioId: DINT;  // 0=MIO-00, 1=MIO-01.
+	prevSysTime: ULINT;  // The oldest value of SysTime for the right MIO.
+	elapsedTime: ULINT;  // Time between the event and prevSysTime.
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Converts a 32-bit MIO timestamp into a 64-bit external timestamp in T_DCTIME64 format.
+
+// Assume that the MIO timestamp was created sometime between the start of the oldest cycle in the time buffer
+// and the current cycle.
+
+// Find out how much time passed on the MIO clock between the oldest cycle
+// and the Hall event. Take into account a possible rollover
+// of the MIO SysTime.
+mioId := hallId / GVL.cFirstMio1Hall;
+
+iPrevTime := (iCurTime + 1) MOD GVL.cTimeBufferDepth;
+prevSysTime := mioSysTime[iPrevTime][mioId];
+IF eventTime <= prevSysTime THEN
+	elapsedTime := (eventTime + rolloverCorrection) - prevSysTime;
+ELSE
+	elapsedTime := eventTime - prevSysTime;
+END_IF
+
+// Assume that the MIO clock and the PLC task clock are running at the same rate.
+// Then the external time for the event is just the elapsed time on the MIO
+// clock added to the external time at the start of the oldest cycle in the time buffer.
+F_MioExtTime := taskStartExtTime[iPrevTime] + elapsedTime;
+]]></ST>
+    </Implementation>
+    <LineIds Name="F_MioExtTime">
+      <LineId Id="174" Count="21" />
+      <LineId Id="41" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

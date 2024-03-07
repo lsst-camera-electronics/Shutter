@@ -40,11 +40,11 @@ VAR
 	i, j, k, m		: INT := 0;
 	nTPC	: INT; //Trip Per Cycle
 
-	// Save task-start and ADC SysTime values in a ring buffer x of depth N. The newest
+	// Save task-start and MIO SysTime values in a ring buffer x of depth N. The newest
 	// entry is x[i], the oldest is x[(i + 1) mod N], assuming that the buffer is full.
 	iTimeBuffer: INT := GVL.cTimeBufferDepth - 1;
 	taskStartExtTime: T_TaskStartTimes;
-	adcSysTime: T_AdcSysTimes;
+	mioSysTime: T_MioSysTimes;
 
 END_VAR
 
@@ -58,7 +58,7 @@ END_VAR
 // Update some times for the previous and current cycles.
 iTimeBuffer := (iTimeBuffer + 1) MOD GVL.cTimeBufferDepth;
 taskStartExtTime[iTimeBuffer] := F_GetCurExtTime64(GVL.DcToExtTimeOffset, GVL.DcToTcTimeOffset);
-adcSysTime[iTimeBuffer] := GVL.adcSysTime;
+mioSysTime[iTimeBuffer] := GVL.mioSysTime;
 
 stAxis[GVL.cXP].bTrackedFlag:=FALSE;
 stAxis[GVL.cXM].bTrackedFlag:=FALSE;
@@ -154,9 +154,9 @@ IF bMotionDone THEN
 END_IF
 
 
-////////// Collect information on any Hall switch transitions from the time-stamping ADCs. //////////
-// nNumOfINputs[i] is linked to the event count for the ADC channel assigned to Hall sensor i.
-// bInputEventState[i] is linked to the current ADC channel state for Hall sensor i.
+////////// Collect information on any Hall switch transitions from the MIOs. //////////
+// nNumOfINputs[i] is linked to the event count for the MIO channel assigned to Hall sensor i.
+// bInputEventState[i] is linked to the current MIO channel state for Hall sensor i.
 // nInputEventTime[i] is linked to the first transition timestamp for Hall sensor i. We assume there is at most one per cycle per channel, though
 // more than one channel may have a timestamp available in the same cycle.
 // New timestamps are added to the end of the stTrack array.
@@ -168,7 +168,7 @@ FOR i:=GVL.cHallLower TO GVL.cHallUpper BY 1 DO
 		stTrack[nTPC].bEdgeToCompare := GVL.bInputEventState[i];
 		stTrack[nTPC].nHallID := i;
 		stTrack[nTPC].tScanTime := 
-			F_AdcExtTime(i, GVL.nInputEventTime[i], iTimeBuffer, taskStartExtTime, adcSysTime);  // ADC timestamp -> ext time.
+			F_MioExtTime(i, GVL.nInputEventTime[i], iTimeBuffer, taskStartExtTime, mioSysTime);  // ADC timestamp -> ext time.
  		// Count the number of entries stored in stTrack.
 		nTPC:=nTPC+1;
 	END_IF
@@ -241,7 +241,7 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXP].trans[stMotionDone[GVL.cXP].ntrans].pos := stAxis[GVL.cXP].fHallPosAct;
 			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
 			// We're taking the encoder value from process data for this cycle, so the closest
-			// approximation we have to the actual sample time is the DC time at the start of the cycle.
+			// approximation we have to the actual sample time is the time at the start of the cycle.
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].extTime := taskStartExtTime[iTimeBuffer];
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
@@ -335,7 +335,7 @@ IF stAxis[GVL.cXP].axisRef.Status.Moving THEN
 			stMotionDone[GVL.cXP].ntrans := stMotionDone[GVL.cXP].ntrans +1;
 			
 			// We're taking the encoder value from process data for this cycle, so the closest
-			// approximation we have to the actual sample time is the DC time at the start of the cycle.
+			// approximation we have to the actual sample time is the time at the start of the cycle.
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].extTime := taskStartExtTime[iTimeBuffer];
 			stMotionDone[GVL.cXP].samples[stMotionDone[GVL.cXP].nsamples].pos := stAxis[GVL.cXP].axisRef.NcToPlc.ActPos;
 			stMotionDone[GVL.cXP].nsamples := stMotionDone[GVL.cXP].nsamples + 1;
@@ -461,15 +461,7 @@ END_IF]]></ST>
       </Implementation>
     </Action>
     <LineIds Name="FB_Tracking">
-      <LineId Id="1115" Count="11" />
-      <LineId Id="1132" Count="12" />
-      <LineId Id="1151" Count="12" />
-      <LineId Id="1169" Count="71" />
-      <LineId Id="1242" Count="9" />
-      <LineId Id="1263" Count="29" />
-      <LineId Id="1294" Count="2" />
-      <LineId Id="1298" Count="1" />
-      <LineId Id="1301" Count="4" />
+      <LineId Id="1402" Count="159" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Tracking.ACT_TrackingDoubleNegative">

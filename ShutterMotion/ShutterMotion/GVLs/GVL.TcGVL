@@ -36,9 +36,9 @@ VAR_GLOBAL CONSTANT
 	cTripPerHall	: INT := 16;
 	cNumOfHall		: INT := 15;
 	cTripCount		: INT := (cTripPerHall*cNumOfHall)-1;
-	cAdc0           : INT := 0;  // Identifies the first ADC, MIO-00.
-	cAdc1           : INT := 1;  // Identifies the second ADC, MIO-01.
-	cFirstAdc1Hall  : INT := 8;  // Hall sensors with this ID or greater are on the second ADC MIO-01.
+	cMio0           : INT := 0;  // Identifies the first multi-timestamping digital I/O module, MIO-00.
+	cMio1           : INT := 1;  // Identifies the second MIO module, MIO-01.
+	cFirstMio1Hall  : INT := 8;  // Hall sensors with this ID or greater are on the second MIO, MIO-01.
 	  
 	cBrakeOff		: BOOL	:= TRUE;
 	cBrakeOn		: BOOL	:= FALSE;
@@ -53,7 +53,7 @@ VAR_GLOBAL CONSTANT
 	cXP : INT := 0;  // +X side.
 	cXM : INT := 1;  // -X side.
 	
-	// For how many cycles should we save PLC external task-start time and ADC SysTimes?
+	// For how many cycles should we save PLC external task-start time and MIO SysTimes?
 	cTimeBufferDepth: INT := 5;
 	
 	// Version number for the set of messages passsing between CCS and this firmware.
@@ -67,17 +67,17 @@ VAR_GLOBAL
 	//Hall Switches
 	nHallSequence 			: WORD;
 		
-	// We're using our ADCs in synchronous multi-timestamping mode with a Multi-TimeStamping Factor (MTSF) of 2x. We expect at most one Hall event
+	// We're using our MIOs in synchronous multi-timestamping mode with a Multi-TimeStamping Factor (MTSF) of 2x. We expect at most one Hall event
 	// per channel per cycle, so we've set the MTSF to 2x as recommended by the EL12xx manual.
 	
-	// SysTime is a 64-bit variable that in multi-timestamp mode contains the lower 32 bits of the ADC's DC clock. Each ADC channel reacts to a state change
+	// SysTime is a 64-bit variable that in multi-timestamp mode contains the lower 32 bits of the MIO's DC clock. Each MIO channel reacts to a state change
 	// by generating a timestamp that's a copy of the lower 32 bits of the current SysTime.
 	
 	{attribute 'TcLinkTo' := '[0] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^DEV Inputs Device^SysTime;
 	                          [1] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^DEV Inputs Device^SysTime'}
-	adcSysTime AT %I*: ARRAY [GVL.cAdc0 .. GVL.cAdc1] OF ULINT;  
+	mioSysTime AT %I*: ARRAY [GVL.cMio0 .. GVL.cMio1] OF ULINT;  
 
-	// The first event timestamp for each ADC channel that we use.
+	// The first event timestamp for each MIO channel that we use.
 	{attribute 'TcLinkTo' := '
      [0]  := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 1^Input event time 1;
 	 [1]  := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 2^Input event time 1;
@@ -96,7 +96,7 @@ VAR_GLOBAL
 	 [14] := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-01 (EL1259)^MTI Inputs 2x Channel 7^Input event time 1'}
 	nInputEventTime	AT %I*	: ARRAY [cHallLower .. cHallUpper] OF UDINT;
 
-	// The input event count for each ADC channel that we use.
+	// The input event count for each MIO channel that we use.
 	{attribute 'TcLinkTo' := '
      [0]  := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 1^No of input events;
 	 [1]  := TIID^Device 1 (EtherCAT)^MCD-00 (EK1200)^MIO-00 (EL1259)^MTI Inputs 2x Channel 2^No of input events;
